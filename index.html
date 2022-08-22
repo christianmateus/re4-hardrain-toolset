@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://kit.fontawesome.com/0c74900712.js" crossorigin="anonymous"></script>
+  <!-- !! IMPORTANT !! -->
+  <!-- Content-Security-Policy no longer required. Will show warning in devtools. Can be ignored -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"> -->
+  <title>Resident Evil 4 ITA Tool</title>
+</head>
+
+<body>
+  <nav id="menu-container">
+    <div class="dropdown">
+      <button class="menu-buttons" id="file">File</button>
+      <div class="dropdown-content">
+        <button id="openFile" class="menu-buttons"><img src="images/open.png"> Open ITA file</button>
+        <button id="closeFile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+        <hr>
+        <button id="saveFile" class="menu-buttons"><img src="images/save.png"> Save ITA file</button>
+        <button id="save-as-file" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+        <hr>
+        <button id="quitApp" class="menu-buttons">Quit</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="menu-buttons" id="edit">Edit</button>
+      <div class="dropdown-content">
+        <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
+        <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="menu-buttons" id="options">Options</button>
+      <div class="dropdown-content">
+        <button class="menu-buttons">Language</button>
+        <button class="menu-buttons">Theme</button>
+      </div>
+    </div>
+  </nav>
+  <header>
+    <div id="campo-superior">
+      <div class="inner-box">
+        <label for="count">Total Items:</label>
+        <input id="count" type="text" readonly value="">
+      </div>
+      <div class="inner-box">
+        <input id="guide" type="button" value="Guide">
+      </div>
+      <div class="inner-box">
+        <input id="item-list" type="button" value="Item List">
+      </div>
+    </div>
+  </header>
+  <table>
+    <thead>
+      <tr>
+        <th title="Item's number (sequentially)">No</th>
+        <th title="Item's identifier (see Item List for reference)">ID</th>
+        <th title="Item's quantity/amount">Quantity</th>
+        <th title="Item's index (can be non-sequential)">Index</th>
+        <th title="Whether if it will appear randomnly in-game or not">Random</th>
+        <th title="Item's aura color">Glow</th>
+        <th title="Whether the item belongs to something">Inside</th>
+        <th title="Number of belonging, example: enemy number or box number">ETS</th>
+        <th title="Whether if it's shootable or inside a treasure box or not">Status</th>
+        <th title="Position it will spawn in X coordinate (left and right)">Pos X</th>
+        <th title="Position it will spawn in Y coordinate (height)">Pos Y</th>
+        <th title="Position it will spawn in Z coordinate (front and back)">Pos Z</th>
+        <th title="Coordinate it will be rotated in X axis">Rot X</th>
+        <th title="Coordinate it will be rotated in Y axis">Rot Y</th>
+        <th title="Coordinate it will be rotated in Z axis">Rot Z</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <tr class="item-row">
+        <!-- Linha inteira -->
+        <td class="number-sequential"></td>
+        <td>
+          <select class="item-id">
+            <option value="0">Magnum Ammo</option>
+            <option value="1">Explosive Grenade</option>
+            <option value="2">Incendiary Grenade</option>
+            <option value="3">Matilda</option>
+            <option value="4">Handgun Ammo</option>
+            <option value="5">Spray</option>
+            <option value="6">Green Herb</option>
+            <option value="7">Rifle Ammo</option>
+            <option value="8">White Egg</option>
+            <option value="9">Brown Egg</option>
+            <option value="10">Golden Egg</option>
+            <option value="11">Unknown</option>
+            <option value="12">Plaga Sample</option>
+            <option value="13">Krauser's Knife</option>
+            <option value="14">Flash Grenade</option>
+            <option value="15">Salazar family insignia</option>
+            <option value="16">Crossbow</option>
+            <option value="17">Crossbow Arrows</option>
+            <option value="18">Green Herb (x2)</option>
+            <option value="19">Green Herb (x3)</option>
+            <option value="20">Mixed Herbs (G+R)</option>
+            <option value="21">Mixed Herbs (G+R+Y)</option>
+            <option value="22">Mixed Herbs (G+Y)</option>
+            <option value="23">Special Rocket Launcher</option>
+            <option value="24">Shotgun Shells</option>
+            <option value="25">Red Herb</option>
+            <option value="26">Handcannon Ammo</option>
+            <option value="27">Hourglass w/ Gold Decor</option>
+            <option value="28">Yellow Herb</option>
+            <option value="29">Stone Tablet</option>
+            <option value="30">Lion Ornament</option>
+            <option value="31">Goat Ornament</option>
+            <option value="32">TMP Ammo</option>
+            <option value="33">Punisher</option>
+            <option value="34">Punisher w/ Silencer</option>
+            <option value="35">Handgun</option>
+            <option value="36">Handgun w/ Silencer</option>
+            <option value="37">Red9</option>
+            <option value="38">Red9 w/ Stock</option>
+            <option value="39">Blacktail</option>
+            <option value="40">Blacktail w/ Silencer</option>
+            <option value="41">Broken Butterfly</option>
+            <option value="42">Killer 7</option>
+            <option value="43">Killer 7 w/ Silencer</option>
+            <option value="44">Shotgun</option>
+            <option value="45">Striker</option>
+            <option value="46">Rifle</option>
+            <option value="47">Semi-automatic Rifle</option>
+            <option value="48">TMP</option>
+            <option value="49">Activation Key (blue)</option>
+            <option value="50">TMP w/ Stock</option>
+            <option value="51">Activation Key (red)</option>
+            <option value="52">Chicago Typewriter</option>
+            <option value="53">Rocket Launcher</option>
+            <option value="54">Mine Thrower</option>
+            <option value="55">HandCannon</option>
+            <option value="56">Combat Knife</option>
+            <option value="57">Serpent Ornament</option>
+            <option value="58">Moonstone (right half)</option>
+            <option value="59">Insignia Key</option>
+            <option value="60">Round Insignia (church)</option>
+            <option value="61">False Eye</option>
+            <option value="62">Custom TMP</option>
+            <option value="63">Silencer (handgun)</option>
+            <option value="64">Punisher (Ada)</option>
+            <option value="65">P.R.L 412</option>
+            <option value="66">Red9 Stock</option>
+            <option value="67">Stock TMP</option>
+            <option value="68">Scope (Rifle)</option>
+            <option value="69">Scope (Semi-automatic Rifle)</option>
+            <option value="70">Mine-darts</option>
+            <option value="71">Ada's Shotgun</option>
+            <option value="72">Capture Luis Sera</option>
+            <option value="73">Target Practice</option>
+            <option value="74">Luis' Memo</option>
+            <option value="75">Castellan Memo</option>
+            <option value="76">Female Intruder</option>
+            <option value="77">Butler's Memo</option>
+            <option value="78">Sample Retrieved</option>
+            <option value="79">Ritual Preparation</option>
+            <option value="80">Luis' Memo 2</option>
+            <option value="81">Rifle (semi-auto) w/ Infrared Scope</option>
+            <option value="82">Krauser's Bow</option>
+            <option value="83">Chicago Typewriter</option>
+            <option value="84">Treasure Map (Castle)</option>
+            <option value="85">Treasure Map (Island)</option>
+            <option value="86">Velvet Blue</option>
+            <option value="87">Spinel</option>
+            <option value="88">Pearl Pendant</option>
+            <option value="89">Brass Pocket Watch</option>
+            <option value="90">Elegant Headdress</option>
+            <option value="91">Antique Pipe</option>
+            <option value="92">Gold Bangle w/ Pearls</option>
+            <option value="93">Amber Ring</option>
+            <option value="94">Beerstein</option>
+            <option value="95">Green Catseye</option>
+            <option value="96">Red Catseye</option>
+            <option value="97">Yellow Catseye</option>
+            <option value="98">Beerstein w/ (G)</option>
+            <option value="99">Beerstein w/ (R)</option>
+            <option value="100">Beerstein w/ (Y)</option>
+            <option value="101">Beerstein w/ (G,R)</option>
+            <option value="102">Beerstein w/ (G,Y)</option>
+            <option value="103">Beerstein w/ (R,Y)</option>
+            <option value="104">Beerstein w/ (G,R,Y)</option>
+            <option value="105">Moonstone (Left Half)</option>
+            <option value="106">Chicago Typewriter Ammo</option>
+            <option value="107">Rifle + Scope</option>
+            <option value="108">Rifle (semi-auto) w/ Scope</option>
+            <option value="109">Infinite Launcher</option>
+            <option value="110">King's Grail</option>
+            <option value="111">Queen's Grail</option>
+            <option value="112">Staff Of Royalty</option>
+            <option value="113">Gold Bars</option>
+            <option value="114">Arrows</option>
+            <option value="115">Bonus Time</option>
+            <option value="116">Emergency Lock Card Key</option>
+            <option value="117">Bonus Points</option>
+            <option value="118">Green Catseye</option>
+            <option value="119">Ruby</option>
+            <option value="120">Treasure Box (S)</option>
+            <option value="121">Treasure Box (L)</option>
+            <option value="122">Blue Moonstone</option>
+            <option value="123">Key to the Mine</option>
+            <option value="124">Attache Case S</option>
+            <option value="125">Attache Case M</option>
+            <option value="126">Attache Case L</option>
+            <option value="127">Attache Case XL</option>
+            <option value="128">Golden Sword</option>
+            <option value="129">Iron Key</option>
+            <option value="130">Stone of Sacrifice</option>
+            <option value="131">Storage Room Card Key</option>
+            <option value="132">Freezer Card Key</option>
+            <option value="133">Piece of the Holy Beast, Panther</option>
+            <option value="134">Piece of the Holy Beast, Serpent</option>
+            <option value="135">Piece of the Holy Beast, Eagle</option>
+            <option value="136">Jet-ski Key</option>
+            <option value="137">Dirty Pearl Pendant</option>
+            <option value="138">Dirty Brass Pocket Watch</option>
+            <option value="139">Old Key</option>
+            <option value="140">Camp Key</option>
+            <option value="141">Dynamite</option>
+            <option value="142">Lift Activation Key</option>
+            <option value="143">Gold Bangle</option>
+            <option value="144">Elegant Perfume Bottle</option>
+            <option value="145">Mirror w/ Pearls & Rubies</option>
+            <option value="146">Waste Disposal Card Key</option>
+            <option value="147">Elegant Chessboard</option>
+            <option value="148">Riot Gun</option>
+            <option value="149">Black Bass</option>
+            <option value="150">Hourglass w/ gold decor</option>
+            <option value="151">Black Bass (L)</option>
+            <option value="152">Illuminados Pendant</option>
+            <option value="153">Rifle w/ Infrared Scope</option>
+            <option value="154">Crown</option>
+            <option value="155">Crown Jewel</option>
+            <option value="156">Royal Insignia</option>
+            <option value="157">Crown with Jewels</option>
+            <option value="158">Crown with an insignia</option>
+            <option value="159">Salazar Family Crown</option>
+            <option value="160">Rifle Ammo (Infrared)</option>
+            <option value="161">Emerald</option>
+            <option value="162">Bottle Caps</option>
+            <option value="163">Gallery Key</option>
+            <option value="164">Emblem (Right Half)</option>
+            <option value="165">Emblem (Left Half)</option>
+            <option value="166">Hexagonal Emblem</option>
+            <option value="167">Castle Gate Key</option>
+            <option value="168">Mixed Herbs (R+Y)</option>
+            <option value="169">Treasure Map (Village)</option>
+            <option value="170">Scope (Mine Thrower)</option>
+            <option value="171">Mine Thrower + Scope</option>
+            <option value="172">Playing Manual 1</option>
+            <option value="173">Info on Ashley</option>
+            <option value="174">Playing Manual 2</option>
+            <option value="175">Alert Order</option>
+            <option value="176">About the Blue Medallions</option>
+            <option value="177">Chief's Note</option>
+            <option value="178">Closure of the Church</option>
+            <option value="179">Anonymous Letter</option>
+            <option value="180">Playing Manual 3</option>
+            <option value="181">Sera and the 3rd Party</option>
+            <option value="182">Two Routes</option>
+            <option value="183">Village's Last Defense</option>
+            <option value="184">Butterfly Lamp</option>
+            <option value="185">Green Eye</option>
+            <option value="186">Red Eye</option>
+            <option value="187">Blue Eye</option>
+            <option value="188">Butterfly Lamp w/ (G)</option>
+            <option value="189">Butterfly Lamp w/ (R)</option>
+            <option value="190">Butterfly Lamp w/ (B)</option>
+            <option value="191">Butterfly Lamp w/ (G,R)</option>
+            <option value="192">Butterfly Lamp w/ (G,B)</option>
+            <option value="193">Butterfly Lamp w/ (R,B)</option>
+            <option value="194">Butterfly Lamp w/ (R,G,B)</option>
+            <option value="195">Prison Key</option>
+            <option value="196">Platinum Sword</option>
+            <option value="197">Infrared Scope</option>
+            <option value="198">Elegant Mask</option>
+            <option value="199">Green Gem</option>
+            <option value="200">Red Gem</option>
+            <option value="201">Purple Gem</option>
+            <option value="202">Elegant Mask w/ (G)</option>
+            <option value="203">Elegant Mask w/ (R)</option>
+            <option value="204">Elegant Mask w/ (P)</option>
+            <option value="205">Elegant Mask w/ (G,R)</option>
+            <option value="206">Elegant Mask w/ (G,P)</option>
+            <option value="207">Elegant Mask w/ (R,P)</option>
+            <option value="208">Elegant Mask w/ (R,G,P)</option>
+            <option value="209">Golden Lynx</option>
+            <option value="210">Green Stone of Judgement</option>
+            <option value="211">Red Stone of Faith</option>
+            <option value="212">Blue Stone of Treason</option>
+            <option value="213">Golden Lynx w/ (G)</option>
+            <option value="214">Golden Lynx w/ (R)</option>
+            <option value="215">Golden Lynx w/ (B)</option>
+            <option value="216">Golden Lynx w/ (G,R)</option>
+            <option value="217">Golden Lynx w/ (G,B)</option>
+            <option value="218">Golden Lynx w/ (R,B)</option>
+            <option value="219">Golden Lynx w/ (G,R,B)</option>
+            <option value="220">Leon w/ rocket launcher</option>
+            <option value="221">Leon w/ shotgun</option>
+            <option value="222">Leon w/ handgun</option>
+            <option value="223">Ashley Graham</option>
+            <option value="224">Luis Sera</option>
+            <option value="225">Don Jose</option>
+            <option value="226">Don Diego</option>
+            <option value="227">Don Esteban</option>
+            <option value="228">Don Manuel</option>
+            <option value="229">Dr. Salvador</option>
+            <option value="230">Merchant</option>
+            <option value="231">Zealot w/ scythe</option>
+            <option value="232">Zealot w/ shield</option>
+            <option value="233">Zealot w/ bowgun</option>
+            <option value="234">Leader zealot</option>
+            <option value="235">Soldier w/ dynamite</option>
+            <option value="236">Soldier w/ stun-rod</option>
+            <option value="237">Soldier w/ hammer</option>
+            <option value="238">Isabel</option>
+            <option value="239">Maria</option>
+            <option value="240">Ada Wong</option>
+            <option value="241">Bella Sisters</option>
+            <option value="242">Don Pedro</option>
+            <option value="243">J.J.</option>
+            <option value="244">Letter from Ada</option>
+            <option value="245">Luis' Memo 3</option>
+            <option value="246">Paper Airplane</option>
+            <option value="247">Our Plan</option>
+            <option value="248">Luis' Memo 4</option>
+            <option value="249">Krauser's Note</option>
+            <option value="250">Luis' Memo 5</option>
+            <option value="251">Our Mission</option>
+            <option value="252">Unknown</option>
+            <option value="253">Unknown</option>
+            <option value="254">Tactical Vest</option>
+            <option value="255">Unknown</option>
+
+          </select>
+        </td>
+        <td class="quantity" contenteditable="true"></td>
+        <td class="item-index" contenteditable="true"></td>
+        <td>
+          <select class="random">
+            <option value="10">Yes</option>
+            <option value="0">No</option>
+          </select>
+        </td>
+        <td>
+          <select class="glow">
+            <option value="0">None</option>
+            <option value="1">Glint</option>
+            <option value="2">Blue</option>
+            <option value="3">White(normal)</option>
+            <option value="4">Green</option>
+            <option value="5">Red</option>
+            <option value="6">Unknown</option>
+            <option value="7">Big White</option>
+            <option value="8">White Sparkle</option>
+            <option value="9">Time Bonus</option>
+          </select>
+        </td>
+        <td>
+          <select class="inside">
+            <option value="0">Nothing</option>
+            <option value="1">Enemy</option>
+            <option value="2">Object</option>
+          </select>
+        </td>
+        <td class="ets" contenteditable="true"></td>
+        <td>
+          <select class="status">
+            <option value="0">Normal</option>
+            <option value="2">Treasure chest</option>
+            <option value="10">Shootable</option>
+          </select>
+        </td>
+        <td class="coordinates itemX" contenteditable="true"></td>
+        <td class="coordinates itemY" contenteditable="true"></td>
+        <td class="coordinates itemZ" contenteditable="true"></td>
+        <td class="coordinates" contenteditable="true"></td>
+        <td class="coordinates" contenteditable="true"></td>
+        <td class="coordinates" contenteditable="true"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div id="container-add">
+    <input id="add-new-item" type="button" onclick="cloneRow" value="Add New Item">
+  </div>
+  <!-- <div>
+    <textarea id="testes" cols="80" rows="10">
+
+    </textarea>
+  </div> -->
+  <script>
+    // function cloneRow() {
+    //   var row = document.querySelector(".item-row"); // find row to copy
+    //   var table = document.querySelector("table"); // find table to append to
+    //   var clone = row.cloneNode(true); // copy children too
+    //   clone.id = "newID"; // change id or other attributes/contents
+    //   table.appendChild(clone); // add new row to end of table
+    // }
+    new Notification("Resident Evil 4 ITA Tool", {
+      body: "O arquivo foi aberto com sucesso!"
+    })
+
+    require('./renderer.js');
+
+  </script>
+</body>
+
+</html>
