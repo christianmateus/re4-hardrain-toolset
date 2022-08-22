@@ -2,11 +2,14 @@ const fs = require('fs');
 const { windowsStore } = require('process');
 const { ipcRenderer } = require('electron');
 
-// Const for testing text output
+// Const for testing text output (DEBUG)
 const textarea = document.getElementById("testes");
+
+// Const for getting Menu elements
 const closeBtn = document.getElementById("closeFile")
 const saveBtn = document.getElementById("saveFile")
 
+// Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
     ipcRenderer.send("openfile")
     let table = document.querySelector("table");
@@ -23,27 +26,38 @@ quitApp.addEventListener("click", () => {
     ipcRenderer.send("quitApp")
 })
 
+// App start after loading file
 ipcRenderer.on("dialog", (e, arg) => {
-    let fd = fs.openSync(arg);
+    let fd = fs.openSync(arg); // fd means file descriptor
 
-    var contador = 176;
-    var somador = 0;
-    var seq = 1;
+    var contador = 176; // 
+    var somador = 0; // Used together with sum to read all chunks data
+    var seq = 1; // Used to update the row/slot number
+
+    var stats = fs.statSync(arg); // Gets file's object with informations
+    var fileSize = stats.size; // Stores file's size in "fileSize" variable
+
+    var header_bytes = 0;
+
+    // Buffer for storing bytes
+    let buffer = Buffer.alloc(fileSize);// 16 bytes
 
     // ===============
     // ---- HEADER
     // ===============
 
     let program = function () {
-        // Buffer for reading HEADER
-        let buffer_header = Buffer.alloc(16);// 16 bytes
 
-        fs.read(fd, buffer_header, 0, 16, 0, function (err, bytesread, buffer_header) {
+        // fs.read(fd, buffer, offset, length, position, callback)
+        fs.read(fd, buffer, 0, 16, 0, function (err, bytesread, buffer_header) {
             // Getting values
             var total_item = buffer_header.readInt8(6);
             // Setting values
             var cont = document.getElementById("count");
             cont.setAttribute("value", total_item);
+            // Item slot number
+            var seq = document.querySelector(".number-sequential");
+            seq.innerText = 01;
 
             for (i = 1; i <= total_item; i++) {
 
@@ -51,24 +65,23 @@ ipcRenderer.on("dialog", (e, arg) => {
                     contador = 16;
                     somador = 0;
                     chunk();
+
                 } else if (i == 2) {
-                    setTimeout(() => { somador = somador + 176; cloneRow(); }, 150);
+                    setTimeout(() => {
+                        somador = somador + 176
+                        cloneRow();
+                    }, 150);
+
                 } else if (i == 3) {
                     setTimeout(() => {
                         somador = somador + 176
                         cloneRow();
-                        ipcRenderer.on("savefile", (e, arg) => {
-                            fs.writeFileSync(arg, buffer)
-                            fs.writeFileSync(arg, bufferGeral)
-                        })
                     }, 300);
+
                 } else if (i == 4) {
                     setTimeout(() => {
                         somador = somador + 176
                         cloneRow();
-                        ipcRenderer.on("savefile", (e, arg) => {
-                            fs.writeFileSync(arg, bufferGeral)
-                        })
                     }, 450);
                 } else if (i == 5) {
                     setTimeout(() => {
@@ -85,6 +98,7 @@ ipcRenderer.on("dialog", (e, arg) => {
                         somador = somador + 176
                         cloneRow();
                     }, 900);
+
                 } else if (i == 8) {
                     setTimeout(() => {
                         somador = somador + 176
@@ -233,20 +247,15 @@ ipcRenderer.on("dialog", (e, arg) => {
                 }
             }
         })
+
     }
+
 
     // ===============
     // ---- CHUNKS
     // ===============
-
-    // Buffer for reading CHUNK DATA
-    let buffer = Buffer.alloc(176); // 176 bytes
-
     let chunk = function () {
         fs.read(fd, buffer, 0, 176, contador, function (err, bytesread, buffer) {
-
-            var seq = document.querySelector(".number-sequential");
-            seq.innerText = 01;
 
             // Editable fields
             getItem_index = buffer.readInt8(54);
@@ -345,28 +354,28 @@ ipcRenderer.on("dialog", (e, arg) => {
             itemZ.innerText = getItemZ;
         })
     }
+    // Buffer for reading CHUNK DATA
+    // let buffer = Buffer.alloc(176); // 176 bytes
 
     program();
 
-    var bufferGeral = Buffer.alloc(176);
     var row = document.querySelector(".item-row"); // Finding row to copy
     var table = document.querySelector("table"); // Finding table to append to
 
     // Função para criar novas linhas
     function cloneRow() {
-
         var clone = row.cloneNode(true); // Cloning all child nodes
         clone.querySelector(".number-sequential").innerText = seq = seq + 1;
 
         // Reading next INDEX byte
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneIndex = buffer.readInt8(54);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneIndex = buffer.readInt8(70);
             // buffer.writeInt8; USAR ISSO PARA SALVAR ALTERAÇÕES
             clone.querySelector(".item-index").innerHTML = cloneIndex;
         })
         //Reading next INSIDE bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneInside = buffer.readUInt8(70);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneInside = buffer.readUInt8(86);
 
             if (cloneInside == 0) {
                 clone.querySelector(".inside").selectedIndex = 0;
@@ -378,20 +387,20 @@ ipcRenderer.on("dialog", (e, arg) => {
         })
 
         // Reading next ETS byte
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneETS = buffer.readUInt8(71);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneETS = buffer.readUInt8(87);
             clone.querySelector(".ets").innerHTML = cloneETS;
         })
 
         //Reading next QUANTITY bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneQuantity = buffer.readInt16LE(136);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneQuantity = buffer.readInt16LE(152);
             clone.querySelector(".quantity").innerHTML = cloneQuantity;
         })
 
         //Reading next RANDOM bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneRandom = buffer.readUInt8(133);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneRandom = buffer.readUInt8(149);
 
             if (cloneRandom == 16) {
                 clone.querySelector(".random").selectedIndex = 0;
@@ -401,7 +410,7 @@ ipcRenderer.on("dialog", (e, arg) => {
         })
 
         //Reading next GLOW bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
             let cloneGlow = buffer.readUInt8(140);
             clone.querySelector(".glow");
 
@@ -429,8 +438,8 @@ ipcRenderer.on("dialog", (e, arg) => {
         })
 
         //Reading next ITEM STATUS bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneStatus = buffer.readUInt8(144);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneStatus = buffer.readUInt8(160);
 
             if (cloneStatus == 16) {
                 clone.querySelector(".status").selectedIndex = 2;
@@ -442,8 +451,8 @@ ipcRenderer.on("dialog", (e, arg) => {
         })
 
         //Reading next ITEM ID bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneItem_id = buffer.readUInt8(132);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneItem_id = buffer.readUInt8(148);
             let selectItem_id = clone.querySelector(".item-id");
 
             for (var i = 0; i < selectItem_id.options.length; i++) {
@@ -454,28 +463,25 @@ ipcRenderer.on("dialog", (e, arg) => {
         })
 
         //Reading next X Coordinate bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneX = buffer.readFloatLE(96).toFixed(2);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneX = buffer.readFloatLE(112).toFixed(2);
             clone.querySelector(".itemX").innerHTML = cloneX;
         })
 
         //Reading next Y Coordinate bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneY = buffer.readFloatLE(100).toFixed(2);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneY = buffer.readFloatLE(116).toFixed(2);
             clone.querySelector(".itemY").innerHTML = cloneY;
         })
 
         //Reading next Z Coordinate bytes
-        fs.read(fd, bufferGeral, 0, bufferGeral.length, 16 + somador, (err, bytesread, buffer) => {
-            let cloneZ = buffer.readFloatLE(104).toFixed(2);
+        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
+            let cloneZ = buffer.readFloatLE(120).toFixed(2);
             clone.querySelector(".itemZ").innerHTML = cloneZ;
         })
 
         table.appendChild(clone); // add new row to end of table
-
     }
-
-    //Receiving save data path
 
 
     //Menu buttons
@@ -488,6 +494,10 @@ ipcRenderer.on("dialog", (e, arg) => {
         while (table.rows.length > 2) {
             table.deleteRow(1);
         }
-
     }
+
+    //Receiving save data path
+    ipcRenderer.on("savefile", (e, arg) => {
+        fs.appendFileSync(arg, buffer)
+    })
 })
