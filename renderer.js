@@ -7,7 +7,7 @@ const textarea = document.getElementById("testes");
 
 // Const for getting Menu elements
 const closeBtn = document.getElementById("closeFile")
-const saveBtn = document.getElementById("saveFile")
+const saveAsBtn = document.getElementById("saveAs")
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -18,7 +18,7 @@ openFile.addEventListener("click", () => {
     }
 })
 
-saveBtn.addEventListener("click", () => {
+saveAsBtn.addEventListener("click", () => {
     ipcRenderer.send("saveFile")
 })
 
@@ -41,7 +41,9 @@ ipcRenderer.on("dialog", (e, arg) => {
 
     // Buffer for storing bytes
     let buffer = Buffer.alloc(fileSize);// 16 bytes
-
+    // Item slot number
+    var seq = document.querySelector(".number-sequential").innerHTML = 01;
+    // seq.innerText = 01;
     // ===============
     // ---- HEADER
     // ===============
@@ -55,9 +57,7 @@ ipcRenderer.on("dialog", (e, arg) => {
             // Setting values
             var cont = document.getElementById("count");
             cont.setAttribute("value", total_item);
-            // Item slot number
-            var seq = document.querySelector(".number-sequential");
-            seq.innerText = 01;
+
 
             for (i = 1; i <= total_item; i++) {
 
@@ -246,29 +246,153 @@ ipcRenderer.on("dialog", (e, arg) => {
                     }, 5250);
                 }
             }
+            // Função para criar novas linhas
+            function cloneRow() {
+                var clone = row.cloneNode(true); // Cloning all child nodes
+                clone.querySelector(".number-sequential").innerText = seq = seq + 1;
+
+                // Reading next INDEX byte
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneIndex = buffer.readInt8(70 + somador);
+                    // buffer.writeInt8; USAR ISSO PARA SALVAR ALTERAÇÕES
+                    clone.querySelector(".item-index").innerHTML = cloneIndex;
+                })
+
+                //Reading next INSIDE bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneInside = buffer.readUInt8(86 + somador);
+
+                    if (cloneInside == 0) {
+                        clone.querySelector(".inside").selectedIndex = 0;
+                    } else if (cloneInside == 1) {
+                        clone.querySelector(".inside").selectedIndex = 1;
+                    } else {
+                        clone.querySelector(".inside").selectedIndex = 2;
+                    }
+                })
+
+                // Reading next ETS byte
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneETS = buffer.readUInt8(87 + somador);
+                    clone.querySelector(".ets").innerHTML = cloneETS;
+                })
+
+                //Reading next QUANTITY bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneQuantity = buffer.readUInt16LE(152 + somador);
+                    clone.querySelector(".quantity").innerHTML = cloneQuantity;
+                })
+
+                //Reading next RANDOM bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneRandom = buffer.readUInt8(149 + somador);
+
+                    if (cloneRandom == 16) {
+                        clone.querySelector(".random").selectedIndex = 0;
+                    } else {
+                        clone.querySelector(".random").selectedIndex = 1;
+                    }
+                })
+
+                //Reading next GLOW bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneGlow = buffer.readUInt8(140 + somador);
+                    clone.querySelector(".glow");
+
+                    if (cloneGlow == 0) {
+                        clone.querySelector(".glow").selectedIndex = 0;
+                    } else if (cloneGlow == 1) {
+                        clone.querySelector(".glow").selectedIndex = 1;
+                    } else if (cloneGlow == 2) {
+                        clone.querySelector(".glow").selectedIndex = 2;
+                    } else if (cloneGlow == 3) {
+                        clone.querySelector(".glow").selectedIndex = 3;
+                    } else if (cloneGlow == 4) {
+                        clone.querySelector(".glow").selectedIndex = 4;
+                    } else if (cloneGlow == 5) {
+                        clone.querySelector(".glow").selectedIndex = 5;
+                    } else if (cloneGlow == 6) {
+                        clone.querySelector(".glow").selectedIndex = 6;
+                    } else if (cloneGlow == 7) {
+                        clone.querySelector(".glow").selectedIndex = 7;
+                    } else if (cloneGlow == 8) {
+                        clone.querySelector(".glow").selectedIndex = 8;
+                    } else if (cloneGlow == 9) {
+                        clone.querySelector(".glow").selectedIndex = 9;
+                    }
+                })
+
+                //Reading next ITEM STATUS bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneStatus = buffer.readUInt8(160 + somador);
+
+                    if (cloneStatus == 16) {
+                        clone.querySelector(".status").selectedIndex = 2;
+                    } else if (cloneStatus == 2 || cloneStatus == 6) {
+                        clone.querySelector(".status").selectedIndex = 1;
+                    } else {
+                        clone.querySelector(".status").selectedIndex = 0;
+                    }
+                })
+
+                //Reading next ITEM ID bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneItem_id = buffer.readUInt8(148 + somador);
+                    let selectItem_id = clone.querySelector(".item-id");
+
+                    for (var i = 0; i < selectItem_id.options.length; i++) {
+                        if (selectItem_id.options[i].value == cloneItem_id) {
+                            selectItem_id.selectedIndex = i;
+                        }
+                    }
+                })
+
+                //Reading next X Coordinate bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneX = buffer.readFloatLE(112 + somador).toFixed(2);
+                    clone.querySelector(".itemX").innerHTML = cloneX;
+                })
+
+                //Reading next Y Coordinate bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneY = buffer.readFloatLE(116 + somador).toFixed(2);
+                    clone.querySelector(".itemY").innerHTML = cloneY;
+                })
+
+                //Reading next Z Coordinate bytes
+                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
+                    let cloneZ = buffer.readFloatLE(120 + somador).toFixed(2);
+                    clone.querySelector(".itemZ").innerHTML = cloneZ;
+                })
+
+                table.appendChild(clone); // add new row to end of table
+
+            }
+            ipcRenderer.on("savefile", (e, arg) => {
+                fs.appendFileSync(arg, buffer)
+            })
         })
 
     }
-
 
     // ===============
     // ---- CHUNKS
     // ===============
     let chunk = function () {
-        fs.read(fd, buffer, 0, 176, contador, function (err, bytesread, buffer) {
+        fs.read(fd, buffer, 16, 176, contador, function (err, bytesread, buffer) {
 
             // Editable fields
-            getItem_index = buffer.readInt8(54);
-            getInside = buffer.readInt8(70);
-            getETS = buffer.readUInt8(71);
-            getItem_id = buffer.readUInt8(132);
-            getQuantity = buffer.readInt16LE(136);
-            getRandom = buffer.readUInt8(133);
-            getGlow = buffer.readUInt8(140);
-            getStatus = buffer.readUInt8(144);
-            getItemX = buffer.readFloatLE(96).toFixed(2);
-            getItemY = buffer.readFloatLE(100).toFixed(2);
-            getItemZ = buffer.readFloatLE(104).toFixed(2);
+            getItem_index = buffer.readInt8(54 + 16);
+            getInside = buffer.readInt8(70 + 16);
+            getETS = buffer.readUInt8(71 + 16);
+            getItem_id = buffer.readUInt8(132 + 16);
+            getQuantity = buffer.readInt16LE(136 + 16);
+            getRandom = buffer.readUInt8(133 + 16);
+            getGlow = buffer.readUInt8(140 + 16);
+            getStatus = buffer.readUInt8(144 + 16);
+            getItemX = buffer.readFloatLE(96 + 16).toFixed(2);
+            getItemY = buffer.readFloatLE(100 + 16).toFixed(2);
+            getItemZ = buffer.readFloatLE(104 + 16).toFixed(2);
 
             // Set value for Index
             var item_index = document.querySelector(".item-index");
@@ -362,126 +486,6 @@ ipcRenderer.on("dialog", (e, arg) => {
     var row = document.querySelector(".item-row"); // Finding row to copy
     var table = document.querySelector("table"); // Finding table to append to
 
-    // Função para criar novas linhas
-    function cloneRow() {
-        var clone = row.cloneNode(true); // Cloning all child nodes
-        clone.querySelector(".number-sequential").innerText = seq = seq + 1;
-
-        // Reading next INDEX byte
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneIndex = buffer.readInt8(70);
-            // buffer.writeInt8; USAR ISSO PARA SALVAR ALTERAÇÕES
-            clone.querySelector(".item-index").innerHTML = cloneIndex;
-        })
-        //Reading next INSIDE bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneInside = buffer.readUInt8(86);
-
-            if (cloneInside == 0) {
-                clone.querySelector(".inside").selectedIndex = 0;
-            } else if (cloneInside == 1) {
-                clone.querySelector(".inside").selectedIndex = 1;
-            } else {
-                clone.querySelector(".inside").selectedIndex = 2;
-            }
-        })
-
-        // Reading next ETS byte
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneETS = buffer.readUInt8(87);
-            clone.querySelector(".ets").innerHTML = cloneETS;
-        })
-
-        //Reading next QUANTITY bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneQuantity = buffer.readInt16LE(152);
-            clone.querySelector(".quantity").innerHTML = cloneQuantity;
-        })
-
-        //Reading next RANDOM bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneRandom = buffer.readUInt8(149);
-
-            if (cloneRandom == 16) {
-                clone.querySelector(".random").selectedIndex = 0;
-            } else {
-                clone.querySelector(".random").selectedIndex = 1;
-            }
-        })
-
-        //Reading next GLOW bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneGlow = buffer.readUInt8(140);
-            clone.querySelector(".glow");
-
-            if (cloneGlow == 0) {
-                clone.querySelector(".glow").selectedIndex = 0;
-            } else if (cloneGlow == 1) {
-                clone.querySelector(".glow").selectedIndex = 1;
-            } else if (cloneGlow == 2) {
-                clone.querySelector(".glow").selectedIndex = 2;
-            } else if (cloneGlow == 3) {
-                clone.querySelector(".glow").selectedIndex = 3;
-            } else if (cloneGlow == 4) {
-                clone.querySelector(".glow").selectedIndex = 4;
-            } else if (cloneGlow == 5) {
-                clone.querySelector(".glow").selectedIndex = 5;
-            } else if (cloneGlow == 6) {
-                clone.querySelector(".glow").selectedIndex = 6;
-            } else if (cloneGlow == 7) {
-                clone.querySelector(".glow").selectedIndex = 7;
-            } else if (cloneGlow == 8) {
-                clone.querySelector(".glow").selectedIndex = 8;
-            } else if (cloneGlow == 9) {
-                clone.querySelector(".glow").selectedIndex = 9;
-            }
-        })
-
-        //Reading next ITEM STATUS bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneStatus = buffer.readUInt8(160);
-
-            if (cloneStatus == 16) {
-                clone.querySelector(".status").selectedIndex = 2;
-            } else if (cloneStatus == 2 || cloneStatus == 6) {
-                clone.querySelector(".status").selectedIndex = 1;
-            } else {
-                clone.querySelector(".status").selectedIndex = 0;
-            }
-        })
-
-        //Reading next ITEM ID bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneItem_id = buffer.readUInt8(148);
-            let selectItem_id = clone.querySelector(".item-id");
-
-            for (var i = 0; i < selectItem_id.options.length; i++) {
-                if (selectItem_id.options[i].value == cloneItem_id) {
-                    selectItem_id.selectedIndex = i;
-                }
-            }
-        })
-
-        //Reading next X Coordinate bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneX = buffer.readFloatLE(112).toFixed(2);
-            clone.querySelector(".itemX").innerHTML = cloneX;
-        })
-
-        //Reading next Y Coordinate bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneY = buffer.readFloatLE(116).toFixed(2);
-            clone.querySelector(".itemY").innerHTML = cloneY;
-        })
-
-        //Reading next Z Coordinate bytes
-        fs.read(fd, buffer, 0, buffer.length, 0 + somador, (err, bytesread, buffer) => {
-            let cloneZ = buffer.readFloatLE(120).toFixed(2);
-            clone.querySelector(".itemZ").innerHTML = cloneZ;
-        })
-
-        table.appendChild(clone); // add new row to end of table
-    }
 
 
     //Menu buttons
@@ -497,7 +501,5 @@ ipcRenderer.on("dialog", (e, arg) => {
     }
 
     //Receiving save data path
-    ipcRenderer.on("savefile", (e, arg) => {
-        fs.appendFileSync(arg, buffer)
-    })
+
 })
