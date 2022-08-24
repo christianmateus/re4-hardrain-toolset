@@ -12,6 +12,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000, height: 500,
     autoHideMenuBar: true,
+    frame: false,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
@@ -20,7 +21,7 @@ function createWindow() {
 
   })
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   // Load index.html into the new BrowserWindow
   mainWindow.loadFile('index.html');
 
@@ -84,4 +85,22 @@ ipcMain.on("saveFile", (e, arg) => {
 // Quiting application
 ipcMain.on("quitApp", (e, arg) => {
   mainWindow.close();
+})
+
+// ====================
+// Window menu buttons
+ipcMain.on("minimize", (e, arg) => {
+  mainWindow.minimize();
+})
+
+ipcMain.on("maximize", (e, arg) => {
+  mainWindow.maximize();
+})
+
+ipcMain.on("closeWindow", (e, arg) => {
+  mainWindow.close();
+})
+
+ipcMain.on("openMainMenu", (e, arg) => {
+  mainWindow.loadFile("menu.html");
 })

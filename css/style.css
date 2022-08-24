@@ -17,6 +17,7 @@
 
 body {
     background-color: var(--darken);
+
 }
 
 /* ===================== 
@@ -25,6 +26,7 @@ body {
 #menu-container {
     display: flex;
     background-color: #fff;
+    height: 25px;
 }
 
 nav hr {
@@ -40,7 +42,7 @@ nav hr {
 .dropdown-content {
     display: none;
     position: absolute;
-    top: 19px;
+    top: 24px;
     background-color: #fff;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -73,6 +75,33 @@ nav hr {
 .menu-buttons:hover {
     background-color: #3c6e71;
     color: #fff;
+}
+
+#control-window {
+    display: flex;
+    flex: 1;
+    justify-content: right;
+}
+
+.control-buttons {
+    width: 30px;
+    background-color: #fff;
+    transition: .15s;
+}
+
+.menuWindow,
+.minimize,
+.maximize,
+.closeWindow {
+    background-repeat: no-repeat;
+    border: none;
+}
+
+.menuWindow:hover,
+.minimize:hover,
+.maximize:hover,
+.closeWindow:hover {
+    background-color: #3c6e71;
 }
 
 /* ===================== 

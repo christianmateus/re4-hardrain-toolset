@@ -1,0 +1,171 @@
+* {
+    font-family: Verdana;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Cores da ferramenta */
+:root {
+    --main-color: #1c4e51;
+    --purple: #1c4e51;
+    --lightpurple: #3c6e71;
+    --silver: #d9d9d9;
+    --darken: #353535;
+}
+
+body {
+    background-color: var(--darken);
+
+}
+
+/* ===================== 
+    Menu principal
+   ===================== */
+#menu-container {
+    display: flex;
+    background-color: #fff;
+    height: 25px;
+}
+
+nav hr {
+    height: 1px;
+    background-color: rgba(140, 140, 140, 0.4);
+    margin: 2px 0;
+}
+
+.dropdown {
+    display: flex;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 24px;
+    background-color: #fff;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    width: 130px;
+    border: 1px solid rgba(140, 140, 140, 0.4);
+}
+
+.dropdown-content .menu-buttons {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 4px 10px;
+}
+
+.menu-buttons {
+    /* margin-right: 8px; */
+    text-align: center;
+    padding: 2px 8px;
+    font-size: 12px;
+    background-color: #fff;
+    font-family: "Segoe UI";
+    transition: .15s;
+    color: #333;
+}
+
+.menu-buttons:hover {
+    background-color: #3c6e71;
+    color: #fff;
+}
+
+#control-window {
+    display: flex;
+    flex: 1;
+    justify-content: right;
+}
+
+.control-buttons {
+    width: 30px;
+    background-color: #fff;
+    transition: .15s;
+}
+
+.menuWindow,
+.minimize,
+.maximize,
+.closeWindow {
+    background-repeat: no-repeat;
+    border: none;
+}
+
+.menuWindow:hover,
+.minimize:hover,
+.maximize:hover,
+.closeWindow:hover {
+    background-color: #3c6e71;
+}
+
+/* ===================== 
+    Conteúdo superior
+   ===================== */
+
+header {
+    margin: 20px;
+    text-align: center;
+}
+
+h2 {
+    color: #fff;
+}
+
+header>p {
+    color: #ccc;
+    font-size: .8rem;
+}
+
+/* ===================== 
+    Conteúdo principal
+   ===================== */
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 350px;
+    margin: 20px 0;
+    /* background-color: forestgreen; */
+}
+
+.container-cards {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 36%;
+    height: 30%;
+    padding: 10px;
+    background-color: #1c4e51;
+    border-left: 6px solid #3c6e71;
+    box-shadow: 2px;
+    border-radius: 10px;
+    box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+/* ===================== 
+    Dentro dos cards
+   ===================== */
+
+.container-cards>h4 {
+    flex: 1;
+}
+
+.container-cards>p {
+    flex: 1;
+    color: #fff;
+    font-size: .72rem;
+}
+
+/* =================== 
+    Depois da tabela
+   =================== */

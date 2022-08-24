@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/menu.css">
+  <!-- !! IMPORTANT !! -->
+  <!-- Content-Security-Policy no longer required. Will show warning in devtools. Can be ignored -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"> -->
+  <title>Resident Evil 4 Toolset</title>
+</head>
+
+<body>
+  <nav id="menu-container">
+    <div class="dropdown">
+      <button class="menu-buttons" id="file">File</button>
+      <div class="dropdown-content">
+        <button id="openFile" class="menu-buttons"><img src="images/open.png"> Open ITA file</button>
+        <button id="closeFile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+        <hr>
+        <button id="saveFile" class="menu-buttons"><img src="images/save.png"> Save ITA file</button>
+        <button id="saveAs" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+        <hr>
+        <button id="quitApp" class="menu-buttons">Quit</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="menu-buttons" id="edit">Edit</button>
+      <div class="dropdown-content">
+        <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
+        <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
+      </div>
+    </div>
+    <div class="dropdown">
+      <button class="menu-buttons" id="options">Options</button>
+      <div class="dropdown-content">
+        <button class="menu-buttons">Language</button>
+        <button class="menu-buttons">Theme</button>
+      </div>
+    </div>
+    <div id="control-window">
+      <button id="minimize" class="control-buttons minimize"><img src="./images/minimize.png"></button>
+      <button id="maximize" class="control-buttons maximize"><img src="./images/expand-window.png"></button>
+      <button id="closeWindow" class="control-buttons closeWindow"><img src="./images/close-window.png"></button>
+    </div>
+  </nav>
+  <header>
+    <h2>Resident Evil 4 Toolset</h2>
+    <p>A collection of tools for modding Resident Evil 4 PS2 and PC 2007 version.</p>
+  </header>
+  <section>
+    <div class="container">
+      <div class="container-cards">
+        <h4>ITA Tool</h4>
+        <p>Want to edit items in the game? Click here</p>
+      </div>
+      <div class="container-cards">
+        <h4>LIT Tool</h4>
+        <p>What about some Lights/Illuminations editing? Click here</p>
+      </div>
+      <div class="container-cards">
+        <h4>AEV Tool</h4>
+        <p>Looking to edit events in the game? Click here</p>
+      </div>
+      <div class="container-cards">
+        <h4>ITA Tool</h4>
+        <p>Want to edit items in the game? Click here</p>
+      </div>
+    </div>
+  </section>
+  <script>
+    require('./renderer.js');
+  </script>
+</body>
+
+</html>

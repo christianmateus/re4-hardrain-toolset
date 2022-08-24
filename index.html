@@ -39,6 +39,12 @@
         <button class="menu-buttons">Theme</button>
       </div>
     </div>
+    <div id="control-window">
+      <button id="menuWindow" class="control-buttons menuWindow"><img src="./images/main-menu.png"></button>
+      <button id="minimize" class="control-buttons minimize"><img src="./images/minimize.png"></button>
+      <button id="maximize" class="control-buttons maximize"><img src="./images/expand-window.png"></button>
+      <button id="closeWindow" class="control-buttons closeWindow"><img src="./images/close-window.png"></button>
+    </div>
   </nav>
   <header>
     <div id="campo-superior">
@@ -388,11 +394,11 @@
   <div id="container-add">
     <input id="add-new-item" type="button" onclick="cloneRow" value="Add New Item">
   </div>
-  <!-- <div>
+  <div>
     <textarea id="testes" cols="80" rows="10">
 
     </textarea>
-  </div> -->
+  </div>
   <script>
     // function cloneRow() {
     //   var row = document.querySelector(".item-row"); // find row to copy
@@ -401,9 +407,7 @@
     //   clone.id = "newID"; // change id or other attributes/contents
     //   table.appendChild(clone); // add new row to end of table
     // }
-    new Notification("Resident Evil 4 ITA Tool", {
-      body: "O arquivo foi aberto com sucesso!"
-    })
+
 
     require('./renderer.js');
 

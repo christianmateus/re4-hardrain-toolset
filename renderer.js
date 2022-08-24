@@ -8,6 +8,9 @@ const textarea = document.getElementById("testes");
 // Const for getting Menu elements
 const closeBtn = document.getElementById("closeFile")
 const saveAsBtn = document.getElementById("saveAs")
+const minimizeBtn = document.getElementById("minimize")
+const maximizeBtn = document.getElementById("maximize")
+const closeWindowBtn = document.getElementById("closeWindow")
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -26,6 +29,23 @@ quitApp.addEventListener("click", () => {
     ipcRenderer.send("quitApp")
 })
 
+// Window menu actions
+menuWindow.addEventListener("click", () => {
+    ipcRenderer.send("openMainMenu")
+})
+
+minimizeBtn.addEventListener("click", () => {
+    ipcRenderer.send("minimize")
+})
+
+maximizeBtn.addEventListener("click", () => {
+    ipcRenderer.send("maximize")
+})
+
+closeWindowBtn.addEventListener("click", () => {
+    ipcRenderer.send("closeWindow")
+})
+
 // App start after loading file
 ipcRenderer.on("dialog", (e, arg) => {
     let fd = fs.openSync(arg); // fd means file descriptor
@@ -36,8 +56,6 @@ ipcRenderer.on("dialog", (e, arg) => {
 
     var stats = fs.statSync(arg); // Gets file's object with informations
     var fileSize = stats.size; // Stores file's size in "fileSize" variable
-
-    var header_bytes = 0;
 
     // Buffer for storing bytes
     let buffer = Buffer.alloc(fileSize);// 16 bytes
@@ -58,6 +76,11 @@ ipcRenderer.on("dialog", (e, arg) => {
             var cont = document.getElementById("count");
             cont.setAttribute("value", total_item);
 
+            // Save system with write 
+            ipcRenderer.on("savefile", (e, arg) => {
+                buffer.writeUint16LE(editQuantity, 152)
+                fs.appendFileSync(arg, buffer)
+            })
 
             for (i = 1; i <= total_item; i++) {
 
@@ -246,6 +269,10 @@ ipcRenderer.on("dialog", (e, arg) => {
                     }, 5250);
                 }
             }
+            // Saving system
+            // let finalQuantity = parseInt(editQuantity, 16);
+            let editQuantity = document.querySelector(".quantity").innerText;
+            textarea.innerText = editQuantity;
             // Função para criar novas linhas
             function cloneRow() {
                 var clone = row.cloneNode(true); // Cloning all child nodes
@@ -253,9 +280,10 @@ ipcRenderer.on("dialog", (e, arg) => {
 
                 // Reading next INDEX byte
                 fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneIndex = buffer.readInt8(70 + somador);
+                    let cloneIndex = buffer.readUInt8(70 + somador);
                     // buffer.writeInt8; USAR ISSO PARA SALVAR ALTERAÇÕES
                     clone.querySelector(".item-index").innerHTML = cloneIndex;
+                    // let editIndex = buffer.writeUInt8(70 + somador);
                 })
 
                 //Reading next INSIDE bytes
@@ -368,13 +396,13 @@ ipcRenderer.on("dialog", (e, arg) => {
                 table.appendChild(clone); // add new row to end of table
 
             }
-            ipcRenderer.on("savefile", (e, arg) => {
-                fs.appendFileSync(arg, buffer)
+
+            new Notification("Resident Evil 4 ITA Tool", {
+                body: "ITA file opened successfully!"
             })
         })
 
     }
-
     // ===============
     // ---- CHUNKS
     // ===============
@@ -500,6 +528,5 @@ ipcRenderer.on("dialog", (e, arg) => {
         }
     }
 
-    //Receiving save data path
 
 })
