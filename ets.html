@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/ets.css">
+    <title>ETS Tool</title>
+</head>
+
+<body>
+    <nav id="menu-container">
+        <div class="dropdown">
+            <button class="menu-buttons" id="file">File</button>
+            <div class="dropdown-content">
+                <button id="openFile" class="menu-buttons"><img src="images/open.png"> Open ITA file</button>
+                <button id="closeFile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+                <hr>
+                <button id="saveFile" class="menu-buttons"><img src="images/save.png"> Save ITA file</button>
+                <button id="saveAs" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+                <hr>
+                <button id="quitApp" class="menu-buttons">Quit</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="menu-buttons" id="edit">Edit</button>
+            <div class="dropdown-content">
+                <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
+                <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="menu-buttons" id="options">Options</button>
+            <div class="dropdown-content">
+                <button class="menu-buttons">Language</button>
+                <button class="menu-buttons">Theme</button>
+            </div>
+        </div>
+        <div id="control-window">
+            <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+                    src="./images/main-menu.png"></button>
+            <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+                    src="./images/minimize.png"></button>
+            <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+                    src="./images/expand-window.png"></button>
+            <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+                    src="./images/close-window.png"></button>
+        </div>
+    </nav>
+    <header>
+        <div id="campo-superior">
+            <div class="inner-box">
+                <label for="count">Total Objects:</label>
+                <input id="count" type="text" readonly value="">
+            </div>
+            <div class="inner-box">
+                <input id="guide" type="button" value="Guide">
+            </div>
+            <div class="inner-box">
+                <input id="item-list" type="button" value="Item List">
+            </div>
+        </div>
+    </header>
+    <table>
+        <tbody>
+            <div class="container">
+                <tr class="tableRow">
+                    <th colspan="4" class="objectNumber">01</th>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Image</th>
+                    <td colspan="3" class="objectImage"><img src="/images/obj/00.png"></td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Object name</th>
+                    <td colspan="3" class="objectId">
+                        <select class="objectList">
+                            <option value="0">Window</option>
+                            <option value="1">Small Box</option>
+                            <option value="2">Large Box</option>
+                            <option value="3">Door</option>
+                            <option value="4">Movable Drawer</option>
+                            <option value="5">Bookshelf</option>
+                            <option value="6">Ladder (Small)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Index</th>
+                    <td colspan="3" class="objectIndex"><input value="0" type="number"></td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Position</th>
+                    <td class="objectPosition">341789.31</td>
+                    <td class="objectPosition">341789.31</td>
+                    <td class="objectPosition">341789.31</td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Rotation</th>
+                    <td class="objectPosition"></td>
+                    <td class="objectPosition"></td>
+                    <td class="objectPosition"></td>
+                </tr>
+            </div>
+            <div class="container">
+                <tr class="tableRow">
+                    <th colspan="4" class="objectNumber">01</th>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Image</th>
+                    <td colspan="3" class="objectImage"><img src="/images/obj/00.png"></td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Object name</th>
+                    <td colspan="3" class="objectId">
+                        <select class="objectList">
+                            <option value="0">Window</option>
+                            <option value="1">Small Box</option>
+                            <option value="2">Large Box</option>
+                            <option value="3">Door</option>
+                            <option value="4">Movable Drawer</option>
+                            <option value="5">Bookshelf</option>
+                            <option value="6">Ladder (Small)</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Index</th>
+                    <td colspan="3" class="objectIndex"><input value="0" type="number"></td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Position</th>
+                    <td class="objectPosition">341789.31</td>
+                    <td class="objectPosition">341789.31</td>
+                    <td class="objectPosition">341789.31</td>
+                </tr>
+                <tr class="tableRow">
+                    <th class="tableHeader">Rotation</th>
+                    <td class="objectPosition"></td>
+                    <td class="objectPosition"></td>
+                    <td class="objectPosition"></td>
+                </tr>
+            </div>
+        </tbody>
+    </table>
+    <script>
+        require('./renderer.js');
+    </script>
+</body>
+
+</html>

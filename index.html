@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://kit.fontawesome.com/0c74900712.js" crossorigin="anonymous"></script>
   <!-- !! IMPORTANT !! -->
   <!-- Content-Security-Policy no longer required. Will show warning in devtools. Can be ignored -->
   <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"> -->
@@ -40,10 +39,13 @@
       </div>
     </div>
     <div id="control-window">
-      <button id="menuWindow" class="control-buttons menuWindow"><img src="./images/main-menu.png"></button>
-      <button id="minimize" class="control-buttons minimize"><img src="./images/minimize.png"></button>
-      <button id="maximize" class="control-buttons maximize"><img src="./images/expand-window.png"></button>
-      <button id="closeWindow" class="control-buttons closeWindow"><img src="./images/close-window.png"></button>
+      <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+          src="./images/main-menu.png"></button>
+      <button title="Minimize" id="minimize" class="control-buttons minimize"><img src="./images/minimize.png"></button>
+      <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+          src="./images/expand-window.png"></button>
+      <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+          src="./images/close-window.png"></button>
     </div>
   </nav>
   <header>

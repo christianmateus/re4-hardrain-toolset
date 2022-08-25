@@ -49,7 +49,7 @@ closeWindowBtn.addEventListener("click", () => {
 // App start after loading file
 ipcRenderer.on("dialog", (e, arg) => {
     let fd = fs.openSync(arg); // fd means file descriptor
-
+    debugger
     var contador = 176; // 
     var somador = 0; // Used together with sum to read all chunks data
     var seq = 1; // Used to update the row/slot number
@@ -65,7 +65,8 @@ ipcRenderer.on("dialog", (e, arg) => {
     // ===============
     // ---- HEADER
     // ===============
-
+    var ff = fs.readSync(fd, buffer, 0, 16, 0);
+    console.log(ff)
     let program = function () {
 
         // fs.read(fd, buffer, offset, length, position, callback)
@@ -75,12 +76,6 @@ ipcRenderer.on("dialog", (e, arg) => {
             // Setting values
             var cont = document.getElementById("count");
             cont.setAttribute("value", total_item);
-
-            // Save system with write 
-            ipcRenderer.on("savefile", (e, arg) => {
-                buffer.writeUint16LE(editQuantity, 152)
-                fs.appendFileSync(arg, buffer)
-            })
 
             for (i = 1; i <= total_item; i++) {
 
@@ -232,47 +227,46 @@ ipcRenderer.on("dialog", (e, arg) => {
                         somador = somador + 176
                         cloneRow();
                     }, 4200);
-                } else if (i == 30) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4350);
-                } else if (i == 31) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4500);
-                } else if (i == 32) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4650);
-                } else if (i == 33) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4800);
-                } else if (i == 34) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4950);
-                } else if (i == 35) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 5100);
-                } else if (i == 36) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 5250);
                 }
+                // } else if (i == 30) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 4350);
+                // } else if (i == 31) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 4500);
+                // } else if (i == 32) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 4650);
+                // } else if (i == 33) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 4800);
+                // } else if (i == 34) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 4950);
+                // } else if (i == 35) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 5100);
+                // } else if (i == 36) {
+                //     setTimeout(() => {
+                //         somador = somador + 176
+                //         cloneRow();
+                //     }, 5250);
+                // }
+
             }
-            // Saving system
-            // let finalQuantity = parseInt(editQuantity, 16);
-            let editQuantity = document.querySelector(".quantity").innerText;
-            textarea.innerText = editQuantity;
+
             // Função para criar novas linhas
             function cloneRow() {
                 var clone = row.cloneNode(true); // Cloning all child nodes
@@ -403,6 +397,7 @@ ipcRenderer.on("dialog", (e, arg) => {
         })
 
     }
+
     // ===============
     // ---- CHUNKS
     // ===============
@@ -504,17 +499,14 @@ ipcRenderer.on("dialog", (e, arg) => {
             // Set value for Z Coordinate
             var itemZ = document.querySelector(".itemZ");
             itemZ.innerText = getItemZ;
+
         })
     }
-    // Buffer for reading CHUNK DATA
-    // let buffer = Buffer.alloc(176); // 176 bytes
 
     program();
 
     var row = document.querySelector(".item-row"); // Finding row to copy
     var table = document.querySelector("table"); // Finding table to append to
-
-
 
     //Menu buttons
     closeBtn.addEventListener("click", closeFile);
@@ -528,5 +520,15 @@ ipcRenderer.on("dialog", (e, arg) => {
         }
     }
 
+    // fs.read(fd, buffer, 0, buffer.length, 16, (err, bytesread, buffer) => {
+    //     // let edit = buffer.readUint16LE(152);
+    // })
 
+    var buffer_ready = Buffer.from(buffer);
+
+    // Save system with write 
+    ipcRenderer.on("savefile", (e, arg) => {
+        buffer.writeUint16LE(255, 152)
+        fs.appendFileSync(arg, buffer_ready)
+    })
 })

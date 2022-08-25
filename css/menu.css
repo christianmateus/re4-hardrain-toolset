@@ -1,3 +1,13 @@
+@font-face {
+    font-family: "RE4";
+    src: url("../fonts/re4.ttf");
+}
+
+@font-face {
+    font-family: "RE4-Remake";
+    src: url("../fonts/re4-remake.ttf");
+}
+
 * {
     font-family: Verdana;
     margin: 0;
@@ -16,8 +26,9 @@
 }
 
 body {
-    background-color: var(--darken);
-
+    background-image: url("../images/texture.png"), linear-gradient(-25deg, #0F2027, #203A43, #2C5364);
+    /* background-size: cover; */
+    height: 100vh;
 }
 
 /* ===================== 
@@ -115,10 +126,15 @@ header {
 
 h2 {
     color: #fff;
+    font-weight: 100;
+    font-size: 36pt;
+    font-family: "RE4";
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
 }
 
 header>p {
     color: #ccc;
+    margin-top: 10px;
     font-size: .8rem;
 }
 
@@ -142,14 +158,27 @@ header>p {
     flex-wrap: wrap;
     flex-direction: column;
     width: 36%;
+    max-width: 37%;
     height: 30%;
     padding: 10px;
-    background-color: #1c4e51;
+    background-image: linear-gradient(to bottom left, rgba(100, 100, 100, 0.9), rgba(0, 0, 0, .3));
     border-left: 6px solid #3c6e71;
     box-shadow: 2px;
     border-radius: 10px;
     box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.4);
     cursor: pointer;
+    transition: .2s;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+}
+
+.container-cards:hover {
+    outline: 1px solid #3c6e71;
+    transform: scale(1.01);
+}
+
+.container-cards:active {
+    transform: scale(0.98);
 }
 
 /* ===================== 
@@ -158,12 +187,34 @@ header>p {
 
 .container-cards>h4 {
     flex: 1;
+    font-family: Helvetica;
+    font-size: 1.14rem;
+    color: #fff;
+    border-bottom: 1px solid rgba(220, 220, 220, 0.2);
+
+}
+
+.container-cards>h4:hover {
+    border-bottom: 1px solid #3c6e71;
+    transition: .2s;
 }
 
 .container-cards>p {
     flex: 1;
-    color: #fff;
+    color: #ddd;
     font-size: .72rem;
+}
+
+#ita-card {
+    background-image: url("../images/ITA_background.png");
+    background-size: 369px 105px;
+    background-repeat: no-repeat;
+}
+
+#ets-card {
+    background-image: url("../images/ETS_background.png");
+    background-size: 369px 105px;
+    background-repeat: no-repeat;
 }
 
 /* =================== 

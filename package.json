@@ -1,20 +1,20 @@
 {
   "name": "master-electron",
   "version": "1.0.0",
-  "description": "Master Electron Course Code",
+  "description": "Toolset for modders of Resident Evil 4",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "watch": "nodemon --exec electron .",
     "reset": "git reset --hard"
   },
-  "repository": "https://github.com/stackacademytv/master-electron",
+  "repository": "https://github.com/christianmateus/re4-ITA_tool",
   "keywords": [
     "Electron",
-    "Master Electron",
-    "demo"
+    "Resident Evil 4",
+    "Modding"
   ],
-  "author": "GitHub, Stackacademytv",
+  "author": "HardRain",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^19.0.10",
