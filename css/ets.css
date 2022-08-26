@@ -165,7 +165,7 @@ nav hr {
    ===================== */
 
 table {
-    gap: 0;
+    gap: 3;
     table-layout: fixed;
     border-collapse: collapse;
 }
@@ -224,8 +224,20 @@ select:hover {
     background-color: #000;
 }
 
+.objectImage:hover {
+    background-color: #000;
+}
+
 .objectImage img {
-    width: 140px;
+    width: 60px;
+    max-height: 60px;
+    height: max-content;
+    transition: .3s;
+}
+
+.objectImage img:active {
+    transform: scale(3);
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
 
 .objectList {
@@ -235,6 +247,10 @@ select:hover {
     font-size: 8pt;
     text-align: center;
     outline: none;
+}
+
+.objectId {
+    width: 150px;
 }
 
 .objectIndex>input {
@@ -257,10 +273,22 @@ select:hover {
     background-color: var(--lightpurple);
 }
 
-tbody {
-    /* display: flex; */
-    background-color: brown;
-    /* float: left; */
+table {
+    background-color: #1c4e51;
+    padding: 20px;
+}
+
+.container {
+    background-color: cyan;
+}
+
+textarea {
+    margin: 10px;
+}
+
+.objectPosition,
+.objectRotation {
+    min-width: 70px;
 }
 
 /* =================== 

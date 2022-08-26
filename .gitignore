@@ -3,3 +3,6 @@ backup/
 creating_images/
 feito/
 git-passos.txt
+*.ETS
+*.bak
+*.psd

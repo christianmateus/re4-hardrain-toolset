@@ -23,8 +23,8 @@ function createWindow() {
 
   // mainWindow.webContents.openDevTools()
   // Load index.html into the new BrowserWindow
-  mainWindow.loadFile('index.html');
-
+  mainWindow.loadFile('ets.html');
+  mainWindow.webContents.openDevTools()
   // Open DevTools - Remove for PRODUCTION!
   // mainWindow.webContents.openDevTools();
 
@@ -51,7 +51,7 @@ app.on('activate', () => {
     FUNCTIONS
    ================== */
 
-// Function for sending file path
+// Function for sending ITA file path
 
 ipcMain.on("openfile", () => {
   dialog.showOpenDialog(mainWindow, {
@@ -68,7 +68,24 @@ ipcMain.on("openfile", () => {
     })
 })
 
-// Saving actual file
+// Function for sending ETS file path
+
+ipcMain.on("openETSfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "ETS files", extensions: ["ETS"]
+      // name: "All files", extensions: ["*"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let ETSfile = um.filePaths.toString();
+      // ETSfile = ETSfile.replace(/\\/g, "/") //Used to 
+      mainWindow.webContents.send("etsFileChannel", ETSfile);
+      console.log(ETSfile)
+    })
+})
+
+// Saving actual ITA file
 ipcMain.on("saveFile", (e, arg) => {
   dialog.showSaveDialog(mainWindow,
     {
@@ -78,6 +95,20 @@ ipcMain.on("saveFile", (e, arg) => {
     }).then((dados) => {
       let salvar = dados.filePath.toString();
       mainWindow.webContents.send("savefile", salvar);
+      console.log(salvar)
+    })
+})
+
+// Saving actual ETS file
+ipcMain.on("saveETSfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'ETS Files', extensions: ['ETS'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveETSfile", salvar);
       console.log(salvar)
     })
 })
@@ -103,4 +134,12 @@ ipcMain.on("closeWindow", (e, arg) => {
 
 ipcMain.on("openMainMenu", (e, arg) => {
   mainWindow.loadFile("menu.html");
+})
+
+ipcMain.on("openITAtool", () => {
+  mainWindow.loadFile("index.html")
+})
+
+ipcMain.on("openETStool", () => {
+  mainWindow.loadFile("ets.html")
 })

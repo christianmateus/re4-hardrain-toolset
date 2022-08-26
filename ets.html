@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/ets.css">
+    <!-- <script src="ets.js" defer></script> -->
     <title>ETS Tool</title>
 </head>
 
@@ -13,11 +14,11 @@
         <div class="dropdown">
             <button class="menu-buttons" id="file">File</button>
             <div class="dropdown-content">
-                <button id="openFile" class="menu-buttons"><img src="images/open.png"> Open ITA file</button>
-                <button id="closeFile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+                <button id="openETSfile" class="menu-buttons"><img src="images/open.png"> Open ETS file</button>
+                <button id="closeETSfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
                 <hr>
-                <button id="saveFile" class="menu-buttons"><img src="images/save.png"> Save ITA file</button>
-                <button id="saveAs" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+                <button id="saveETSfile" class="menu-buttons"><img src="images/save.png"> Save ETS file</button>
+                <button id="saveETSas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
                 <hr>
                 <button id="quitApp" class="menu-buttons">Quit</button>
             </div>
@@ -61,90 +62,95 @@
             </div>
         </div>
     </header>
+    <!-- TABLE DATA STARTS -->
     <table>
+        <thead>
+            <tr>
+                <th class="objectNumber">No</th>
+                <th class="tableHeader">Image</th>
+                <th class="tableHeader">Object name</th>
+                <th class="tableHeader">Index</th>
+                <th colspan="3" class="tableHeader">Position</th>
+                <th colspan="3" class="tableHeader">Rotation</th>
+            </tr>
+        </thead>
         <tbody>
-            <div class="container">
-                <tr class="tableRow">
-                    <th colspan="4" class="objectNumber">01</th>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Image</th>
-                    <td colspan="3" class="objectImage"><img src="/images/obj/00.png"></td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Object name</th>
-                    <td colspan="3" class="objectId">
-                        <select class="objectList">
-                            <option value="0">Window</option>
-                            <option value="1">Small Box</option>
-                            <option value="2">Large Box</option>
-                            <option value="3">Door</option>
-                            <option value="4">Movable Drawer</option>
-                            <option value="5">Bookshelf</option>
-                            <option value="6">Ladder (Small)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Index</th>
-                    <td colspan="3" class="objectIndex"><input value="0" type="number"></td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Position</th>
-                    <td class="objectPosition">341789.31</td>
-                    <td class="objectPosition">341789.31</td>
-                    <td class="objectPosition">341789.31</td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Rotation</th>
-                    <td class="objectPosition"></td>
-                    <td class="objectPosition"></td>
-                    <td class="objectPosition"></td>
-                </tr>
-            </div>
-            <div class="container">
-                <tr class="tableRow">
-                    <th colspan="4" class="objectNumber">01</th>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Image</th>
-                    <td colspan="3" class="objectImage"><img src="/images/obj/00.png"></td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Object name</th>
-                    <td colspan="3" class="objectId">
-                        <select class="objectList">
-                            <option value="0">Window</option>
-                            <option value="1">Small Box</option>
-                            <option value="2">Large Box</option>
-                            <option value="3">Door</option>
-                            <option value="4">Movable Drawer</option>
-                            <option value="5">Bookshelf</option>
-                            <option value="6">Ladder (Small)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Index</th>
-                    <td colspan="3" class="objectIndex"><input value="0" type="number"></td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Position</th>
-                    <td class="objectPosition">341789.31</td>
-                    <td class="objectPosition">341789.31</td>
-                    <td class="objectPosition">341789.31</td>
-                </tr>
-                <tr class="tableRow">
-                    <th class="tableHeader">Rotation</th>
-                    <td class="objectPosition"></td>
-                    <td class="objectPosition"></td>
-                    <td class="objectPosition"></td>
-                </tr>
-            </div>
+            <tr class="tableRow">
+                <td class="number-sequential"></td>
+                <td class="objectImage">
+                    <img title="Click and hold to zoom" class="imageEl" src="./images/obj/model.png">
+                </td>
+                <td class="objectId">
+                    <select class="objectList">
+                        <option value="0">Window</option>
+                        <option value="1">Small Box</option>
+                        <option value="2">Large Box</option>
+                        <option value="3">Wooden Door 1</option>
+                        <option value="4">Movable Drawer</option>
+                        <option value="5">Bookshelf</option>
+                        <option value="6">Ladder (Small)</option>
+                        <option value="7">Wooden Barricade</option>
+                        <option value="8">Ladder (Big)</option>
+                        <option value="9">Wooden Gate</option>
+                        <option value="10">Lantern w/ chains</option>
+                        <option value="11">Lantern (Ashley)</option>
+                        <option value="12">Unknown</option>
+                        <option value="13">Rusted Metal Door</option>
+                        <option value="14">Lever</option>
+                        <option value="15">No-Knob Gate</option>
+                        <option value="16">Lantern</option>
+                        <option value="17">Barrel</option>
+                        <option value="18">Explosive Barrel</option>
+                        <option value="19">Wooden Door 2</option>
+                        <option value="20">Torch (Top part)</option>
+                        <option value="21">Large Movable Box</option>
+                        <option value="22">Metal Door 1</option>
+                        <option value="23">Metal Door 2</option>
+                        <option value="24">Castle Door 1</option>
+                        <option value="25">Torch (Top part)</option>
+                        <option value="26">Medalion</option>
+                        <option value="27">Iron Gate</option>
+                        <option value="28">Unknown</option>
+                        <option value="29">Big Window</option>
+                        <option value="30">Barrel (laid down)</option>
+                        <option value="31">Bird Nest</option>
+                        <option value="32">Castle Door 2</option>
+                        <option value="33">Castle Door 3</option>
+                        <option value="34">Wooden Door 3</option>
+                        <option value="35">Cell Gate</option>
+                        <option value="36">Dungeon Metal Door</option>
+                        <option value="37">Glass (bookshelf)</option>
+                        <option value="38">Metal Gate</option>
+                        <option value="39">Big Wooden Door</option>
+                        <option disabled value="40"><i>not used</i></option>
+                        <option value="41">Glass</option>
+                        <option value="42">Metal Door 3</option>
+                        <option value="43">Metal Door 4</option>
+                        <option value="44">Window</option>
+                        <option value="45">Explosive Barrel</option>
+                        <option value="46">Small Vase</option>
+                        <option value="47">Large Vase</option>
+                        <option value="48">Knight Statue</option>
+                        <option value="49">Cell Door</option>
+                        <option value="50">Door with Insignia</option>
+                    </select>
+                </td>
+                <td class="objectIndex"><input class="index" value="0" type="number"></td>
+                <td class="objectPosition posX" contenteditable="true"></td>
+                <td class="objectPosition posY" contenteditable="true"></td>
+                <td class="objectPosition posZ" contenteditable="true"></td>
+                <td class="objectRotation rotX" contenteditable="true"></td>
+                <td class="objectRotation rotY" contenteditable="true"></td>
+                <td class="objectRotation rotZ" contenteditable="true"></td>
+            </tr>
+
         </tbody>
     </table>
+    <textarea id="testes" cols="40" rows="10">
+
+    </textarea>
     <script>
-        require('./renderer.js');
+        require('./ets.js');
     </script>
 </body>
 

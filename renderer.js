@@ -6,6 +6,7 @@ const { ipcRenderer } = require('electron');
 const textarea = document.getElementById("testes");
 
 // Const for getting Menu elements
+const openFile = document.getElementById("openFile")
 const closeBtn = document.getElementById("closeFile")
 const saveAsBtn = document.getElementById("saveAs")
 const minimizeBtn = document.getElementById("minimize")
