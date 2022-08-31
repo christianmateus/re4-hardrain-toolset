@@ -104,6 +104,18 @@ nav hr {
     background-color: #3c6e71;
 }
 
+#fileSaved {
+    background-color: #6c6;
+    color: #fff;
+    padding: 6px 8px;
+    font-size: 13px;
+}
+
+.hide {
+    display: none;
+    transition: .5s;
+}
+
 /* ===================== 
     Conteúdo superior
    ===================== */
@@ -288,7 +300,22 @@ textarea {
 
 .objectPosition,
 .objectRotation {
-    min-width: 70px;
+    min-width: 20px;
+    max-width: 100px;
+}
+
+.objectPosition>input {
+    width: 90px;
+    height: 100%;
+    background-color: var(--silver);
+    text-align: center;
+}
+
+.objectRotation>input {
+    width: 90px;
+    height: 100%;
+    background-color: var(--silver);
+    text-align: center;
 }
 
 /* =================== 

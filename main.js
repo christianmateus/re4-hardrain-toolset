@@ -23,7 +23,7 @@ function createWindow() {
 
   // mainWindow.webContents.openDevTools()
   // Load index.html into the new BrowserWindow
-  mainWindow.loadFile('ets.html');
+  mainWindow.loadFile('menu.html');
   mainWindow.webContents.openDevTools()
   // Open DevTools - Remove for PRODUCTION!
   // mainWindow.webContents.openDevTools();
@@ -100,7 +100,7 @@ ipcMain.on("saveFile", (e, arg) => {
 })
 
 // Saving actual ETS file
-ipcMain.on("saveETSfile", (e, arg) => {
+ipcMain.on("saveAsETSfile", (e, arg) => {
   dialog.showSaveDialog(mainWindow,
     {
       filters: [
@@ -108,7 +108,7 @@ ipcMain.on("saveETSfile", (e, arg) => {
       ]
     }).then((dados) => {
       let salvar = dados.filePath.toString();
-      mainWindow.webContents.send("saveETSfile", salvar);
+      mainWindow.webContents.send("saveAsETSfileContent", salvar);
       console.log(salvar)
     })
 })

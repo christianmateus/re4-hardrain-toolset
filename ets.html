@@ -37,6 +37,7 @@
                 <button class="menu-buttons">Theme</button>
             </div>
         </div>
+        <div class="hide" id="fileSaved">File saved successfully!</div>
         <div id="control-window">
             <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
                     src="./images/main-menu.png"></button>
@@ -70,8 +71,8 @@
                 <th class="tableHeader">Image</th>
                 <th class="tableHeader">Object name</th>
                 <th class="tableHeader">Index</th>
-                <th colspan="3" class="tableHeader">Position</th>
-                <th colspan="3" class="tableHeader">Rotation</th>
+                <th colspan="3" class="tableHeader">Position XYZ</th>
+                <th colspan="3" class="tableHeader">Rotation XYZ</th>
             </tr>
         </thead>
         <tbody>
@@ -133,22 +134,77 @@
                         <option value="48">Knight Statue</option>
                         <option value="49">Cell Door</option>
                         <option value="50">Door with Insignia</option>
+                        <option value="51">Metal Door 5</option>
+                        <option value="52">Metal Door 6</option>
+                        <option value="53">Window</option>
+                        <option value="54">Unknown</option>
+                        <option value="55">Cell Gate 2</option>
+                        <option value="56">Unknown</option>
+                        <option value="57">Prison Door</option>
+                        <option value="58">Blue Gate</option>
+                        <option value="59">Castle Door 3</option>
+                        <option value="60">Cylinder Tank</option>
+                        <option value="61">Castle Door 4</option>
+                        <option value="62">Metal Door 7</option>
+                        <option value="63">Castle Door 5</option>
+                        <option value="64">Curved Wooden Door</option>
+                        <option value="65">White Metal Door</option>
+                        <option value="66">Piece of Wood</option>
+                        <option value="67">Modern Door</option>
+                        <option value="68">Piece of Wood</option>
+                        <option value="69">Garden Gate</option>
+                        <option value="70">Door w/ Glass</option>
+                        <option value="71">Island Gate</option>
+                        <option value="72">Glass</option>
+                        <option value="73">Island Door 1</option>
+                        <option value="74">Window</option>
+                        <option value="75">Laboratory Door</option>
+                        <option value="76">U3 gates</option>
+                        <option value="77">Island Door 2</option>
+                        <option value="78">Keycard Door</option>
+                        <option value="79">Laboratory Door</option>
+                        <option value="80">Laboratory Window</option>
+                        <option value="81">Laboratory Glass</option>
+                        <option value="82">Laboratory Cylinder S</option>
+                        <option value="83">Laboratory Cylinder L</option>
+                        <option value="84">Window</option>
+                        <option value="85">Window</option>
+                        <option value="86">Glass</option>
+                        <option value="87">Glass</option>
+                        <option value="88">Window</option>
+                        <option value="89">Red Iron Door</option>
+                        <option value="90">Window</option>
+                        <option value="91">Unknown</option>
+                        <option value="92">Unknown</option>
+                        <option value="93">Small Window</option>
+                        <option value="94">Small Window</option>
+                        <option value="95">Small Window</option>
+                        <option value="96">Small Window</option>
+                        <option value="97">Automatic Door</option>
+                        <option value="98">Cell Door</option>
+                        <option value="99">Island Metal Door</option>
+                        <option value="100">Glass</option>
+                        <option value="101">Glass</option>
+                        <option value="102">Dragon Statue</option>
+                        <option value="103">Old Gate</option>
+                        <option value="104">Barn Gate (left)</option>
+                        <option value="105">Barn Gate (right)</option>
                     </select>
                 </td>
                 <td class="objectIndex"><input class="index" value="0" type="number"></td>
-                <td class="objectPosition posX" contenteditable="true"></td>
-                <td class="objectPosition posY" contenteditable="true"></td>
-                <td class="objectPosition posZ" contenteditable="true"></td>
-                <td class="objectRotation rotX" contenteditable="true"></td>
-                <td class="objectRotation rotY" contenteditable="true"></td>
-                <td class="objectRotation rotZ" contenteditable="true"></td>
+                <td class="objectPosition"><input class="posX" type="number"></td>
+                <td class="objectPosition"><input class="posY" type="number"></td>
+                <td class="objectPosition"><input class="posZ" type="number"></td>
+                <td class="objectRotation"><input class="rotX" type="number"></td>
+                <td class="objectRotation"><input class="rotY" type="number"></td>
+                <td class="objectRotation"><input class="rotZ" type="number"></td>
             </tr>
 
         </tbody>
     </table>
-    <textarea id="testes" cols="40" rows="10">
+    <!-- <textarea id="testes" cols="40" rows="10">
 
-    </textarea>
+    </textarea> -->
     <script>
         require('./ets.js');
     </script>

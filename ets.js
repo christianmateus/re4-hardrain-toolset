@@ -27,23 +27,27 @@ var tBody = document.querySelector("tbody");
 var row = document.querySelector(".tableRow");
 
 // Const for getting Menu elements
-const openaFile = document.getElementById("openETSfile")
-const closeBtn = document.getElementById("closeETSfile")
-const saveAsBtn = document.getElementById("saveETSas")
-const quitApp = document.getElementById("quitApp")
-const minimizeBtn = document.getElementById("minimize")
-const maximizeBtn = document.getElementById("maximize")
-const closeWindowBtn = document.getElementById("closeWindow")
+const openFile = document.getElementById("openETSfile");
+const closeBtn = document.getElementById("closeETSfile");
+const saveBtn = document.getElementById("saveETSfile");
+const saveAsBtn = document.getElementById("saveETSas");
+const quitApp = document.getElementById("quitApp");
+const minimizeBtn = document.getElementById("minimize");
+const maximizeBtn = document.getElementById("maximize");
+const closeWindowBtn = document.getElementById("closeWindow");
 
 // Menu actions (open/save/quit)
-openaFile.addEventListener("click", () => {
+openFile.addEventListener("click", () => {
     ipcRenderer.send("openETSfile")
+})
+
+saveAsBtn.addEventListener("click", () => {
+    ipcRenderer.send("saveAsETSfile")
 })
 
 quitApp.addEventListener("click", () => {
     ipcRenderer.send("quitApp")
 })
-
 
 /* ===============
     READ
@@ -52,6 +56,14 @@ quitApp.addEventListener("click", () => {
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
 var seq = 1; // Slot for item number
+var select_id = 2; // Add a new id for each select (used in cloneRow())
+var index_id = 2; // Add a new id for each index (used in cloneRow())
+var posX_id = 2; // Add a new id for each posX (used in cloneRow())
+var posY_id = 2; // Add a new id for each posX (used in cloneRow())
+var posZ_id = 2; // Add a new id for each posX (used in cloneRow())
+var rotX_id = 2; // Add a new id for each posX (used in cloneRow())
+var rotY_id = 2; // Add a new id for each posX (used in cloneRow())
+var rotZ_id = 2; // Add a new id for each posX (used in cloneRow())
 
 // Getting file path
 ipcRenderer.on("etsFileChannel", (e, filepath) => {
@@ -63,42 +75,50 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
     countEl.setAttribute("value", total_obj);
 
     // Reading table data
-    for (i = 0; i < total_obj; i++) {
+    for (i = 1; i != total_obj; i++) {
         numberSequential.innerText = 1;
 
         // Reading object ID
         var getObjId = buffer.readUint8(64);
+        selectList.id = 1;
         selectList.selectedIndex = getObjId;
         imageEl.setAttribute("src", `./images/obj/${getObjId}.png`)
 
         // Reading index byte
         var getIndex = buffer.readUint8(66)
+        indexEl.id = 1;
         indexEl.setAttribute("value", getIndex);
 
         // Reading position X
         var getPosX = buffer.readFloatLE(48).toFixed(2);
-        posX.innerText = getPosX;
+        posX.id = 1;
+        posX.value = getPosX;
 
         // Reading position Y
         var getPosY = buffer.readFloatLE(52).toFixed(2);
-        posY.innerText = getPosY;
+        posY.id = 1;
+        posY.value = getPosY;
 
         // Reading position Z
         var getPosZ = buffer.readFloatLE(56).toFixed(2);
-        posZ.innerText = getPosZ;
+        posZ.id = 1;
+        posZ.value = getPosZ;
 
         // ROTATION
         // Reading rotation X
         var getRotX = buffer.readFloatLE(32).toFixed(2);
-        rotX.innerText = getRotX;
+        rotX.id = 1;
+        rotX.value = getRotX;
 
         // Reading rotation Y
         var getRotY = buffer.readFloatLE(36).toFixed(2);
-        rotY.innerText = getRotY;
+        rotY.id = 1;
+        rotY.value = getRotY;
 
         // Reading rotation Z
         var getRotZ = buffer.readFloatLE(40).toFixed(2);
-        rotZ.innerText = getRotZ;
+        rotZ.id = 1;
+        rotZ.value = getRotZ;
 
 
         cloneRow();
@@ -108,6 +128,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
         let clone = row.cloneNode(true); // Cloning row
         chunk = chunk + 64; // Reading next chunks
         seq++; // Slot for item number
+        // select_id++;
 
         let cloneSeq = clone.querySelector(".number-sequential");
         cloneSeq.innerText = seq;
@@ -116,53 +137,147 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
         let cloneId = clone.querySelector(".objectList");
         let cloneImage = clone.querySelector(".imageEl")
         var getCloneObjId = buffer.readUint8(64 + chunk);
+        cloneId.id = select_id++;
         cloneId.selectedIndex = getCloneObjId;
         cloneImage.setAttribute("src", `./images/obj/${getCloneObjId}.png`)
 
         // Getting index 
         let cloneIndex = clone.querySelector(".index");
         let getCloneIndex = buffer.readUint8(66 + chunk);
+        cloneIndex.id = index_id++;
         cloneIndex.setAttribute("value", getCloneIndex);
 
         // Getting POSITION coordinates
         let clonePosX = clone.querySelector(".posX");
         let getClonePosX = buffer.readFloatLE(48 + chunk).toFixed(2);
-        clonePosX.innerText = getClonePosX;
+        clonePosX.id = posX_id++;
+        clonePosX.value = getClonePosX;
 
         let clonePosY = clone.querySelector(".posY");
         let getClonePosY = buffer.readFloatLE(52 + chunk).toFixed(2);
-        clonePosY.innerText = getClonePosY;
+        clonePosY.id = posY_id++;
+        clonePosY.value = getClonePosY;
 
         let clonePosZ = clone.querySelector(".posZ");
         let getClonePosZ = buffer.readFloatLE(56 + chunk).toFixed(2);
-        clonePosZ.innerText = getClonePosZ;
+        clonePosZ.id = posZ_id++;
+        clonePosZ.value = getClonePosZ;
 
         // Getting ROTATION coordinates
         let cloneRotX = clone.querySelector(".rotX");
         let getCloneRotX = buffer.readFloatLE(32 + chunk).toFixed(2);
-        cloneRotX.innerText = getCloneRotX;
+        cloneRotX.id = rotX_id++;
+        cloneRotX.value = getCloneRotX;
 
         let cloneRotY = clone.querySelector(".rotY");
         let getCloneRotY = buffer.readFloatLE(36 + chunk).toFixed(2);
-        cloneRotY.innerText = getCloneRotY;
+        cloneRotY.id = rotY_id++;
+        cloneRotY.value = getCloneRotY;
 
         let cloneRotZ = clone.querySelector(".rotZ");
         let getCloneRotZ = buffer.readFloatLE(40 + chunk).toFixed(2);
-        cloneRotZ.innerText = getCloneRotZ;
+        cloneRotZ.id = rotZ_id++;
+        cloneRotZ.value = getCloneRotZ;
 
         tBody.appendChild(clone); // Appending row to the end of table
+        console.log(buffer.byteLength + " bytes")
     }
+
+
+    /* ===============
+        UPDATE
+       =============== */
+
+    // Getting object ID and image
+    tBody.addEventListener("change", function (e) {
+        if (e.target.className == "objectList") {
+            // Gets value from select/option and sets to buffer
+            var select_number = e.target.id; // Get clicked select ID attribute
+            var select_opt = e.target.selectedIndex; // Get *option* selected from the clicked select
+            var chunk_save = 64 * (parseInt(select_number) - 1); // Multiply chunk size by select ID number
+
+            // Using the same class name for every image and using the *option* selected value as the index
+            var imageChanger = document.getElementsByClassName("imageEl")[parseInt(select_number) - 1];
+            buffer.writeUint8(select_opt, 64 + chunk_save); // Writes data on buffer on every hange
+            imageChanger.setAttribute("src", `./images/obj/${select_opt}.png`);
+        }
+        if (e.target.className == "index") {
+            // Gets value from index input and sets to buffer
+            var setIndex = e.target.value;
+            var setIndexId = e.target.id;
+            var chunk_save = 64 * (parseInt(setIndexId) - 1);
+            buffer.writeUint8(setIndex, 66 + chunk_save);
+        }
+        if (e.target.className == "posX") {
+            // Gets value from posX and sets to buffer
+            var setPosX = e.target.value;
+            var setPosXid = e.target.id;
+            var chunk_save = 64 * (parseInt(setPosXid) - 1);
+            buffer.writeFloatLE(setPosX, 48 + chunk_save).toFixed(2);
+            console.log(buffer);
+        }
+        if (e.target.className == "posY") {
+            // Gets value from posY and sets to buffer
+            var setPosY = e.target.value;
+            var setPosYid = e.target.id;
+            var chunk_save = 64 * (parseInt(setPosYid) - 1);
+            buffer.writeFloatLE(setPosY, 52 + chunk_save).toFixed(2);
+            console.log(buffer);
+        }
+        if (e.target.className == "posZ") {
+            // Gets value from posY and sets to buffer
+            var setPosZ = e.target.value;
+            var setPosZid = e.target.id;
+            var chunk_save = 64 * (parseInt(setPosZid) - 1);
+            buffer.writeFloatLE(setPosZ, 56 + chunk_save).toFixed(2);
+            console.log(buffer);
+        }
+        if (e.target.className == "rotX") {
+            // Gets value from rotX and sets to buffer
+            var setRotX = e.target.value;
+            var setRotXid = e.target.id;
+            var chunk_save = 64 * (parseInt(setRotXid) - 1);
+            buffer.writeFloatLE(setRotX, 32 + chunk_save).toFixed(2);
+            console.log(buffer);
+        }
+        if (e.target.className == "rotY") {
+            // Gets value from rotY and sets to buffer
+            var setRotY = e.target.value;
+            var setRotYid = e.target.id;
+            var chunk_save = 64 * (parseInt(setRotYid) - 1);
+            buffer.writeFloatLE(setRotY, 36 + chunk_save).toFixed(2);
+            console.log(buffer);
+        }
+        if (e.target.className == "rotZ") {
+            // Gets value from rotZ and sets to buffer
+            var setRotZ = e.target.value;
+            var setRotZid = e.target.id;
+            var chunk_save = 64 * (parseInt(setRotZid) - 1);
+            buffer.writeFloatLE(setRotZ, 40 + chunk_save).toFixed(2);
+            console.log(buffer);
+        }
+    })
+
+
+    // Save all modified buffer back to file
+
+    saveBtn.addEventListener("click", () => {
+        fs.writeFileSync(filepath, buffer);
+        var saveMessage = document.querySelector(".hide");
+        saveMessage.style.display = "block"
+        setTimeout(() => {
+            saveMessage.style.display = "none"
+        }, 2000);
+    })
+
+    // NEEDS FIX!!
+    closeBtn.addEventListener("click", () => {
+        while (table.rows.length > 1)
+            table.deleteRow(1)
+    })
+
+    ipcRenderer.on("saveAsETSfileContent", (e, arg) => {
+        fs.writeFileSync(arg, buffer);
+    })
 });
 
-
-
-
-
-
-
-
-
-
-/* ===============
-    Write
-   =============== */
