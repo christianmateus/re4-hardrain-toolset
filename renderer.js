@@ -5,9 +5,37 @@ const { ipcRenderer } = require('electron');
 // Const for testing text output (DEBUG)
 const textarea = document.getElementById("testes");
 
+/* ===============
+    CREATE
+   =============== */
+
+// Getting elements
+var countEl = document.getElementById("count");
+var numberSequential = document.querySelector(".number-sequential");
+var selectItemID = document.querySelector(".item-id");
+var quantityEl = document.querySelector(".quantity");
+var indexEl = document.querySelector(".item-index");
+var selectRandomEl = document.querySelector(".random");
+var selectGlowEl = document.querySelector(".glow");
+var selectInsideEl = document.querySelector(".inside");
+var etsEl = document.querySelector(".ets");
+var selectStatusEl = document.querySelector(".status");
+var posX = document.querySelector(".posX");
+var posY = document.querySelector(".posY");
+var posZ = document.querySelector(".posZ");
+var rotX = document.querySelector(".rotX");
+var rotY = document.querySelector(".rotY");
+var rotZ = document.querySelector(".rotZ");
+
+// Getting elements for cloneRow function
+var table = document.querySelector("table");
+var tBody = document.querySelector("tbody");
+var row = document.querySelector(".tableRow");
+
 // Const for getting Menu elements
 const openFile = document.getElementById("openFile")
 const closeBtn = document.getElementById("closeFile")
+const saveBtn = document.getElementById("saveFile")
 const saveAsBtn = document.getElementById("saveAs")
 const minimizeBtn = document.getElementById("minimize")
 const maximizeBtn = document.getElementById("maximize")
@@ -15,11 +43,8 @@ const closeWindowBtn = document.getElementById("closeWindow")
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
-    ipcRenderer.send("openfile")
-    let table = document.querySelector("table");
-    while (table.rows.length > 2) {
-        table.deleteRow(1);
-    }
+    ipcRenderer.send("openfile");
+    ipcRenderer.send("closeITAfile");
 })
 
 saveAsBtn.addEventListener("click", () => {
@@ -47,489 +72,323 @@ closeWindowBtn.addEventListener("click", () => {
     ipcRenderer.send("closeWindow")
 })
 
-// App start after loading file
+/* ===============
+    READ
+   =============== */
+
+// Global variables
+var chunk = 0; // Used together with sum to read all chunks data
+var seq = 1; // Used to update the row/slot number
+var itemID_id = 2; // Add a new id for each cell in every row
+var quantity_id = 2; // Add a new id for each cell in every row
+var index_id = 2; // Add a new id for each cell in every row
+var random_id = 2; // Add a new id for each cell in every row
+var glow_id = 2; // Add a new id for each cell in every row
+var inside_id = 2; // Add a new id for each cell in every row
+var ets_id = 2; // Add a new id for each cell in every row
+var status_id = 2; // Add a new id for each cell in every row
+var posX_id = 2; // Add a new id for each cell in every row
+var posY_id = 2; // Add a new id for each cell in every row
+var posZ_id = 2; // Add a new id for each cell in every row
+var rotX_id = 2; // Add a new id for each cell in every row
+var rotY_id = 2; // Add a new id for each cell in every row
+var rotZ_id = 2; // Add a new id for each cell in every row
+
 ipcRenderer.on("dialog", (e, arg) => {
     let fd = fs.openSync(arg); // fd means file descriptor
-    debugger
-    var contador = 176; // 
-    var somador = 0; // Used together with sum to read all chunks data
-    var seq = 1; // Used to update the row/slot number
+    var buffer = fs.readFileSync(fd);
 
-    var stats = fs.statSync(arg); // Gets file's object with informations
-    var fileSize = stats.size; // Stores file's size in "fileSize" variable
+    let total_item = buffer.readUInt8(6);
+    countEl.setAttribute("value", total_item);
 
-    // Buffer for storing bytes
-    let buffer = Buffer.alloc(fileSize);// 16 bytes
-    // Item slot number
-    var seq = document.querySelector(".number-sequential").innerHTML = 01;
-    // seq.innerText = 01;
-    // ===============
-    // ---- HEADER
-    // ===============
-    var ff = fs.readSync(fd, buffer, 0, 16, 0);
-    console.log(ff)
-    let program = function () {
 
-        // fs.read(fd, buffer, offset, length, position, callback)
-        fs.read(fd, buffer, 0, 16, 0, function (err, bytesread, buffer_header) {
-            // Getting values
-            var total_item = buffer_header.readInt8(6);
-            // Setting values
-            var cont = document.getElementById("count");
-            cont.setAttribute("value", total_item);
+    // Reading table data
+    for (i = 1; i != total_item; i++) {
+        // Item slot number
+        numberSequential.innerText = 1;
 
-            for (i = 1; i <= total_item; i++) {
+        // Reading item ID
+        var getItem_id = buffer.readUInt8(148);
+        selectItemID.id = 1;
+        selectItemID.selectedIndex = getItem_id;
 
-                if (i == 1) {
-                    contador = 16;
-                    somador = 0;
-                    chunk();
+        // Reading quantity bytes
+        var getQuantity = buffer.readUint16LE(152);
+        quantityEl.id = 1;
+        quantityEl.value = getQuantity;
 
-                } else if (i == 2) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 150);
+        // Reading index byte
+        var getIndex = buffer.readUint8(70);
+        indexEl.id = 1;
+        indexEl.value = getIndex;
 
-                } else if (i == 3) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 300);
-
-                } else if (i == 4) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 450);
-                } else if (i == 5) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 600);
-                } else if (i == 6) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 750);
-                } else if (i == 7) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 900);
-
-                } else if (i == 8) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1050);
-                } else if (i == 9) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1200);
-                } else if (i == 10) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1350);
-                } else if (i == 11) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1500);
-                } else if (i == 12) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1650);
-                } else if (i == 13) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1800);
-                } else if (i == 14) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 1950);
-                } else if (i == 15) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 2100);
-                } else if (i == 16) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 2250);
-                } else if (i == 17) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 2400);
-                } else if (i == 18) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 2550);
-                } else if (i == 19) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 2700);
-                } else if (i == 20) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 2850);
-                } else if (i == 21) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3000);
-                } else if (i == 22) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3150);
-                } else if (i == 23) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3300);
-                } else if (i == 24) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3450);
-                } else if (i == 25) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3600);
-                } else if (i == 26) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3750);
-                } else if (i == 27) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 3900);
-                } else if (i == 28) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4050);
-                } else if (i == 29) {
-                    setTimeout(() => {
-                        somador = somador + 176
-                        cloneRow();
-                    }, 4200);
-                }
-                // } else if (i == 30) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 4350);
-                // } else if (i == 31) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 4500);
-                // } else if (i == 32) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 4650);
-                // } else if (i == 33) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 4800);
-                // } else if (i == 34) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 4950);
-                // } else if (i == 35) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 5100);
-                // } else if (i == 36) {
-                //     setTimeout(() => {
-                //         somador = somador + 176
-                //         cloneRow();
-                //     }, 5250);
-                // }
-
-            }
-
-            // Função para criar novas linhas
-            function cloneRow() {
-                var clone = row.cloneNode(true); // Cloning all child nodes
-                clone.querySelector(".number-sequential").innerText = seq = seq + 1;
-
-                // Reading next INDEX byte
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneIndex = buffer.readUInt8(70 + somador);
-                    // buffer.writeInt8; USAR ISSO PARA SALVAR ALTERAÇÕES
-                    clone.querySelector(".item-index").innerHTML = cloneIndex;
-                    // let editIndex = buffer.writeUInt8(70 + somador);
-                })
-
-                //Reading next INSIDE bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneInside = buffer.readUInt8(86 + somador);
-
-                    if (cloneInside == 0) {
-                        clone.querySelector(".inside").selectedIndex = 0;
-                    } else if (cloneInside == 1) {
-                        clone.querySelector(".inside").selectedIndex = 1;
-                    } else {
-                        clone.querySelector(".inside").selectedIndex = 2;
-                    }
-                })
-
-                // Reading next ETS byte
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneETS = buffer.readUInt8(87 + somador);
-                    clone.querySelector(".ets").innerHTML = cloneETS;
-                })
-
-                //Reading next QUANTITY bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneQuantity = buffer.readUInt16LE(152 + somador);
-                    clone.querySelector(".quantity").innerHTML = cloneQuantity;
-                })
-
-                //Reading next RANDOM bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneRandom = buffer.readUInt8(149 + somador);
-
-                    if (cloneRandom == 16) {
-                        clone.querySelector(".random").selectedIndex = 0;
-                    } else {
-                        clone.querySelector(".random").selectedIndex = 1;
-                    }
-                })
-
-                //Reading next GLOW bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneGlow = buffer.readUInt8(140 + somador);
-                    clone.querySelector(".glow");
-
-                    if (cloneGlow == 0) {
-                        clone.querySelector(".glow").selectedIndex = 0;
-                    } else if (cloneGlow == 1) {
-                        clone.querySelector(".glow").selectedIndex = 1;
-                    } else if (cloneGlow == 2) {
-                        clone.querySelector(".glow").selectedIndex = 2;
-                    } else if (cloneGlow == 3) {
-                        clone.querySelector(".glow").selectedIndex = 3;
-                    } else if (cloneGlow == 4) {
-                        clone.querySelector(".glow").selectedIndex = 4;
-                    } else if (cloneGlow == 5) {
-                        clone.querySelector(".glow").selectedIndex = 5;
-                    } else if (cloneGlow == 6) {
-                        clone.querySelector(".glow").selectedIndex = 6;
-                    } else if (cloneGlow == 7) {
-                        clone.querySelector(".glow").selectedIndex = 7;
-                    } else if (cloneGlow == 8) {
-                        clone.querySelector(".glow").selectedIndex = 8;
-                    } else if (cloneGlow == 9) {
-                        clone.querySelector(".glow").selectedIndex = 9;
-                    }
-                })
-
-                //Reading next ITEM STATUS bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneStatus = buffer.readUInt8(160 + somador);
-
-                    if (cloneStatus == 16) {
-                        clone.querySelector(".status").selectedIndex = 2;
-                    } else if (cloneStatus == 2 || cloneStatus == 6) {
-                        clone.querySelector(".status").selectedIndex = 1;
-                    } else {
-                        clone.querySelector(".status").selectedIndex = 0;
-                    }
-                })
-
-                //Reading next ITEM ID bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneItem_id = buffer.readUInt8(148 + somador);
-                    let selectItem_id = clone.querySelector(".item-id");
-
-                    for (var i = 0; i < selectItem_id.options.length; i++) {
-                        if (selectItem_id.options[i].value == cloneItem_id) {
-                            selectItem_id.selectedIndex = i;
-                        }
-                    }
-                })
-
-                //Reading next X Coordinate bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneX = buffer.readFloatLE(112 + somador).toFixed(2);
-                    clone.querySelector(".itemX").innerHTML = cloneX;
-                })
-
-                //Reading next Y Coordinate bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneY = buffer.readFloatLE(116 + somador).toFixed(2);
-                    clone.querySelector(".itemY").innerHTML = cloneY;
-                })
-
-                //Reading next Z Coordinate bytes
-                fs.read(fd, buffer, somador, 176, somador, (err, bytesread, buffer) => {
-                    let cloneZ = buffer.readFloatLE(120 + somador).toFixed(2);
-                    clone.querySelector(".itemZ").innerHTML = cloneZ;
-                })
-
-                table.appendChild(clone); // add new row to end of table
-
-            }
-
-            new Notification("Resident Evil 4 ITA Tool", {
-                body: "ITA file opened successfully!"
-            })
-        })
-
-    }
-
-    // ===============
-    // ---- CHUNKS
-    // ===============
-    let chunk = function () {
-        fs.read(fd, buffer, 16, 176, contador, function (err, bytesread, buffer) {
-
-            // Editable fields
-            getItem_index = buffer.readInt8(54 + 16);
-            getInside = buffer.readInt8(70 + 16);
-            getETS = buffer.readUInt8(71 + 16);
-            getItem_id = buffer.readUInt8(132 + 16);
-            getQuantity = buffer.readInt16LE(136 + 16);
-            getRandom = buffer.readUInt8(133 + 16);
-            getGlow = buffer.readUInt8(140 + 16);
-            getStatus = buffer.readUInt8(144 + 16);
-            getItemX = buffer.readFloatLE(96 + 16).toFixed(2);
-            getItemY = buffer.readFloatLE(100 + 16).toFixed(2);
-            getItemZ = buffer.readFloatLE(104 + 16).toFixed(2);
-
-            // Set value for Index
-            var item_index = document.querySelector(".item-index");
-            item_index.innerHTML = getItem_index;
-
-            // Set value for Inside
-            var inside = document.querySelector(".inside");
-            if (getInside == 0) {
-                inside.selectedIndex = 0;
-            } else if (getInside == 1) {
-                inside.selectedIndex = 1;
-            } else {
-                inside.selectedIndex = 2;
-            }
-
-            // Set value for ETS
-            var ETS = document.querySelector(".ets");
-            ETS.innerText = getETS;
-
-            // Set value for Quantity
-            var quantity = document.querySelector(".quantity");
-            quantity.innerHTML = getQuantity;
-
-            // Set value for Random
-            var random = document.querySelector(".random");
-            if (getRandom == 16) {
-                random.selectedIndex = 0;
-            } else {
-                random.selectedIndex = 1;
-            }
-
-            // Set value for Glow
-            var glow = document.querySelector(".glow");
-            if (getGlow == 0) {
-                glow.selectedIndex = 0;
-            } else if (getGlow == 1) {
-                glow.selectedIndex = 1;
-            } else if (getGlow == 2) {
-                glow.selectedIndex = 2;
-            } else if (getGlow == 3) {
-                glow.selectedIndex = 3;
-            } else if (getGlow == 4) {
-                glow.selectedIndex = 4;
-            } else if (getGlow == 5) {
-                glow.selectedIndex = 5;
-            } else if (getGlow == 6) {
-                glow.selectedIndex = 6;
-            } else if (getGlow == 7) {
-                glow.selectedIndex = 7;
-            } else if (getGlow == 8) {
-                glow.selectedIndex = 8;
-            } else if (getGlow == 9) {
-                glow.selectedIndex = 9;
-            }
-
-            // Set value for Item Status
-            var status = document.querySelector(".status");
-            if (getStatus == 16) {
-                status.selectedIndex = 2;
-            } else if (getStatus == 2 || getStatus == 6) {
-                status.selectedIndex = 1;
-            } else {
-                status.selectedIndex = 0;
-            }
-
-            // Set value for ID (Item name)
-            var item_id = document.querySelector(".item-id");
-            for (var i = 0; i < item_id.options.length; i++) {
-                if (item_id.options[i].value == getItem_id) {
-                    item_id.selectedIndex = i;
-                    // break;
-                }
-            }
-
-            // Set value for X Coordinate
-            var itemX = document.querySelector(".itemX");
-            itemX.innerText = getItemX;
-            // Set value for Y Coordinate
-            var itemY = document.querySelector(".itemY");
-            itemY.innerText = getItemY;
-            // Set value for Z Coordinate
-            var itemZ = document.querySelector(".itemZ");
-            itemZ.innerText = getItemZ;
-
-        })
-    }
-
-    program();
-
-    var row = document.querySelector(".item-row"); // Finding row to copy
-    var table = document.querySelector("table"); // Finding table to append to
-
-    //Menu buttons
-    closeBtn.addEventListener("click", closeFile);
-
-    //Functions
-    function closeFile() {
-        fs.closeSync(fd);
-        let table = document.querySelector("table");
-        while (table.rows.length > 2) {
-            table.deleteRow(1);
+        // Reading random byte
+        var getRandom = buffer.readUint8(149);
+        selectRandomEl.id = 1;
+        if (getRandom == 0) {
+            selectRandomEl.selectedIndex = 0;
+        } else if (getRandom == 16) {
+            selectRandomEl.selectedIndex = 1;
         }
+
+        // Reading glow byte
+        var getGlow = buffer.readUint8(156);
+        selectGlowEl.id = 1;
+        selectGlowEl.selectedIndex = getGlow;
+
+        // Reading inside byte
+        var getInside = buffer.readUint8(86);
+        selectInsideEl.id = 1;
+        selectInsideEl.selectedIndex = getInside;
+
+        // Reading ETS byte
+        var getETS = buffer.readUint8(87);
+        etsEl.id = 1;
+        etsEl.value = getETS;
+
+        // Reading status byte
+        var getStatus = buffer.readUint8(160);
+        selectStatusEl.id = 1;
+        if (getStatus == 0) {
+            selectStatusEl.selectedIndex = 0;
+        } else if (getStatus == 2) {
+            selectStatusEl.selectedIndex = 1;
+        } else if (getStatus == 16) {
+            selectStatusEl.selectedIndex = 2;
+        } else {
+            selectStatusEl.selectedIndex = 0;
+        }
+
+        // Reading position X
+        var getPosX = buffer.readFloatLE(112).toFixed(2);
+        posX.id = 1;
+        posX.value = getPosX;
+
+        // Reading position Y
+        var getPosY = buffer.readFloatLE(116).toFixed(2);
+        posY.id = 1;
+        posY.value = getPosY;
+
+        // Reading position Z
+        var getPosZ = buffer.readFloatLE(120).toFixed(2);
+        posZ.id = 1;
+        posZ.value = getPosZ;
+
+        cloneRow();
     }
 
-    // fs.read(fd, buffer, 0, buffer.length, 16, (err, bytesread, buffer) => {
-    //     // let edit = buffer.readUint16LE(152);
-    // })
+    // Função para criar novas linhas
+    function cloneRow() {
+        let clone = row.cloneNode(true); // Cloning all child nodes
+        chunk = chunk + 176;
+        seq++;
 
-    var buffer_ready = Buffer.from(buffer);
+        let cloneSeq = clone.querySelector(".number-sequential");
+        cloneSeq.innerText = seq;
 
-    // Save system with write 
-    ipcRenderer.on("savefile", (e, arg) => {
-        buffer.writeUint16LE(255, 152)
-        fs.appendFileSync(arg, buffer_ready)
+        // Reading next ITEM ID bytes
+        let cloneItem_id = buffer.readUInt8(148 + chunk);
+        let selectItem_id = clone.querySelector(".item-id");
+        selectItem_id.id = itemID_id++;
+        selectItem_id.selectedIndex = cloneItem_id;
+
+        // for (var i = 0; i < selectItem_id.options.length; i++) {
+        //     if (selectItem_id.options[i].value == cloneItem_id) {
+        //         selectItem_id.selectedIndex = i;
+        //     }
+        // }
+
+        // Reading next QUANTITY bytes
+        let cloneQuantity = buffer.readUInt16LE(152 + chunk);
+        let cloneQuantityEl = clone.querySelector(".quantity");
+        cloneQuantityEl.id = quantity_id++;
+        clone.querySelector(".quantity").value = cloneQuantity;
+
+        // Reading next INDEX byte
+        let cloneIndex = buffer.readUInt8(70 + chunk);
+        let cloneIndexEl = clone.querySelector(".item-index")
+        cloneIndexEl.id = index_id++;
+        cloneIndexEl.value = cloneIndex;
+
+        // Reading next RANDOM bytes
+        let cloneRandom = buffer.readUInt8(149 + chunk);
+        let cloneRandomEl = clone.querySelector(".random");
+        cloneRandomEl.id = random_id++;
+
+        if (cloneRandom == 0) {
+            clone.querySelector(".random").selectedIndex = 0;
+        } else {
+            clone.querySelector(".random").selectedIndex = 1;
+        }
+
+        // Reading next GLOW bytes
+        let cloneGlow = buffer.readUInt8(156 + chunk);
+        let cloneGlowEl = clone.querySelector(".glow");
+        cloneGlowEl.id = glow_id++;
+        cloneGlowEl.selectedIndex = cloneGlow;
+
+        // Reading next INSIDE bytes
+        let cloneInside = buffer.readUInt8(86 + chunk);
+        let cloneInsideEl = clone.querySelector(".inside")
+        cloneInsideEl.id = inside_id++;
+        cloneInsideEl.selectedIndex = cloneInside;
+
+        // Reading next ETS byte
+        let cloneETS = buffer.readUInt8(87 + chunk);
+        let cloneEtsEl = clone.querySelector(".ets")
+        cloneEtsEl.id = ets_id++;
+        cloneEtsEl.value = cloneETS;
+
+        // Reading next ITEM STATUS bytes
+        let cloneStatus = buffer.readUInt8(160 + chunk);
+        let cloneStatusEl = clone.querySelector(".status");
+        cloneStatusEl.id = status_id++;
+
+        if (cloneStatus == 0) {
+            clone.querySelector(".status").selectedIndex = 0;
+        } else if (cloneStatus == 2) {
+            clone.querySelector(".status").selectedIndex = 1;
+        } else if (cloneStatus == 16) {
+            clone.querySelector(".status").selectedIndex = 2;
+        } else {
+            clone.querySelector(".status").selectedIndex = 0;
+        }
+
+        // Reading next X Coordinate bytes
+        let cloneX = buffer.readFloatLE(112 + chunk).toFixed(2);
+        let cloneXEl = clone.querySelector(".posX");
+        cloneXEl.id = posX_id++;
+        cloneXEl.value = cloneX;
+
+        //Reading next Y Coordinate bytes
+        let cloneY = buffer.readFloatLE(116 + chunk).toFixed(2);
+        let cloneYEl = clone.querySelector(".posY");
+        cloneYEl.id = posY_id++;
+        cloneYEl.value = cloneY;
+
+        //Reading next Z Coordinate bytes
+        let cloneZ = buffer.readFloatLE(120 + chunk).toFixed(2);
+        let cloneZEl = clone.querySelector(".posZ");
+        cloneZEl.id = posZ_id++;
+        cloneZEl.value = cloneZ;
+
+        tBody.appendChild(clone); // add new row to end of table
+
+    }
+    /* ===============
+           UPDATE
+       =============== */
+
+    // Adding a parent event listener
+    tBody.addEventListener("change", function (e) {
+        // Gets value from item ID and sets to buffer
+        if (e.target.className == "item-id") {
+            var setItemID = e.target.id;
+            var setItemID_opt = e.target.selectedIndex;
+            var chunk_save = 176 * (parseInt(setItemID) - 1);
+            buffer.writeUint8(setItemID_opt, 148 + chunk_save)
+        }
+        // Gets value from quantity and sets to buffer
+        if (e.target.className == "quantity") {
+            var setQuantity = e.target.value;
+            var setQuantityId = e.target.id;
+            var chunk_save = 176 * (parseInt(setQuantityId) - 1);
+            if (setQuantity <= 65000) {
+                buffer.writeUint16LE(setQuantity, 152 + chunk_save)
+            } else {
+                setQuantity = 65000
+            }
+        }
+        // Gets value from index and sets to buffer
+        if (e.target.className == "index") {
+            var setIndex = e.target.value;
+            var setIndexId = e.target.id;
+            var chunk_save = 176 * (parseInt(setIndexId) - 1);
+            buffer.writeUint8(setIndex, 70 + chunk_save)
+        }
+        // Gets value from random and sets to buffer
+        if (e.target.className == "random") {
+            var setRandom_opt = e.target.selectedIndex;
+            var setRandomId = e.target.id;
+            var chunk_save = 176 * (parseInt(setRandomId) - 1);
+            if (setRandom_opt == 0) {
+                buffer.writeUint8(0, 149 + chunk_save);
+            } else if (setRandom_opt == 1) {
+                buffer.writeUint8(16, 149 + chunk_save);
+            }
+        }
+        // Gets value from glow and sets to buffer
+        if (e.target.className == "glow") {
+            var setGlow_opt = e.target.selectedIndex;
+            var setGlowId = e.target.id;
+            var chunk_save = 176 * (parseInt(setGlowId) - 1);
+            buffer.writeUint8(setGlow_opt, 156 + chunk_save);
+        }
+        // Gets value from inside and sets to buffer
+        if (e.target.className == "inside") {
+            var setInside_opt = e.target.selectedIndex;
+            var setInsideId = e.target.id;
+            var chunk_save = 176 * (parseInt(setInsideId) - 1);
+            buffer.writeUint8(setInside_opt, 86 + chunk_save);
+        }
+        // Gets value from ets and sets to buffer
+        if (e.target.className == "ets") {
+            var setEts = e.target.value;
+            var setEtsId = e.target.id;
+            var chunk_save = 176 * (parseInt(setEtsId) - 1);
+            buffer.writeUint8(setEts, 87 + chunk_save);
+        }
+        // Gets value from status and sets to buffer
+        if (e.target.className == "status") {
+            var setStatus_opt = e.target.selectedIndex;
+            var setStatusId = e.target.id;
+            var chunk_save = 176 * (parseInt(setStatusId) - 1);
+            if (setStatus_opt == 0) {
+                buffer.writeUint8(0, 160 + chunk_save);
+            } else if (setStatus_opt == 1) {
+                buffer.writeUint8(2, 160 + chunk_save);
+            } else if (setStatus_opt == 2) {
+                buffer.writeUint8(16, 160 + chunk_save);
+            }
+        }
+        // Gets value from X and sets to buffer
+        if (e.target.className == "posX") {
+            var setPosX = e.target.value;
+            var setPosXid = e.target.id;
+            var chunk_save = 176 * (parseInt(setPosXid) - 1);
+            buffer.writeFloatLE(setPosX, 112 + chunk_save).toFixed(2);
+        }
+        // Gets value from X and sets to buffer
+        if (e.target.className == "posY") {
+            var setPosY = e.target.value;
+            var setPosYid = e.target.id;
+            var chunk_save = 176 * (parseInt(setPosYid) - 1);
+            buffer.writeFloatLE(setPosY, 116 + chunk_save).toFixed(2);
+        }
+        // Gets value from X and sets to buffer
+        if (e.target.className == "posZ") {
+            var setPosZ = e.target.value;
+            var setPosZid = e.target.id;
+            var chunk_save = 176 * (parseInt(setPosZid) - 1);
+            buffer.writeFloatLE(setPosZ, 120 + chunk_save).toFixed(2);
+        }
     })
+    // Menu buttons
+    saveBtn.addEventListener("click", () => {
+        fs.writeFileSync(arg, buffer);
+        var saveMessage = document.querySelector(".hide");
+        saveMessage.style.display = "block"
+        setTimeout(() => {
+            saveMessage.style.display = "none"
+        }, 2000);
+    })
+
+    ipcRenderer.on("saveAsITA", (e, arg) => {
+        fs.writeFileSync(arg, buffer);
+    })
+
+})
+
+closeBtn.addEventListener("click", () => {
+    ipcRenderer.send("closeITAfile");
 })

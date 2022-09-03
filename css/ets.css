@@ -27,6 +27,8 @@ body {
     display: flex;
     background-color: #fff;
     height: 25px;
+    top: 0;
+    position: sticky;
 }
 
 nav hr {
@@ -128,8 +130,6 @@ nav hr {
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 0;
-    position: sticky;
 }
 
 .inner-box {
@@ -274,6 +274,10 @@ select:hover {
     outline: none;
 }
 
+.objectIndex>input:hover {
+    background-color: #6cbec1;
+}
+
 .number-sequential {
     min-width: 35px;
     background-color: var(--purple);
@@ -309,6 +313,7 @@ textarea {
     height: 100%;
     background-color: var(--silver);
     text-align: center;
+    outline: none;
 }
 
 .objectRotation>input {
@@ -316,6 +321,15 @@ textarea {
     height: 100%;
     background-color: var(--silver);
     text-align: center;
+    outline: none;
+}
+
+.objectRotation>input:hover {
+    background-color: #6cbec1;
+}
+
+.objectPosition>input:hover {
+    background-color: #6cbec1;
 }
 
 /* =================== 

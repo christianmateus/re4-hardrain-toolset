@@ -11,7 +11,7 @@
     --main-color: #1c4e51;
     --purple: #1c4e51;
     --lightpurple: #3c6e71;
-    --silver: #d9d9d9;
+    --silver: #fff;
     --darken: #353535;
 }
 
@@ -27,6 +27,8 @@ body {
     display: flex;
     background-color: #fff;
     height: 25px;
+    top: 0;
+    position: sticky;
 }
 
 nav hr {
@@ -104,6 +106,18 @@ nav hr {
     background-color: #3c6e71;
 }
 
+#fileSaved {
+    background-color: #6c6;
+    color: #fff;
+    padding: 6px 8px;
+    font-size: 13px;
+}
+
+.hide {
+    display: none;
+    transition: .5s;
+}
+
 /* ===================== 
     Conteúdo superior
    ===================== */
@@ -116,8 +130,6 @@ nav hr {
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 0;
-    position: sticky;
 }
 
 .inner-box {
@@ -270,11 +282,19 @@ select:hover {
     min-width: 65px;
 }
 
+input {
+    width: 65px;
+    height: 100%;
+    text-align: center;
+    font-size: 8pt;
+}
+
 .item-id {
     min-width: 115px;
 }
 
 .ets {
+    width: 50px;
     min-width: 35px;
 }
 
@@ -282,8 +302,8 @@ select:hover {
     min-width: 45px;
 }
 
-.coordinates {
-    width: 220px;
+.coordinates>input {
+    width: 75px;
 }
 
 /* =================== 

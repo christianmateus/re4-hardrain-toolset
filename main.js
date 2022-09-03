@@ -12,7 +12,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000, height: 500,
     autoHideMenuBar: true,
-    frame: false,
+    frame: true,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
@@ -85,7 +85,7 @@ ipcMain.on("openETSfile", () => {
     })
 })
 
-// Saving actual ITA file
+// Saving As ITA file
 ipcMain.on("saveFile", (e, arg) => {
   dialog.showSaveDialog(mainWindow,
     {
@@ -94,9 +94,14 @@ ipcMain.on("saveFile", (e, arg) => {
       ]
     }).then((dados) => {
       let salvar = dados.filePath.toString();
-      mainWindow.webContents.send("savefile", salvar);
+      mainWindow.webContents.send("saveAsITA", salvar);
       console.log(salvar)
     })
+})
+
+// Closing ITA file (workaround)
+ipcMain.on("closeITAfile", (e, arg) => {
+  mainWindow.loadFile("index.html")
 })
 
 // Saving actual ETS file
@@ -111,6 +116,11 @@ ipcMain.on("saveAsETSfile", (e, arg) => {
       mainWindow.webContents.send("saveAsETSfileContent", salvar);
       console.log(salvar)
     })
+})
+
+// Closing ETS file (workaround)
+ipcMain.on("closeETSfile", (e, arg) => {
+  mainWindow.loadFile("ets.html")
 })
 
 // Quiting application

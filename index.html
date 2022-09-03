@@ -24,7 +24,7 @@
         <button id="quitApp" class="menu-buttons">Quit</button>
       </div>
     </div>
-    <div class="dropdown">
+    <!-- <div class="dropdown">
       <button class="menu-buttons" id="edit">Edit</button>
       <div class="dropdown-content">
         <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
@@ -37,7 +37,8 @@
         <button class="menu-buttons">Language</button>
         <button class="menu-buttons">Theme</button>
       </div>
-    </div>
+    </div> -->
+    <div class="hide" id="fileSaved">File saved successfully!</div>
     <div id="control-window">
       <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
           src="./images/main-menu.png"></button>
@@ -54,12 +55,12 @@
         <label for="count">Total Items:</label>
         <input id="count" type="text" readonly value="">
       </div>
-      <div class="inner-box">
+      <!-- <div class="inner-box">
         <input id="guide" type="button" value="Guide">
       </div>
       <div class="inner-box">
         <input id="item-list" type="button" value="Item List">
-      </div>
+      </div> -->
     </div>
   </header>
   <table>
@@ -83,7 +84,7 @@
       </tr>
     </thead>
     <tbody id="table-body">
-      <tr class="item-row">
+      <tr class="tableRow">
         <!-- Linha inteira -->
         <td class="number-sequential"></td>
         <td>
@@ -347,12 +348,12 @@
 
           </select>
         </td>
-        <td class="quantity" contenteditable="true">0</td>
-        <td class="item-index" contenteditable="true">0</td>
+        <td><input type="number" class="quantity" max="65000"></td>
+        <td><input type="number" class="item-index"></td>
         <td>
           <select class="random">
-            <option value="10">Yes</option>
             <option value="0">No</option>
+            <option value="10">Yes</option>
           </select>
         </td>
         <td>
@@ -376,7 +377,7 @@
             <option value="2">Object</option>
           </select>
         </td>
-        <td class="ets" contenteditable="true">0</td>
+        <td><input type="number" class="ets"></td>
         <td>
           <select class="status">
             <option value="0">Normal</option>
@@ -384,23 +385,23 @@
             <option value="10">Shootable</option>
           </select>
         </td>
-        <td class="coordinates itemX" contenteditable="true">0</td>
-        <td class="coordinates itemY" contenteditable="true">0</td>
-        <td class="coordinates itemZ" contenteditable="true">0</td>
-        <td class="coordinates" contenteditable="true"></td>
-        <td class="coordinates" contenteditable="true"></td>
-        <td class="coordinates" contenteditable="true"></td>
+        <td class="coordinates"><input type="number" class="posX"></td>
+        <td class="coordinates"><input type="number" class="posY"></td>
+        <td class="coordinates"><input type="number" class="posZ"></td>
+        <td class="coordinates"><input type="number" class="rotX"></td>
+        <td class="coordinates"><input type="number" class="rotY"></td>
+        <td class="coordinates"><input type="number" class="rotZ"></td>
       </tr>
     </tbody>
   </table>
-  <div id="container-add">
-    <input id="add-new-item" type="button" onclick="cloneRow" value="Add New Item">
-  </div>
-  <div>
+  <!-- <div id="container-add">
+    <input id="add-new-item" type="button" value="Add New Item">
+  </div> -->
+  <!-- <div>
     <textarea id="testes" cols="80" rows="10">
 
     </textarea>
-  </div>
+  </div> -->
   <script>
     // function cloneRow() {
     //   var row = document.querySelector(".item-row"); // find row to copy

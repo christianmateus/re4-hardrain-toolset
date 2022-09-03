@@ -39,6 +39,7 @@ const closeWindowBtn = document.getElementById("closeWindow");
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
     ipcRenderer.send("openETSfile")
+    ipcRenderer.send("closeETSfile")
 })
 
 saveAsBtn.addEventListener("click", () => {
@@ -47,6 +48,23 @@ saveAsBtn.addEventListener("click", () => {
 
 quitApp.addEventListener("click", () => {
     ipcRenderer.send("quitApp")
+})
+
+// Window menu actions
+menuWindow.addEventListener("click", () => {
+    ipcRenderer.send("openMainMenu")
+})
+
+minimizeBtn.addEventListener("click", () => {
+    ipcRenderer.send("minimize")
+})
+
+maximizeBtn.addEventListener("click", () => {
+    ipcRenderer.send("maximize")
+})
+
+closeWindowBtn.addEventListener("click", () => {
+    ipcRenderer.send("closeWindow")
 })
 
 /* ===============
@@ -214,7 +232,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setPosXid = e.target.id;
             var chunk_save = 64 * (parseInt(setPosXid) - 1);
             buffer.writeFloatLE(setPosX, 48 + chunk_save).toFixed(2);
-            console.log(buffer);
+
         }
         if (e.target.className == "posY") {
             // Gets value from posY and sets to buffer
@@ -222,7 +240,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setPosYid = e.target.id;
             var chunk_save = 64 * (parseInt(setPosYid) - 1);
             buffer.writeFloatLE(setPosY, 52 + chunk_save).toFixed(2);
-            console.log(buffer);
+
         }
         if (e.target.className == "posZ") {
             // Gets value from posY and sets to buffer
@@ -230,7 +248,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setPosZid = e.target.id;
             var chunk_save = 64 * (parseInt(setPosZid) - 1);
             buffer.writeFloatLE(setPosZ, 56 + chunk_save).toFixed(2);
-            console.log(buffer);
+
         }
         if (e.target.className == "rotX") {
             // Gets value from rotX and sets to buffer
@@ -238,7 +256,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setRotXid = e.target.id;
             var chunk_save = 64 * (parseInt(setRotXid) - 1);
             buffer.writeFloatLE(setRotX, 32 + chunk_save).toFixed(2);
-            console.log(buffer);
+
         }
         if (e.target.className == "rotY") {
             // Gets value from rotY and sets to buffer
@@ -246,7 +264,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setRotYid = e.target.id;
             var chunk_save = 64 * (parseInt(setRotYid) - 1);
             buffer.writeFloatLE(setRotY, 36 + chunk_save).toFixed(2);
-            console.log(buffer);
+
         }
         if (e.target.className == "rotZ") {
             // Gets value from rotZ and sets to buffer
@@ -254,7 +272,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setRotZid = e.target.id;
             var chunk_save = 64 * (parseInt(setRotZid) - 1);
             buffer.writeFloatLE(setRotZ, 40 + chunk_save).toFixed(2);
-            console.log(buffer);
+
         }
     })
 
@@ -272,8 +290,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
 
     // NEEDS FIX!!
     closeBtn.addEventListener("click", () => {
-        while (table.rows.length > 1)
-            table.deleteRow(1)
+        ipcRenderer.send("closeETSfile");
     })
 
     ipcRenderer.on("saveAsETSfileContent", (e, arg) => {
