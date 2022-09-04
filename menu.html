@@ -12,60 +12,47 @@
 
 <body>
   <nav id="menu-container">
-    <div class="dropdown">
-      <button class="menu-buttons" id="file">File</button>
-      <div class="dropdown-content">
-        <button id="openFile" class="menu-buttons"><img src="images/open.png"> Open ITA file</button>
-        <button id="closeFile" class="menu-buttons"><img src="images/close.png"> Close file</button>
-        <hr>
-        <button id="saveFile" class="menu-buttons"><img src="images/save.png"> Save ITA file</button>
-        <button id="saveAs" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
-        <hr>
-        <button id="quitApp" class="menu-buttons">Quit</button>
-      </div>
-    </div>
-    <div class="dropdown">
-      <button class="menu-buttons" id="edit">Edit</button>
-      <div class="dropdown-content">
-        <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
-        <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
-      </div>
-    </div>
-    <div class="dropdown">
-      <button class="menu-buttons" id="options">Options</button>
-      <div class="dropdown-content">
-        <button class="menu-buttons">Language</button>
-        <button class="menu-buttons">Theme</button>
-      </div>
-    </div>
+    <!-- <div id="logo-container">
+      <img width="20px" src="./icons/icon.ico">
+    </div> -->
     <div id="control-window">
-      <button id="minimize" class="control-buttons minimize"><img src="./images/minimize.png"></button>
-      <button id="maximize" class="control-buttons maximize"><img src="./images/expand-window.png"></button>
-      <button id="closeWindow" class="control-buttons closeWindow"><img src="./images/close-window.png"></button>
+      <button title="Minimize" id="minimize" class="control-buttons minimize"><img src="./images/minimize.png"></button>
+      <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+          src="./images/expand-window.png"></button>
+      <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+          src="./images/close-window.png"></button>
     </div>
   </nav>
   <header>
     <h2>resident evil $ toolset</h2>
-    <p>A collection of tools for modding Resident Evil 4 PS2 and PC 2007 version.</p>
+    <p>A collection of tools for modding Resident Evil 4 PS2 and PC 2007 versions.</p>
+    <p>Version 1.0.0</p>
   </header>
   <section>
     <div class="container">
       <div id="ita-card" class="container-cards">
-        <!-- <img width="100%" src="./images/ITA_background.png"> -->
         <h4>ITA Tool</h4>
         <p>Want to edit items in the game? Click here</p>
-      </div>
-      <div class="container-cards">
-        <h4>LIT Tool</h4>
-        <p>What about some Lights/Illuminations editing? Click here</p>
-      </div>
-      <div class="container-cards">
-        <h4>AEV Tool</h4>
-        <p>Looking to edit events in the game? Click here</p>
       </div>
       <div id="ets-card" class="container-cards">
         <h4>ETS Tool</h4>
         <p>Want to modify interactive objects positions in the game? Click here</p>
+      </div>
+      <div class="container-cards coming-soon">
+        <h4>LIT Tool</h4>
+        <p>What about some Lights/Illuminations editing? Click here</p>
+      </div>
+      <div class="container-cards coming-soon">
+        <h4>AEV Tool</h4>
+        <p>Looking for editing events? Click here</p>
+      </div>
+      <div class="container-cards coming-soon">
+        <h4>SMD Tool</h4>
+        <p>Wanna edit room 3D models? Click here</p>
+      </div>
+      <div class="container-cards coming-soon">
+        <h4>CAM Tool</h4>
+        <p>Want to try changing camera views? Click here</p>
       </div>
     </div>
   </section>

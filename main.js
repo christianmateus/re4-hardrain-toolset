@@ -10,10 +10,12 @@ let mainWindow;
 function createWindow() {
 
   mainWindow = new BrowserWindow({
-    width: 1000, height: 500,
+    width: 1000, height: 500, minWidth: 600, minHeight: 300,
     autoHideMenuBar: true,
-    frame: true,
+    frame: false,
+    icon: "./icons/icon.png",
     webPreferences: {
+      devTools: false,
       contextIsolation: false,
       nodeIntegration: true,
       preload: 'preload.js'
@@ -21,10 +23,9 @@ function createWindow() {
 
   })
 
-  // mainWindow.webContents.openDevTools()
   // Load index.html into the new BrowserWindow
   mainWindow.loadFile('menu.html');
-  mainWindow.webContents.openDevTools()
+
   // Open DevTools - Remove for PRODUCTION!
   // mainWindow.webContents.openDevTools();
 

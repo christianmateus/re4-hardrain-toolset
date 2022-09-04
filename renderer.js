@@ -295,16 +295,26 @@ ipcRenderer.on("dialog", (e, arg) => {
             var chunk_save = 176 * (parseInt(setQuantityId) - 1);
             if (setQuantity <= 65000) {
                 buffer.writeUint16LE(setQuantity, 152 + chunk_save)
+                document.getElementsByClassName("quantity")[parseInt(setQuantityId) - 1].style.color = "#111";
+                document.getElementsByClassName("quantity")[parseInt(setQuantityId) - 1].style.outline = "none";
             } else {
-                setQuantity = 65000
+                document.getElementsByClassName("quantity")[parseInt(setQuantityId) - 1].style.color = "red";
+                document.getElementsByClassName("quantity")[parseInt(setQuantityId) - 1].style.outline = "1px solid red";
             }
         }
         // Gets value from index and sets to buffer
-        if (e.target.className == "index") {
+        if (e.target.className == "item-index") {
             var setIndex = e.target.value;
             var setIndexId = e.target.id;
             var chunk_save = 176 * (parseInt(setIndexId) - 1);
-            buffer.writeUint8(setIndex, 70 + chunk_save)
+            if (setIndex <= 255) {
+                buffer.writeUint8(setIndex, 70 + chunk_save)
+                document.getElementsByClassName("item-index")[parseInt(setIndexId) - 1].style.color = "#000";
+                document.getElementsByClassName("item-index")[parseInt(setIndexId) - 1].style.outline = "none";
+            } else {
+                document.getElementsByClassName("item-index")[parseInt(setIndexId) - 1].style.color = "red";
+                document.getElementsByClassName("item-index")[parseInt(setIndexId) - 1].style.outline = "1px solid red";
+            }
         }
         // Gets value from random and sets to buffer
         if (e.target.className == "random") {
@@ -336,7 +346,14 @@ ipcRenderer.on("dialog", (e, arg) => {
             var setEts = e.target.value;
             var setEtsId = e.target.id;
             var chunk_save = 176 * (parseInt(setEtsId) - 1);
-            buffer.writeUint8(setEts, 87 + chunk_save);
+            if (setEts <= 255) {
+                buffer.writeUint8(setEts, 87 + chunk_save);
+                document.getElementsByClassName("ets")[parseInt(setEtsId) - 1].style.color = "#000";
+                document.getElementsByClassName("ets")[parseInt(setEtsId) - 1].style.outline = "none";
+            } else {
+                document.getElementsByClassName("ets")[parseInt(setEtsId) - 1].style.color = "red";
+                document.getElementsByClassName("ets")[parseInt(setEtsId) - 1].style.outline = "1px solid red";
+            }
         }
         // Gets value from status and sets to buffer
         if (e.target.className == "status") {

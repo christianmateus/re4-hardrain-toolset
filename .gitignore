@@ -2,6 +2,7 @@ node_modules/
 backup/
 creating_images/
 feito/
+release-builds/
 git-passos.txt
 *.ETS
 *.bak

@@ -11,7 +11,7 @@
     --main-color: #1c4e51;
     --purple: #1c4e51;
     --lightpurple: #3c6e71;
-    --silver: #d9d9d9;
+    --silver: #fff;
     --darken: #353535;
 }
 
@@ -29,6 +29,7 @@ body {
     height: 25px;
     top: 0;
     position: sticky;
+    -webkit-app-region: drag;
 }
 
 nav hr {
@@ -39,6 +40,7 @@ nav hr {
 
 .dropdown {
     display: flex;
+    -webkit-app-region: no-drag;
 }
 
 .dropdown-content {
@@ -89,6 +91,7 @@ nav hr {
     width: 30px;
     background-color: #fff;
     transition: .15s;
+    -webkit-app-region: no-drag;
 }
 
 .menuWindow,
@@ -217,6 +220,10 @@ td:hover {
     background-color: #6cbec1;
 }
 
+td>input {
+    font-size: 8pt;
+}
+
 tr {
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
@@ -274,9 +281,9 @@ select:hover {
     outline: none;
 }
 
-.objectIndex>input:hover {
+/* .objectIndex>input:hover {
     background-color: #6cbec1;
-}
+} */
 
 .number-sequential {
     min-width: 35px;
@@ -324,13 +331,13 @@ textarea {
     outline: none;
 }
 
-.objectRotation>input:hover {
+/* .objectRotation>input:hover {
     background-color: #6cbec1;
 }
 
 .objectPosition>input:hover {
     background-color: #6cbec1;
-}
+} */
 
 /* =================== 
     Depois da tabela

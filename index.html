@@ -78,9 +78,9 @@
         <th title="Position it will spawn in X coordinate (left and right)">Pos X</th>
         <th title="Position it will spawn in Y coordinate (height)">Pos Y</th>
         <th title="Position it will spawn in Z coordinate (front and back)">Pos Z</th>
-        <th title="Coordinate it will be rotated in X axis">Rot X</th>
+        <!-- <th title="Coordinate it will be rotated in X axis">Rot X</th>
         <th title="Coordinate it will be rotated in Y axis">Rot Y</th>
-        <th title="Coordinate it will be rotated in Z axis">Rot Z</th>
+        <th title="Coordinate it will be rotated in Z axis">Rot Z</th> -->
       </tr>
     </thead>
     <tbody id="table-body">
@@ -349,7 +349,7 @@
           </select>
         </td>
         <td><input type="number" class="quantity" max="65000"></td>
-        <td><input type="number" class="item-index"></td>
+        <td><input type="number" class="item-index" max="255"></td>
         <td>
           <select class="random">
             <option value="0">No</option>
@@ -377,7 +377,7 @@
             <option value="2">Object</option>
           </select>
         </td>
-        <td><input type="number" class="ets"></td>
+        <td class="ets-cell"><input type="number" class="ets" max="255"></td>
         <td>
           <select class="status">
             <option value="0">Normal</option>
@@ -388,9 +388,9 @@
         <td class="coordinates"><input type="number" class="posX"></td>
         <td class="coordinates"><input type="number" class="posY"></td>
         <td class="coordinates"><input type="number" class="posZ"></td>
-        <td class="coordinates"><input type="number" class="rotX"></td>
+        <!-- <td class="coordinates"><input type="number" class="rotX"></td>
         <td class="coordinates"><input type="number" class="rotY"></td>
-        <td class="coordinates"><input type="number" class="rotZ"></td>
+        <td class="coordinates"><input type="number" class="rotZ"></td> -->
       </tr>
     </tbody>
   </table>
@@ -403,14 +403,6 @@
     </textarea>
   </div> -->
   <script>
-    // function cloneRow() {
-    //   var row = document.querySelector(".item-row"); // find row to copy
-    //   var table = document.querySelector("table"); // find table to append to
-    //   var clone = row.cloneNode(true); // copy children too
-    //   clone.id = "newID"; // change id or other attributes/contents
-    //   table.appendChild(clone); // add new row to end of table
-    // }
-
 
     require('./renderer.js');
 

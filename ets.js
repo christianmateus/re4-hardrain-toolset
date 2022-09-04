@@ -224,7 +224,14 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             var setIndex = e.target.value;
             var setIndexId = e.target.id;
             var chunk_save = 64 * (parseInt(setIndexId) - 1);
-            buffer.writeUint8(setIndex, 66 + chunk_save);
+            if (setIndex <= 255) {
+                buffer.writeUint8(setIndex, 66 + chunk_save);
+                document.getElementsByClassName("index")[parseInt(setIndexId) - 1].style.color = "#000";
+                document.getElementsByClassName("index")[parseInt(setIndexId) - 1].style.outline = "none";
+            } else {
+                document.getElementsByClassName("index")[parseInt(setIndexId) - 1].style.color = "red";
+                document.getElementsByClassName("index")[parseInt(setIndexId) - 1].style.outline = "1px solid red";
+            }
         }
         if (e.target.className == "posX") {
             // Gets value from posX and sets to buffer
