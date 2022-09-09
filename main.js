@@ -15,7 +15,7 @@ function createWindow() {
     frame: false,
     icon: "./icons/icon.png",
     webPreferences: {
-      devTools: false,
+      // devTools: false,
       contextIsolation: false,
       nodeIntegration: true,
       preload: 'preload.js'
@@ -24,10 +24,10 @@ function createWindow() {
   })
 
   // Load index.html into the new BrowserWindow
-  mainWindow.loadFile('menu.html');
+  mainWindow.loadFile('aev.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {

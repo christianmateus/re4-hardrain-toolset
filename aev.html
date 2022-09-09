@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/aev.css">
+    <title>AEV Tool</title>
+</head>
+
+<body>
+    <nav id="menu-container">
+        <div class="dropdown">
+            <button class="menu-buttons" id="file">File</button>
+            <div class="dropdown-content">
+                <button id="openAEVfile" class="menu-buttons"><img src="images/open.png"> Open AEV file</button>
+                <button id="closeAEVfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+                <hr>
+                <button id="saveAEVfile" class="menu-buttons"><img src="images/save.png"> Save AEV file</button>
+                <button id="saveAEVas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+                <hr>
+                <button id="quitApp" class="menu-buttons">Quit</button>
+            </div>
+        </div>
+        <!-- <div class="dropdown">
+            <button class="menu-buttons" id="edit">Edit</button>
+            <div class="dropdown-content">
+                <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
+                <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
+            </div>
+        </div> -->
+        <!-- <div class="dropdown">
+            <button class="menu-buttons" id="options">Options</button>
+            <div class="dropdown-content">
+                <button class="menu-buttons">Language</button>
+                <button class="menu-buttons">Theme</button>
+            </div>
+        </div> -->
+        <div class="hide" id="fileSaved">File saved successfully!</div>
+        <div id="control-window">
+            <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+                    src="./images/main-menu.png"></button>
+            <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+                    src="./images/minimize.png"></button>
+            <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+                    src="./images/expand-window.png"></button>
+            <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+                    src="./images/close-window.png"></button>
+        </div>
+    </nav>
+    <header>
+        <div id="campo-superior">
+            <div class="inner-box">
+                <label for="count">Total Events:</label>
+                <input id="count" type="text" readonly value="">
+            </div>
+            <div class="inner-box">
+                <!-- <input id="guide" type="button" value="Guide"> -->
+            </div>
+            <div class="inner-box">
+                <!-- <input id="item-list" type="button" value="Item List"> -->
+            </div>
+        </div>
+    </header>
+    <!-- TABLE DATA STARTS -->
+    <table>
+        <thead>
+            <tr>
+                <th colspan="8" class="tableHeader">Event List</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="tableRow">
+                <td class="number-sequential">01</td>
+                <td>
+                    <div class="event-container">
+                        <div class="event-bar">
+                            <span class="event-title">Event <span class="number-sequential">01</span>: Door
+                                Teleport</span>
+                            <span class="event-title-sec">click to expand</span>
+                        </div>
+                        <div class="hide event-box">
+                            <div class="main-config">
+                                <h5>Main Config</h5>
+                                <fieldset class="fieldset-primary">
+                                    <label for="eventId">Event Type</label>
+                                    <select id="eventId" class="select">
+                                        <option value="">General Purpose</option>
+                                        <option value="">Door Teleport</option>
+                                        <option value="">Cutscene</option>
+                                        <option value="">Enemy Group Trigger</option>
+                                    </select>
+                                    <label for="index">Index</label>
+                                    <input id="index" class="index" type="number">
+                                </fieldset>
+                                <fieldset class="additional-data">
+                                    <legend>Additional data</legend>
+                                    <label for="unk1">Unknown 1</label>
+                                    <input id="unk1" class="unknown-data" type="number">
+                                    <label for="unk2">Unknown 2</label>
+                                    <input id="unk2" class="unknown-data" type="number">
+                                    <label for="unk3">Unknown 3</label>
+                                    <input id="unk3" class="unknown-data" type="number">
+                                </fieldset>
+                                <div class="triggerzone">
+                                    <h5>Triggerzone Area</h5>
+                                    <canvas class="main-canvas"></canvas>
+                                    <fieldset class="fieldset-coordinates">
+                                        <legend>Triggerzone Coordinates</legend>
+                                        <div class="coordinates-box">
+                                            <label for="top-leftX">Top Left X</label>
+                                            <input id="top-leftX" class="input-coordinates top-left" type="number">
+                                            <label for="top-leftZ">Top Left Z</label>
+                                            <input id="top-leftZ" class="input-coordinates top-left" type="number">
+                                        </div>
+                                        <div class="coordinates-box">
+                                            <label for="top-rightX">Top Right X</label>
+                                            <input id="top-rightX" class="input-coordinates top-right" type="number">
+                                            <label for="top-rightZ">Top Right Z</label>
+                                            <input id="top-rightZ" class="input-coordinates top-right" type="number">
+                                        </div>
+                                        <div class="coordinates-box">
+                                            <label for="bottom-leftX">Bottom Left X</label>
+                                            <input id="bottom-leftX" class="input-coordinates bottom-left"
+                                                type="number">
+                                            <label for="bottom-leftZ">Bottom Left Z</label>
+                                            <input id="bottom-leftZ" class="input-coordinates bottom-left"
+                                                type="number">
+                                        </div>
+                                        <div class="coordinates-box">
+                                            <label for="bottom-rightX">Bottom Right X</label>
+                                            <input id="bottom-rightX" class="input-coordinates bottom-right"
+                                                type="number">
+                                            <label for="bottom-rightZ">Bottom Right Z</label>
+                                            <input id="bottom-rightZ" class="input-coordinates bottom-right"
+                                                type="number">
+                                        </div>
+                                    </fieldset>
+                                    <label for="lower-limit">Lower Limit</label>
+                                    <input id="lower-limit" class="input-coordinates lower-limit" type="number">
+                                    <label for="higher-limit">Higher Limit</label>
+                                    <input id="higher-limit" class="input-coordinates higher-limit" type="number">
+                                </div>
+                            </div>
+                            <!-- <div class="extra-config type1">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                </fieldset>
+                                <br>
+                                <fieldset class="fieldset-destination">
+                                    <legend>Destination room</legend>
+                                    <select id="room-select" class="room-select">
+                                        <optgroup label="Village Rooms">
+                                            <option value="r100">r100 - Starting room</option>
+                                            <option value="r101">r101 - The main village</option>
+                                            <option value="r102">r102 - The underground area</option>
+                                            <option value="r103">r103 - Farm after main village</option>
+                                            <option value="r104">r104 - The area you wake up in with Luis</option>
+                                            <option value="r105">r105 - The chief's house</option>
+                                            <option value="r106">r106 - Area with first boulder</option>
+                                            <option value="r107">r107 - The area after using the hexagon pieces</option>
+                                            <option value="r108">r108 - The graveyard</option>
+                                            <option value="r109">r109 - The El Gigante area</option>
+                                            <option value="r10a">r10a - The swamp</option>
+                                            <option value="r10b">r10b - Del Lago area</option>
+                                            <option value="r10c">r10c - Area past Del Lago - Waterfall</option>
+                                            <option value="r10d">r10d - Merchant cave in Del Lago area</option>
+                                            <option value="r10e">r10e - The save room in the El Gig area</option>
+                                            <option value="r10f">r10f - The lifts</option>
+                                        </optgroup>
+                                        <optgroup label="Castle Rooms">
+                                            <option value="">r200</option>
+                                        </optgroup>
+                                    </select>
+                                </fieldset>
+                                <fieldset class="fieldset-teleport">
+                                    <legend>Teleport coordinates</legend>
+                                    <label for="teleport-x">X Coordinates</label>
+                                    <input id="teleport-x" type="number" class="input-teleport">
+                                    <label for="teleport-y">Y Coordinates</label>
+                                    <input id="teleport-y" type="number" class="input-teleport">
+                                    <label for="teleport-z">Z Coordinates</label>
+                                    <input id="teleport-z" type="number" class="input-teleport">
+                                    <label title="The angle Leon will be looking after room loads"
+                                        for="teleport-rotation">Facing angle</label>
+                                    <input title="The angle Leon will be looking after room loads"
+                                        id="teleport-rotation" type="number" class="input-teleport">
+                                </fieldset>
+                            </div> -->
+                            <!-- <div class="extra-config type0">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                </fieldset>
+                                <br>
+                                <h5>There are no more known parameters</h5>
+                            </div> -->
+                            <div class="extra-config type2">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <input type="number" class="input-definition">
+                                    <br>
+                                    <label for="offset73">offset 73</label>
+                                    <input id="offset73" type="number" class="input-definition">
+                                    <label for="offset74">offset 74</label>
+                                    <input id="offset74" type="number" class="input-definition">
+                                </fieldset>
+                                <br>
+                                <h5>There are no more known parameters</h5>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- <textarea id="testes" cols="40" rows="10">
+
+    </textarea> -->
+    <script>
+        require('./aev.js');
+    </script>
+</body>
+
+</html>
