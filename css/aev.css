@@ -297,6 +297,10 @@ hr {
     border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.main-config input {
+    outline: none;
+}
+
 #eventId {
     font-size: 12px;
     margin-right: 20px;
@@ -379,7 +383,10 @@ fieldset {
     width: 40%;
     border-left: 1px solid rgba(0, 0, 0, 0.2);
     border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
 
+.extra-config input {
+    outline: none;
 }
 
 .fieldset-definition {
@@ -390,10 +397,14 @@ fieldset {
     padding: 10px;
 }
 
+.fieldset-definition div {
+    margin: 10px 0;
+}
+
 .input-definition {
-    display: flex;
-    width: 30% !important;
+    width: 20% !important;
     text-align: center;
+    margin-right: 5px;
 }
 
 .fieldset-teleport {
@@ -420,6 +431,214 @@ fieldset {
     font-size: 11px;
     height: 20px;
     border-radius: 2px;
+}
+
+.fieldset-message-parameters {
+    position: relative;
+    text-align: center;
+}
+
+.fieldset-message-parameters label {
+    margin: 10px 10px;
+    text-align: right;
+}
+
+.fieldset-message-parameters input {
+    margin-top: 20px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+input#sound-offset {
+    margin-left: 12px;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    color: #fff;
+    padding: 2px 4px;
+    font-size: 10pt;
+    border-radius: 10px;
+    margin-left: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--main-color);
+    cursor: default;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 180px;
+    background-color: var(--darken);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -90px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.tooltiptext-left {
+    visibility: hidden;
+    width: 220px;
+    background-color: var(--darken);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -110px;
+    right: 110%;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip .tooltiptext-left::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent black;
+}
+
+.tooltip:hover .tooltiptext-left {
+    visibility: visible;
+}
+
+/* Event 10 - Ladder Climb */
+
+.fieldset-ladder {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.fieldset-ladder div {
+    width: 45%;
+    margin: 2px;
+    justify-content: center;
+    align-items: center;
+}
+
+.fieldset-ladder legend {
+    width: 100%;
+}
+
+.fieldset-ladder .tooltip {
+    width: 7%;
+}
+
+.input-ladder {
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 60% !important;
+}
+
+#ladder-steps {
+    width: 40% !important;
+}
+
+.fieldset-ladder-camera-parameters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0;
+}
+
+.fieldset-ladder-camera-parameters div {
+    width: 49%;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.fieldset-ladder-camera-parameters div:nth-child(3) {
+    text-align: right;
+}
+
+.fieldset-ladder-camera-parameters .tooltip {
+    width: 10%;
+}
+
+.fieldset-ladder-camera-parameters .input-ladder-camera {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.fieldset-object {
+    margin-top: 20px;
+}
+
+#item-dependent-id {
+    width: 25% !important;
+}
+
+.fieldset-object object {
+    margin-top: 5px;
+    color: #fff;
+    background-color: #ccc;
+}
+
+.fieldset-hide-event {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.fieldset-hide-event div {
+    width: 45%;
+    margin: 2px;
+    justify-content: center;
+    align-items: center;
+}
+
+.fieldset-hide-event .input-hide-event {
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 60% !important;
+}
+
+.fieldset-hide-event legend {
+    width: 100%;
+}
+
+.fieldset-hide-event .tooltip {
+    width: 7%;
 }
 
 /* =================== 

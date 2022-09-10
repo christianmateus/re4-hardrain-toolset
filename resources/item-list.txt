@@ -1,0 +1,255 @@
+1  -  Hand Grenade
+2  -  Incendiary Grenade
+3  -  Matilda
+4  -  Handgun Ammo
+5  -  First Aid Spray
+6  -  Green Herb
+7  -  Rifle Ammo
+8  -  Chicken Egg
+9  -  Brown Chicken Egg
+10 -  Gold Chicken Egg
+11 -  aaa
+12 -  Plaga Sample
+13 -  Krauser's Knife
+14 -  Flash Grenade
+15 -  Salazar Family Insignia
+16 -  Bowgun
+17 -  Bowgun Bolts
+18 -  Green Herb x2
+19 -  Green Herb x3
+20 -  Mixed Herbs (G+R)
+21 -  Mixed Herbs (G+R+Y)
+22 -  Mixed Herbs (G+Y)
+23 -  Rocket Launcher (Special)
+24 -  Shotgun Shells
+25 -  Red Herb
+26 -  Handcannon Ammo
+27 -  Hourglass w/ gold decor
+28 -  Yellow Herb
+29 -  Stone Tablet
+30 -  Lion Ornament
+31 -  Goat Ornament
+32 -  TMP Ammo
+33 -  Punisher
+34 -  Punisher w/ Silencer
+35 -  Handgun
+36 -  Handgun w/ Silencer
+37 -  Red9
+38 -  Red9 w/ Stock
+39 -  Blacktail
+40 -  Blacktail w/ Silencer
+41 -  Broken Butterfly
+42 -  Killert7
+43 -  Killert7 w/ Silencer
+44 -  Shotgun
+45 -  Striker
+46 -  Rifle
+47 -  Rifle (semi-auto)
+48 -  TMP
+49 -  Aktivation key (blue)
+50 -  TMP w/ Stock
+51 -  Activation Key (red)
+52 -  Chicago Typewriter
+53 -  Rocket Launcher
+54 -  Mine Thrower
+55 -  Handcannon
+56 -  Combat Knife
+57 -  Serpent Ornament
+58 -  Moonstone (Right Half)
+59 -  Insignia Key
+60 -  Round Insignia
+61 -  False Eye
+62 -  Custom TMP
+63 -  Silencer (Hundgun)
+64 -  Punisher
+65 -  P.R.L. 412
+66 -  Stock (Red9)
+67 -  Stock (TMP)
+68 -  Scope (Rifle)
+69 -  Scope (semi-auto rifle)
+70 -  Mine-Darts
+71 -  Shotgun
+72 -  Capture Luis Sera
+73 -  Target Practice
+74 -  Luis' Memo
+75 -  Castellan Memo
+76 -  Female Intruder
+77 -  Butler's Memo
+78 -  Sample Retrieved
+79 -  Ritual Preparation
+80 -  Luis' Memo 2
+81 -  Rifle (semi-auto) w/ Infrared Scope
+82 -  Krauser's Bow
+83 -  Chicago Typewriter
+84 -  Treasure Map (Castle)
+85 -  Treasure Map (Island)
+86 -  Velvet Blue 
+87 -  Spinel
+88 -  Pearl Pendant
+89 -  Brass Pocket Watch
+90 -  Elegant Headdress
+91 -  Antique Pipe
+92 -  Gold Bangle w/ Pearls
+93 -  Amber Ring 
+94 -  Beerstein
+95 -  Green Catseye
+96 -  Red Catseye
+97 -  Yellow Catseye
+98 -  Beerstein w/ (G)
+99 -  Beerstein w/ (R)
+100 -  Beerstein w/ (Y)
+101 -  Beerstein w/ (G,R)
+102 -  Beerstein w/ (G,Y)
+103 -  Beerstein w/ (R,Y)
+104 -  Beerstein w/ (G,R,Y)
+105 -  Moonstone (Left Half)
+106 -  Chicago Typewriter Ammo
+107 -  Rifle + Scope
+108 -  Rifle (semi-auto) w/ Scope
+109 -  Infinite Launcher
+110 -  King's Grail
+111 -  Queen's Grail
+112 -  Staff Of Royality
+113 -  Gold Bars
+114 -  Arrows
+115 -  Bonus Time
+116 -  Emergency Lock Card Key  
+117 -  Bonus Points
+118 -  Green Catseye
+119 -  Ruby
+120 -  Treasure Box (S)
+121 -  Treasure Box (L)
+122 -  Blue Moonstone
+123 -  Key to the Mine
+124 -  Attache Case S
+125 -  Attache Case M
+126 -  Attache Case L
+127 -  Attache Case XL
+128 -  Golden Sword
+129 -  Iron Key
+130 -  Stone of Sacrifice
+131 -  Storage Room Card Key
+132 -  Freezer Card Key
+133 -  Piece of the Holy Beast, Panther
+134 -  Piece of the Holy Beast, Serpent 
+135 -  Piece of the Holy Beast, Eagle
+136 -  Jet-ski Key
+137 -  Dirty Pearl Pendant
+138 -  Dirty Brass Pocket Watch
+139 -  Old Key
+140 -  Camp Key
+141 -  Dynamite
+142 -  Lift Activation Key
+143 -  Gold Bangle
+144 -  Elegant Perfume Bottle
+145 -  Mirror w/ Pearls & Rubies
+146 -  Waste Disposal Card Key
+147 -  Elegant Chessboard
+148 -  Riot Gun
+149 -  Black Bass
+150 -  Hourglass w/ gold decor
+151 -  Black Bass (L)
+152 -  Illuminados Pendant
+153 -  Rifle w/ Infrared Scope
+154 -  Crown
+155 -  Crown Jewel
+156 -  Royal Insignia
+157 -  Crown with Jewels
+158 -  Crown with an insignia
+159 -  Salazar Family Crown
+160 -  Rifle Ammo (Infrared)
+161 -  Emerald
+162 -  Bottle Caps
+163 -  Gallery Key
+164 -  Emblem (Right Half)
+165 -  Emblem (Left Half)
+166 -  Hexagonal Emblem
+167 -  Castle Gate Key
+168 -  Mixed Herbs (R+Y)
+169 -  Treasure Map (Village)
+170 -  Scope (Mine Thrower)
+171 -  Mine Thrower + Scope
+172 -  Playing Manual 1
+173 -  Info on Ashley
+174 -  Playing Manual 2
+175 -  Alert Order
+176 -  About the Blue Medallions
+177 -  Chief's Note
+178 -  Closure of the Church
+179 -  Anonymous Letter
+180 -  Playing Manual 3
+181 -  Sera and the 3rd Party
+182 -  Two Routes
+183 -  Village's Last Defense
+184 -  Butterfly Lamp
+185 -  Green Eye
+186 -  Red Eye
+187 -  Blue Eye
+188 -  Butterfly Lamp w/ (G)
+189 -  Butterfly Lamp w/ (R)
+190 -  Butterfly Lamp w/ (B)
+191 -  Butterfly Lamp w/ (G,R)
+192 -  Butterfly Lamp w/ (G,B)
+193 -  Butterfly Lamp w/ (R,B)
+194 -  Butterfly Lamp w/ (R,G,B)
+195 -  Prison Key
+196 -  Platinum Sword
+197 -  Infrared Scope
+198 -  Elegant Mask
+199 -  Green Gem
+200 -  Red Gem
+201 -  Purple Gem
+202 -  Elegant Mask w/ (G)
+203 -  Elegant Mask w/ (R)
+204 -  Elegant Mask w/ (P)
+205 -  Elegant Mask w/ (G,R)
+206 -  Elegant Mask w/ (G,P)
+207 -  Elegant Mask w/ (R,P)
+208 -  Elegant Mask w/ (R,G,P)
+209 -  Golden Lynx
+210 -  Green Stone of Judgement
+211 -  Red Stone of Faith
+212 -  Blue Stone of Treason
+213 -  Golden Lynx w/ (G)
+214 -  Golden Lynx w/ (R)
+215 -  Golden Lynx w/ (B)
+216 -  Golden Lynx w/ (G,R)
+217 -  Golden Lynx w/ (G,B)
+218 -  Golden Lynx w/ (R,B)
+219 -  Golden Lynx w/ (G,R,B)
+220 -  Leon w/ rocket launcher
+221 -  Leon w/ shotgun
+222 -  Leon w/ handgun
+223 -  Ashley Graham
+224 -  Luis Sera
+225 -  Don Jose
+226 -  Don Diego
+227 -  Don Esteban
+228 -  Don Manuel
+229 -  Dr. Salvador
+230 -  Merchant
+231 -  Zealot w/ scythe
+232 -  Zealot w/ shield
+233 -  Zealot w/ bowgun
+234 -  Leader zealot
+235 -  Soldier w/ dynamite
+236 -  Soldier w/ stun-rod
+237 -  Soldier w/ hammer
+238 -  Isabel
+239 -  Maria
+240 -  Ada Wong
+241 -  Bella Sisters
+242 -  Don Pedro
+243 -  J.J.
+244 -  Letter from Ada
+245 -  Luis' Memo 3
+246 -  Paper Airplane
+247 -  Our Plan
+248 -  Luis' Memo 4
+249 -  Krauser's Note
+250 -  Luis' Memo 5
+251 -  Our Mission
+252 -   aaa
+253 -  aaa
+254 -  Tactical Vest
+255 -  aaa

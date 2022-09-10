@@ -142,6 +142,20 @@
                                     <input id="higher-limit" class="input-coordinates higher-limit" type="number">
                                 </div>
                             </div>
+                            <!-- <div class="extra-config type0">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <h5>There are no more known parameters</h5>
+                            </div> -->
                             <!-- <div class="extra-config type1">
                                 <h5>Event config</h5>
                                 <fieldset class="fieldset-definition">
@@ -192,33 +206,259 @@
                                         id="teleport-rotation" type="number" class="input-teleport">
                                 </fieldset>
                             </div> -->
-                            <!-- <div class="extra-config type0">
+                            <!-- <div class="extra-config type2">
                                 <h5>Event config</h5>
                                 <fieldset class="fieldset-definition">
                                     <legend>Definition bytes</legend>
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                    <div>
+                                        <label for="offset73">offset 73</label>
+                                        <input id="offset73" type="number" class="input-definition">
+                                        <label for="offset74">offset 74</label>
+                                        <input id="offset74" type="number" class="input-definition">
+                                    </div>
                                 </fieldset>
                                 <br>
                                 <h5>There are no more known parameters</h5>
                             </div> -->
-                            <div class="extra-config type2">
+                            <!-- <div class="extra-config type4">
                                 <h5>Event config</h5>
                                 <fieldset class="fieldset-definition">
                                     <legend>Definition bytes</legend>
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <br>
-                                    <label for="offset73">offset 73</label>
-                                    <input id="offset73" type="number" class="input-definition">
-                                    <label for="offset74">offset 74</label>
-                                    <input id="offset74" type="number" class="input-definition">
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                    <div>
+                                        <label for="offset73">Enemy group</label>
+                                        <input id="offset73" type="number" class="input-definition">
+                                    </div>
                                 </fieldset>
                                 <br>
+                            </div> -->
+                            <!-- <div class="extra-config type5">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset class="fieldset-message-parameters">
+                                    <legend>Message parameters</legend>
+                                    <label for="message">Message</label>
+                                    <input id="message" type="number" class="input-definition">
+                                    <div class="tooltip">?
+                                        <span class="tooltiptext">This is the message index being read from .MDT
+                                            file, example: "2" means it will show the second message from .MDT
+                                            file.</span>
+                                    </div><br>
+                                    <label for="camera-offset">Camera</label>
+                                    <input id="camera-offset" type="number" class="input-definition">
+                                    <div class="tooltip">?
+                                        <span class="tooltiptext">This is the camera index being read from .CAM
+                                            file, example: "6" means it will trigger the sixth camera from .CAM
+                                            file.</span>
+                                    </div><br>
+                                    <label for="sound-offset">Sound</label>
+                                    <input id="sound-offset" type="number" class="input-definition">
+                                    <div class="tooltip">?
+                                        <span class="tooltiptext">This is the sound index being read from .SND
+                                            file, example: "5" means it will play the fifth sound from .SND
+                                            file.</span>
+                                    </div>
+                                </fieldset>
+                            </div> -->
+                            <!-- <div class="extra-config type8">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <h5>There are no more known parameters</h5>
+                            </div> -->
+                            <!-- <div class="extra-config type11">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition"><br>
+                                        <div class="tooltip">?
+                                            <span class="tooltiptext-left">Known values:<br>08 00 02 24<br><br>
+                                                08: activator<br>00: padding<br>02: object dependent<br>24: box ETS
+                                                index<br><br>Use this config to make events remain active only while an
+                                                enemy or a desctructible object exists. If you change the "02" to "01"
+                                                the event will be attached to an enemy.</span>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <h5>There are no more known parameters</h5>
+                            </div> -->
+                            <!-- <div class="extra-config type14">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <h5>There are no more known parameters</h5>
+                            </div> -->
+                            <!-- <div class="extra-config type16">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset class="fieldset-ladder">
+                                    <legend>Ladder climb config <div class="tooltip">?
+                                            <span class="tooltiptext">These are the coordinates Leon will start the
+                                                climbing animation, they are slightly different from triggerzone
+                                                coordinates.<br><br>You can define the ladder lenght by modifying Ladder
+                                                Steps option.</span>
+                                        </div>
+                                    </legend>
+                                    <div>
+                                        <label for="ladder-x">X Coordinates</label>
+                                        <input id="ladder-x" type="number" class="input-ladder">
+                                        <label for="ladder-y">Y Coordinates</label>
+                                        <input id="ladder-y" type="number" class="input-ladder">
+                                    </div>
+                                    <div>
+                                        <label for="ladder-z">Z Coordinates</label>
+                                        <input id="ladder-z" type="number" class="input-ladder">
+                                        <label title="The angle Leon will be looking when the event triggers"
+                                            for="ladder-rotation">Facing angle</label>
+                                        <input title="The angle Leon will be looking when the event triggers"
+                                            id="ladder-rotation" type="number" class="input-ladder">
+                                    </div>
+                                    <div>
+                                        <label for="ladder-steps">Ladder steps</label>
+                                        <input id="ladder-steps" type="number" class="input-ladder">
+                                    </div>
+                                </fieldset>
+                                <fieldset class="fieldset-ladder-camera-parameters">
+                                    <legend>Camera parameters</legend>
+                                    <div>
+                                        <label for="cam-param1">Unknown</label>
+                                        <input type="number" class="input-ladder-camera" id="cam-param1">
+                                        <label for="cam-param2">Unknown</label>
+                                        <input type="number" class="input-ladder-camera" id="cam-param2">
+                                    </div>
+                                    <div>
+                                        <div class="tooltip">?
+                                            <span class="tooltiptext">This is the index for triggering a camera as soon
+                                                as Leon <b>starts</b> climbing, located at .CAM file.</span>
+                                        </div>
+                                        <label for="cam-param3">Start camera</label>
+                                        <input type="number" class="input-ladder-camera" id="cam-param3">
+                                        <div class="tooltip">?
+                                            <span class="tooltiptext">This is the index for triggering a second camera
+                                                as soon
+                                                as Leon <b>finishes</b> climbing a ladder, located at .CAM file as
+                                                well.</span>
+                                        </div>
+                                        <label for="cam-param4">End camera</label>
+                                        <input type="number" class="input-ladder-camera" id="cam-param4">
+                                    </div>
+                                </fieldset>
+                            </div> -->
+                            <!-- <div class="extra-config type17">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset class="fieldset-item-dependencies">
+                                    <legend>Item selector<div class="tooltip">?
+                                            <span class="tooltiptext">This is a item necessary to make progress in the
+                                                room, usually used to unlock a locked door or pathway.<br><br>You
+                                                can check the complete item list below, with the ID on the left.</span>
+                                        </div>
+                                    </legend>
+                                    <div>
+                                        <label for="item-dependent-id">Item ID</label>
+                                        <input id="item-dependent-id" type="number" class="input-ladder">
+                                    </div>
+                                </fieldset>
+                                <fieldset class="fieldset-object">
+                                    <legend>Item list</legend>
+                                    <object data="resources/item-list.txt" width="300" height="200">
+                                        Not available (if this message shows up, please give me a feedback about it.)
+                                    </object>
+                                </fieldset>
+                            </div> -->
+                            <div class="extra-config type18">
+                                <h5>Event config</h5>
+                                <fieldset class="fieldset-definition">
+                                    <legend>Definition bytes</legend>
+                                    <div>
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                        <input type="number" class="input-definition">
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <fieldset class="fieldset-hide-event">
+                                    <legend>Hide animation config <div class="tooltip">?
+                                            <span class="tooltiptext">These are the coordinates Ashley will start the
+                                                hiding animation, they are different from triggerzone
+                                                coordinates.<br><br>You can define...</span>
+                                        </div>
+                                    </legend>
+                                    <div>
+                                        <label for="hide-event-x">X Coordinates</label>
+                                        <input id="hide-event-x" type="number" class="input-hide-event">
+                                        <label for="hide-event-y">Y Coordinates</label>
+                                        <input id="hide-event-y" type="number" class="input-hide-event">
+                                    </div>
+                                    <div>
+                                        <label for="hide-event-z">Z Coordinates</label>
+                                        <input id="hide-event-z" type="number" class="input-hide-event">
+                                        <label title="The angle Ashley will be looking when the event triggers"
+                                            for="hide-event-rotation">Facing angle</label>
+                                        <input title="The angle Leon will be looking when the event triggers"
+                                            id="hide-event-rotation" type="number" class="input-hide-event">
+                                    </div>
+                                </fieldset>
                                 <h5>There are no more known parameters</h5>
                             </div>
                         </div>

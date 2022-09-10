@@ -27,7 +27,7 @@ function createWindow() {
   mainWindow.loadFile('aev.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -153,4 +153,8 @@ ipcMain.on("openITAtool", () => {
 
 ipcMain.on("openETStool", () => {
   mainWindow.loadFile("ets.html")
+})
+
+ipcMain.on("openAEVtool", () => {
+  mainWindow.loadFile("aev.html")
 })
