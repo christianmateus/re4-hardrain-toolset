@@ -27,7 +27,7 @@ function createWindow() {
   mainWindow.loadFile('aev.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -53,7 +53,6 @@ app.on('activate', () => {
    ================== */
 
 // Function for sending ITA file path
-
 ipcMain.on("openfile", () => {
   dialog.showOpenDialog(mainWindow, {
     filters: [{
@@ -66,23 +65,6 @@ ipcMain.on("openfile", () => {
       // joao = joao.replace(/\\/g, "/") //Used to 
       mainWindow.webContents.send("dialog", joao);
       console.log(joao)
-    })
-})
-
-// Function for sending ETS file path
-
-ipcMain.on("openETSfile", () => {
-  dialog.showOpenDialog(mainWindow, {
-    filters: [{
-      name: "ETS files", extensions: ["ETS"]
-      // name: "All files", extensions: ["*"]
-    }], properties: ["openFile"]
-  })
-    .then((um) => {
-      let ETSfile = um.filePaths.toString();
-      // ETSfile = ETSfile.replace(/\\/g, "/") //Used to 
-      mainWindow.webContents.send("etsFileChannel", ETSfile);
-      console.log(ETSfile)
     })
 })
 
@@ -105,6 +87,23 @@ ipcMain.on("closeITAfile", (e, arg) => {
   mainWindow.loadFile("index.html")
 })
 
+
+// Function for sending ETS file path
+ipcMain.on("openETSfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "ETS files", extensions: ["ETS"]
+      // name: "All files", extensions: ["*"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let ETSfile = um.filePaths.toString();
+      // ETSfile = ETSfile.replace(/\\/g, "/") //Used to 
+      mainWindow.webContents.send("etsFileChannel", ETSfile);
+      console.log(ETSfile)
+    })
+})
+
 // Saving actual ETS file
 ipcMain.on("saveAsETSfile", (e, arg) => {
   dialog.showSaveDialog(mainWindow,
@@ -122,6 +121,27 @@ ipcMain.on("saveAsETSfile", (e, arg) => {
 // Closing ETS file (workaround)
 ipcMain.on("closeETSfile", (e, arg) => {
   mainWindow.loadFile("ets.html")
+})
+
+
+// Function for sending AEV file path
+ipcMain.on("openAEVfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "AEV files", extensions: ["AEV"]
+      // name: "All files", extensions: ["*"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let AEVfile = um.filePaths.toString();
+      mainWindow.webContents.send("aevFileChannel", AEVfile);
+      console.log(AEVfile)
+    })
+})
+
+// Closing AEV file (workaround)
+ipcMain.on("closeAEVfile", (e, arg) => {
+  mainWindow.loadFile("aev.html")
 })
 
 // Quiting application

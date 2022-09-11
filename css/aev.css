@@ -617,20 +617,13 @@ input#sound-offset {
     align-items: center;
 }
 
-.fieldset-hide-event div {
-    width: 45%;
-    margin: 2px;
-    justify-content: center;
-    align-items: center;
-}
-
 .fieldset-hide-event .input-hide-event {
     display: flex;
     margin-bottom: 10px;
     margin-top: 5px;
     margin-right: auto;
     margin-left: auto;
-    width: 60% !important;
+    width: 50% !important;
 }
 
 .fieldset-hide-event legend {
@@ -639,6 +632,46 @@ input#sound-offset {
 
 .fieldset-hide-event .tooltip {
     width: 7%;
+}
+
+.fieldset-grapple-gun {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.fieldset-grapple-gun .input-grapple-gun,
+.fieldset-grapple-gun .input-grapple-destination {
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 50% !important;
+}
+
+.fieldset-damage-event {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.fieldset-damage-event .input-damage-event {
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 50% !important;
+}
+
+.fieldset-damage-event .tooltiptext-left {
+    width: 300px;
+    top: -103px;
 }
 
 /* =================== 
