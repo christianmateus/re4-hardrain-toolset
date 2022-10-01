@@ -1,9 +1,10 @@
 * {
-    font-family: Verdana;
+    font-family: 'Segoe UI';
     margin: 0;
     border: 0;
     padding: 0;
     box-sizing: border-box;
+    outline: none;
 }
 
 /* Cores da ferramenta */
@@ -11,13 +12,8 @@
     --main-color: #1c4e51;
     --purple: #1c4e51;
     --lightpurple: #3c6e71;
-    --silver: #fff;
-    --darken: #353535;
-}
-
-body {
-    background-color: var(--darken);
-
+    --main-background: #fff;
+    --main-foreground: #ddd;
 }
 
 /* ===================== 
@@ -121,13 +117,13 @@ nav hr {
    ===================== */
 #campo-superior {
     width: 100%;
-    height: 40px;
+    height: 60px;
     background-color: var(--purple);
     font-size: 8pt;
     color: #fff;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
 }
 
 .inner-box {
@@ -140,135 +136,60 @@ nav hr {
     width: 40px;
     height: fit-content;
     background-color: #eee;
-    /* font-weight: bold; */
     text-align: center;
     margin-right: 30px;
     outline: none;
 }
 
-#guide,
-#item-list {
-    padding: 4px 7px;
-    border-radius: 5px;
-    border: 0.2px solid rgba(255, 255, 255, .4);
-    background-color: var(--purple);
-    color: #fff;
-    font-weight: bold;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    margin-right: 12px;
-}
-
-#guide:hover,
-#item-list:hover {
-    background-color: var(--lightpurple);
-    cursor: pointer;
-}
-
-#guide:active,
-#item-list:active {
-    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.4);
-}
-
-
 /* ===================== 
-    Conteúdo principal
+    Definições gerais
    ===================== */
-
-table {
-    gap: 3;
-    table-layout: fixed;
-    border-collapse: collapse;
+.win7-btn {
+    margin-right: 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    padding: 3px 15px 3px 15px;
+    background: #f2f2f2;
+    background: linear-gradient(to bottom, #f2f2f2 0%, #ebebeb 42%, #dddddd 47%, #cfcfcf 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#cfcfcf', GradientType=0);
+    transition: all 1s ease-in-out;
+    border: 1px solid #707070;
 }
 
-table thead {
-    background-color: var(--lightpurple);
-    border-radius: 5px;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-
+.win7-btn:hover,
+.win7-btn:focus {
+    outline: 0;
+    background: #eaf6fd;
+    background: linear-gradient(to bottom, #eaf6fd 0%, #d9f0fc 42%, #bee6fd 47%, #bce5fc 58%, #a7d9f5 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#eaf6fd', endColorstr='#a7d9f5', GradientType=0);
+    border: 1px solid #3C7FB1;
+    box-shadow: 0 0 3px #A7D9F5;
 }
 
-table th {
-    background-color: var(--lightpurple);
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    height: 30px;
-    width: 65px;
-    font-size: 9pt;
-    color: #ECF0F1;
+.win7-btn:active {
+    box-shadow: inset 0 -1px 6px rgba(0, 0, 0, 0.2), inset 0 -0.7em #BEE6FD, 0 0 3px #A7D9F5;
 }
 
-table tbody {
-    background-color: var(--silver);
-}
-
-table td {
-    background-color: var(--silver);
+.container-titles {
+    display: flex;
+    background-color: #eee;
+    height: 40px;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
     border-right: 1px solid rgba(0, 0, 0, 0.2);
-    height: 30px;
-    width: 40px;
-    font-size: 8pt;
-    text-align: center;
-    outline: none;
-}
-
-/* table td:focus,
-td:hover {
-    background-color: #6cbec1;
-} */
-
-td>input {
-    font-size: 8pt;
-}
-
-tr {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-/* ===================== 
-    Classes de células
-   ===================== */
-
-.event-title {
-    font-size: 10pt;
-    padding: 6px;
-    color: #eee;
-    font-weight: bold;
-}
-
-.event-title-sec {
-    color: #ccc;
+    justify-content: center;
+    align-items: center;
 }
 
 h5 {
+    font-family: sans-serif;
     font-size: 12pt;
-    margin-bottom: 5px;
-    color: #fff;
+    color: #444;
     font-weight: bold;
-}
-
-label {
-    color: #eee;
-}
-
-legend {
-    color: #afa;
-}
-
-.event-container {
-    width: 900px;
-    background-color: var(--purple);
-}
-
-.event-container fieldset {
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, .1);
-}
-
-.event-container input {
-    border-radius: 2px;
-    height: 20px;
-    width: 50px;
     text-align: center;
+}
+
+h5.noMoreParameters {
+    font-style: italic;
 }
 
 hr {
@@ -277,73 +198,95 @@ hr {
     margin: 4px 2px;
 }
 
-.event-box {
-    display: flex;
+select:hover {
+    background-color: #eee;
 }
 
-.event-bar {
-    background-color: #BD703E;
+fieldset {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
     padding: 10px;
-    cursor: pointer;
+    text-align: center;
+    width: 100%;
+}
+
+legend {
+    color: #000;
+    text-align: left;
+    font-family: sans-serif;
+    font-size: 10pt;
+    font-weight: 400;
+}
+
+fieldset input {
+    font-family: Verdana;
+    text-align: center;
+    height: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+fieldset label {
+    font-size: 9pt;
+    color: #333;
+    user-select: none;
+    outline: none;
+}
+
+fieldset input:focus {
+    border: 1px solid rgba(0, 0, 0, 1);
+    outline: none;
+}
+
+main {
+    display: flex;
+    background-color: #BD703E;
 }
 
 /* ==============
    LEFT SIDE 
    ============== */
 
-.main-config {
-    padding: 10px;
-    width: 60%;
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
+.container-main-config,
+.container-event-config {
+    background-color: var(--main-foreground);
+    padding: 20px;
+    width: 49.999%;
 }
 
-.main-config input {
-    outline: none;
+.container-main-config {
+    padding-right: 10px;
+}
+
+.container-fieldset {
+    margin-bottom: 2px;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: var(--main-background);
 }
 
 #eventId {
     font-size: 12px;
+    margin: 10px 0;
     margin-right: 20px;
-    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 .index {
     height: 20px;
     width: 50px;
-    border-radius: 2px;
-}
-
-fieldset {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 2px;
-    padding: 5px;
-    text-align: center;
-}
-
-.additional-data {
-    margin: 10px 0;
 }
 
 .unknown-data {
-    height: 20px;
     width: 50px;
-    border-radius: 2px;
     margin-right: 5px;
 }
 
 .fieldset-coordinates {
     display: flex;
-    margin: 20px 0;
 }
 
 .fieldset-coordinates input {
     width: 100px;
-}
-
-.main-canvas {
-    background-color: #ccc;
-    height: 140px;
-    width: 340px;
 }
 
 .coordinates-box {
@@ -378,42 +321,46 @@ fieldset {
    RIGHT SIDE 
    ============== */
 
-.extra-config {
-    padding: 10px;
-    width: 40%;
-    border-left: 1px solid rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
+.container-event-config {
+    padding-left: 0;
 }
 
-.extra-config input {
+.event-config {
+    background-color: var(--main-background);
+}
+
+.event-config input {
     outline: none;
 }
 
 .fieldset-definition {
     display: flex;
-    flex-wrap: wrap;
     text-align: center;
     justify-content: space-around;
     padding: 10px;
 }
 
-.fieldset-definition div {
-    margin: 10px 0;
-}
-
 .input-definition {
-    width: 20% !important;
+    width: 15% !important;
     text-align: center;
     margin-right: 5px;
 }
 
+/* EVENT TYPE 1 */
+
+.room-select {
+    margin: 10px 0;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 .fieldset-teleport {
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-evenly;
     padding: 10px;
+}
+
+.fieldset-teleport div {
+    width: 49.99%;
 }
 
 .fieldset-teleport input {
@@ -421,37 +368,43 @@ fieldset {
     margin: 10px;
 }
 
-.fieldset-destination {
-    margin-top: 15px;
+/* EVENT TYPE 2 */
+
+.fieldset-cutscene {
     padding: 10px;
 }
 
-.room-select {
-    margin: 10px 0;
-    font-size: 11px;
-    height: 20px;
-    border-radius: 2px;
+.fieldset-cutscene input {
+    width: 60px;
+    margin-right: 20px;
 }
 
+/* EVENT TYPE 4 */
+
+
+/* EVENT TYPE 5 */
+
 .fieldset-message-parameters {
-    position: relative;
     text-align: center;
 }
 
 .fieldset-message-parameters label {
     margin: 10px 10px;
-    text-align: right;
 }
 
 .fieldset-message-parameters input {
-    margin-top: 20px;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 10px auto;
+}
+
+.fieldset-message-parameters input:first {
+    margin-top: 0;
 }
 
 input#sound-offset {
     margin-left: 12px;
 }
+
+/* TOOLTIP POPUP */
 
 .tooltip {
     position: relative;
@@ -470,8 +423,8 @@ input#sound-offset {
 .tooltiptext {
     visibility: hidden;
     width: 180px;
-    background-color: var(--darken);
-    color: #fff;
+    background-color: #333;
+    color: var(--main-background);
     text-align: center;
     border-radius: 6px;
     padding: 10px;
@@ -503,7 +456,7 @@ input#sound-offset {
 .tooltiptext-left {
     visibility: hidden;
     width: 220px;
-    background-color: var(--darken);
+    background-color: #333;
     color: #fff;
     text-align: center;
     border-radius: 6px;
@@ -521,7 +474,7 @@ input#sound-offset {
     position: absolute;
     top: 50%;
     left: 100%;
-    margin-top: -5px;
+    margin-top: -10px;
     border-width: 5px;
     border-style: solid;
     border-color: transparent transparent transparent black;
@@ -529,6 +482,46 @@ input#sound-offset {
 
 .tooltip:hover .tooltiptext-left {
     visibility: visible;
+}
+
+/* Event 0A - Damage */
+
+.fieldset-damage-event {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.fieldset-damage-event .input-damage-event {
+    display: flex;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 50% !important;
+}
+
+.fieldset-damage-event .tooltiptext-left {
+    width: 300px;
+    top: -103px;
+}
+
+/* Event 0B - Collilsion */
+
+.type11 {
+    text-align: center;
+}
+
+.tooltip-collision-event {
+    margin: 10px 0;
+    width: 8%;
+}
+
+.type11 .tooltiptext-left {
+    width: 300px;
+    top: -122px;
 }
 
 /* Event 10 - Ladder Climb */
@@ -552,7 +545,8 @@ input#sound-offset {
 }
 
 .fieldset-ladder .tooltip {
-    width: 7%;
+    text-align: center;
+    width: 20px;
 }
 
 .input-ladder {
@@ -573,7 +567,6 @@ input#sound-offset {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
     padding: 0;
 }
 
@@ -584,7 +577,7 @@ input#sound-offset {
 }
 
 .fieldset-ladder-camera-parameters div:nth-child(3) {
-    text-align: right;
+    text-align: center;
 }
 
 .fieldset-ladder-camera-parameters .tooltip {
@@ -596,34 +589,25 @@ input#sound-offset {
     margin-bottom: 10px;
 }
 
-.fieldset-object {
-    margin-top: 20px;
-}
+/* Event 11 - Item Dependent */
 
 #item-dependent-id {
     width: 25% !important;
 }
 
 .fieldset-object object {
-    margin-top: 5px;
     color: #fff;
     background-color: #ccc;
 }
 
-.fieldset-hide-event {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-}
+/* Event 12 - Item Dependent */
 
 .fieldset-hide-event .input-hide-event {
-    display: flex;
     margin-bottom: 10px;
     margin-top: 5px;
     margin-right: auto;
     margin-left: auto;
-    width: 50% !important;
+    width: 100px;
 }
 
 .fieldset-hide-event legend {
@@ -631,47 +615,24 @@ input#sound-offset {
 }
 
 .fieldset-hide-event .tooltip {
-    width: 7%;
+    width: 20px;
+    text-align: center;
 }
 
-.fieldset-grapple-gun {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-}
+/* Event 13 - Item Dependent */
 
 .fieldset-grapple-gun .input-grapple-gun,
 .fieldset-grapple-gun .input-grapple-destination {
-    display: flex;
     margin-bottom: 10px;
     margin-top: 5px;
     margin-right: auto;
     margin-left: auto;
-    width: 50% !important;
+    width: 100px;
 }
 
-.fieldset-damage-event {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.fieldset-damage-event .input-damage-event {
-    display: flex;
-    margin-bottom: 10px;
-    margin-top: 5px;
-    margin-right: auto;
-    margin-left: auto;
-    width: 50% !important;
-}
-
-.fieldset-damage-event .tooltiptext-left {
-    width: 300px;
-    top: -103px;
+.fieldset-grapple-gun .tooltip {
+    width: 20px;
+    text-align: center;
 }
 
 /* =================== 

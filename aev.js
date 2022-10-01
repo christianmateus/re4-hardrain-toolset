@@ -50,6 +50,21 @@ var type18 = document.querySelector(".type18");
 var type20 = document.querySelector(".type20");
 var type21 = document.querySelector(".type21");
 
+// Getting elements from definition bytes
+var definitionByte1 = document.querySelector("#def1");
+var definitionByte2 = document.querySelector("#def2");
+var definitionByte3 = document.querySelector("#def3");
+var definitionByte4 = document.querySelector("#def4");
+
+// Getting elements from event type 1
+var teleportXEl = document.querySelector("#teleport-x");
+var teleportYEl = document.querySelector("#teleport-y");
+var teleportZEl = document.querySelector("#teleport-z");
+var teleportFacingAngleEl = document.querySelector("#teleport-rotation");
+
+// Getting elements from event type HIDE
+var xAshley = document.querySelector("#hide-event-x");
+
 // Getting elements for cloneRow function
 var table = document.querySelector("table");
 var tBody = document.querySelector("tbody");
@@ -132,7 +147,7 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     var fd = fs.openSync(filepath); // Opening the file in memory
     var buffer = fs.readFileSync(fd); // Converting file string to buffer (hex)
 
-    let total_event = buffer.readUInt8(6); // Reading number of objects
+    let total_event = buffer.readUInt8(6); // Reading number of objects i < eventIdSelect.length
     countEl.setAttribute("value", total_event);
 
     // Reading table data
@@ -141,21 +156,20 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
 
         // Reading event type
         var getEventType = buffer.readUint8(69);
-        for (i = 0; i < eventIdSelect.length; i++) {
+        for (i = 0; eventIdSelect.options[i].value == getEventType; i++) {
             console.log(eventIdSelect.options[i].value)
             if (eventIdSelect.options[i].value == getEventType) {
                 eventIdSelect.selectedIndex = i;
             }
         }
-        console.log(extraConfig.length);
 
         // Reading event type 1
-        for (i = 0; i < extraConfig.length; i++) {
-            if (extraConfig[i].classList.contains(`type${getEventType}`)) {
-                console.log("aaa")
-                extraConfig[i].classList.remove("hide");
-            }
-        }
+        // for (i = 0; i < extraConfig.length; i++) {
+        //     if (extraConfig[i].classList.contains(`type${getEventType}`)) {
+        //         console.log("aaa")
+        //         extraConfig[i].classList.remove("hide");
+        //     }
+        // }
 
         // Reading index byte
         var getIndex = buffer.readUint8(70);
@@ -195,6 +209,30 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         lowerLimitEl.value = getLowerLimit;
         higherLimitEl.value = getHigherLimit;
 
+        // Reading definition bytes
+        var getDefByte1 = buffer.readUint8(84);
+        var getDefByte2 = buffer.readUint8(85);
+        var getDefByte3 = buffer.readUint8(86);
+        var getDefByte4 = buffer.readUint8(87);
+        definitionByte1.value = getDefByte1;
+        definitionByte2.value = getDefByte2;
+        definitionByte3.value = getDefByte3;
+        definitionByte4.value = getDefByte4;
+
+        // Event type 1
+        var getTeleportX = buffer.readFloatLE(112).toFixed(2);
+        var getTeleportY = buffer.readFloatLE(116).toFixed(2);
+        var getTeleportZ = buffer.readFloatLE(120).toFixed(2);
+        var getFacingAngle = buffer.readFloatLE(124).toFixed(2);
+        teleportXEl.value = getTeleportX;
+        teleportYEl.value = getTeleportY;
+        teleportZEl.value = getTeleportZ;
+        teleportFacingAngleEl.value = getFacingAngle;
+
+        // Event type 2
+        var getXAshley = buffer.readFloatLE(112);
+        xAshley.value = getXAshley;
+
         cloneRow();
     }
 
@@ -207,8 +245,6 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         let cloneSeq = clone.querySelector(".number-sequential");
         cloneSeq.innerText = seq;
 
-
-
         // Reading event type
         let cloneEventTypeSelect = clone.querySelector(".selectEventName");
         let getCloneEventType = buffer.readUint8(69 + chunk);
@@ -220,17 +256,19 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         }
 
         // Reading event type 1
-        if (extraConfig[1].classList.contains(`type${getCloneEventType}`)) {
-            console.log("aaa")
-            extraConfig[1].classList.add("hide");
+        if (extraConfig[0].classList.contains("type1")) {
+            extraConfig[0].classList.add("hide");
         }
 
+        // Reading event type 1
+        // if (extraConfig[1].classList.contains(`type${getCloneEventType}`)) {
+        //     extraConfig[1].classList.add("hide");
+        // }
 
         // Reading event type 1
         let cloneExtraConfigEl = clone.getElementsByClassName("extra-config");
         for (i = 0; i < cloneExtraConfigEl.length; i++) {
             if (cloneExtraConfigEl[i].classList.contains(`type${getCloneEventType}`)) {
-                console.log("aaa")
                 cloneExtraConfigEl[i].classList.remove("hide");
             }
         }
@@ -304,6 +342,26 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
                 eventBox.classList.add("hide");
             }
         })
+
+        // Reading definition bytes
+        let cloneDefinitionByte1 = clone.querySelector("#def1")
+        let cloneDefinitionByte2 = clone.querySelector("#def2")
+        let cloneDefinitionByte3 = clone.querySelector("#def3")
+        let cloneDefinitionByte4 = clone.querySelector("#def4")
+
+        var getCloneDefByte1 = buffer.readUint8(84 + chunk);
+        var getCloneDefByte2 = buffer.readUint8(85 + chunk);
+        var getCloneDefByte3 = buffer.readUint8(86 + chunk);
+        var getCloneDefByte4 = buffer.readUint8(87 + chunk);
+
+        cloneDefinitionByte1.value = getCloneDefByte1;
+        cloneDefinitionByte2.value = getCloneDefByte2;
+        cloneDefinitionByte3.value = getCloneDefByte3;
+        cloneDefinitionByte4.value = getCloneDefByte4;
+
+        let clonexAshley = clone.querySelector("#hide-event-x");
+        var getCloneXAshley = buffer.readFloatLE(112 + chunk);
+        clonexAshley.value = getCloneXAshley;
 
         tBody.appendChild(clone); // Appending row to the end of table
 

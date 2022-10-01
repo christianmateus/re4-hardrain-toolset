@@ -2,595 +2,507 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/aev.css">
-    <title>AEV Tool</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/aev.css">
+   <title>AEV Tool</title>
 </head>
 
 <body>
-    <nav id="menu-container">
-        <div class="dropdown">
-            <button class="menu-buttons" id="file">File</button>
-            <div class="dropdown-content">
-                <button id="openAEVfile" class="menu-buttons"><img src="images/open.png"> Open AEV file</button>
-                <button id="closeAEVfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
-                <hr>
-                <button id="saveAEVfile" class="menu-buttons"><img src="images/save.png"> Save AEV file</button>
-                <button id="saveAEVas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
-                <hr>
-                <button id="quitApp" class="menu-buttons">Quit</button>
-            </div>
-        </div>
-        <!-- <div class="dropdown">
+   <nav id="menu-container">
+      <div class="dropdown">
+         <button class="menu-buttons" id="file">File</button>
+         <div class="dropdown-content">
+            <button id="openAEVfile" class="menu-buttons"><img src="images/open.png"> Open AEV file</button>
+            <button id="closeAEVfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <hr>
+            <button id="saveAEVfile" class="menu-buttons"><img src="images/save.png"> Save AEV file</button>
+            <button id="saveAEVas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <hr>
+            <button id="quitApp" class="menu-buttons">Quit</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="edit">Edit</button>
+         <div class="dropdown-content">
+            <button id="addEntry" class="menu-buttons"><img src="images/add.png"> Add new event</button>
+            <button id="removeEntry" class="menu-buttons"><img src="images/remove.png"> Remove event</button>
+            <hr>
+            <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
+            <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
+            <hr>
+            <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
+            <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
+         </div>
+      </div>
+      </div>
+      <!-- <div class="dropdown">
             <button class="menu-buttons" id="edit">Edit</button>
             <div class="dropdown-content">
                 <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
                 <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
             </div>
         </div> -->
-        <!-- <div class="dropdown">
-            <button class="menu-buttons" id="options">Options</button>
-            <div class="dropdown-content">
-                <button class="menu-buttons">Language</button>
-                <button class="menu-buttons">Theme</button>
+      <div class="dropdown">
+         <button class="menu-buttons" id="options">Options</button>
+         <div class="dropdown-content">
+            <button class="menu-buttons"><img src="images/language.png"> Language</button>
+            <button class="menu-buttons"><img src="images/theme.png"> Theme</button>
+         </div>
+      </div>
+      <div class="hide" id="fileSaved">File saved successfully!</div>
+      <div id="control-window">
+         <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+               src="./images/main-menu.png"></button>
+         <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+               src="./images/minimize.png"></button>
+         <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+               src="./images/expand-window.png"></button>
+         <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+               src="./images/close-window.png"></button>
+      </div>
+   </nav>
+   <header>
+      <div id="campo-superior">
+         <div class="inner-box">
+            <label for="header-filename">File name:</label>
+            <input id="header-filename" type="text" readonly value="">
+         </div>
+         <div class="inner-box">
+            <label for="count">Total Events:</label>
+            <input id="count" type="text" readonly value="">
+         </div>
+         <div class="inner-box">
+            <!-- <input id="item-list" type="button" value="Item List"> -->
+         </div>
+         <!-- <button hidden class="win7-btn">Botao</button> -->
+      </div>
+   </header>
+   <!-- PROGRAM DATA STARTS -->
+   <main>
+      <div class="container-main-config">
+         <div class="container-fieldset">
+            <div class="container-titles">
+               <h5>Main Config</h5>
             </div>
-        </div> -->
-        <div class="hide" id="fileSaved">File saved successfully!</div>
-        <div id="control-window">
-            <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
-                    src="./images/main-menu.png"></button>
-            <button title="Minimize" id="minimize" class="control-buttons minimize"><img
-                    src="./images/minimize.png"></button>
-            <button title="Maximize" id="maximize" class="control-buttons maximize"><img
-                    src="./images/expand-window.png"></button>
-            <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
-                    src="./images/close-window.png"></button>
-        </div>
-    </nav>
-    <header>
-        <div id="campo-superior">
-            <div class="inner-box">
-                <label for="count">Total Events:</label>
-                <input id="count" type="text" readonly value="">
+            <br>
+            <fieldset class="fieldset-primary">
+               <legend>General</legend>
+               <label for="eventId">Event Type</label>
+               <select id="eventId" class="select selectEventName">
+                  <option value="0">General Purpose</option>
+                  <option value="1">Door Teleport</option>
+                  <option value="2">Cutscene</option>
+                  <option value="4">Enemy Group Trigger</option>
+                  <option value="5">Message</option>
+                  <option value="8">Typewriter Save</option>
+                  <option value="10">Damage Event</option>
+                  <option value="11">Temporary Collision</option>
+                  <option value="14">Crouch</option>
+                  <option value="16">Fixed Ladder Climb</option>
+                  <option value="17">Item Dependencies</option>
+                  <option value="18">HIDE Ashley</option>
+                  <option value="20">Elevators</option>
+                  <option value="21">Grapple Gun (Ada)</option>
+               </select>
+               <label for="index">Index</label>
+               <input id="index" class="index" type="number">
+            </fieldset>
+         </div>
+         <div class="container-fieldset">
+            <div class="triggerzone">
+               <fieldset class="fieldset-coordinates">
+                  <legend>Triggerzone Coordinates</legend>
+                  <div class="coordinates-box">
+                     <label for="top-leftX">Top Left X</label>
+                     <input id="top-leftX" class="input-coordinates top-leftX" type="number">
+                     <label for="top-leftZ">Top Left Z</label>
+                     <input id="top-leftZ" class="input-coordinates top-leftZ" type="number">
+                  </div>
+                  <div class="coordinates-box">
+                     <label for="top-rightX">Top Right X</label>
+                     <input id="top-rightX" class="input-coordinates top-rightX" type="number">
+                     <label for="top-rightZ">Top Right Z</label>
+                     <input id="top-rightZ" class="input-coordinates top-rightZ" type="number">
+                  </div>
+                  <div class="coordinates-box">
+                     <label for="bottom-leftX">Bottom Left X</label>
+                     <input id="bottom-leftX" class="input-coordinates bottom-leftX" type="number">
+                     <label for="bottom-leftZ">Bottom Left Z</label>
+                     <input id="bottom-leftZ" class="input-coordinates bottom-leftZ" type="number">
+                  </div>
+                  <div class="coordinates-box">
+                     <label for="bottom-rightX">Bottom Right X</label>
+                     <input id="bottom-rightX" class="input-coordinates bottom-rightX" type="number">
+                     <label for="bottom-rightZ">Bottom Right Z</label>
+                     <input id="bottom-rightZ" class="input-coordinates bottom-rightZ" type="number">
+                  </div>
+               </fieldset>
+               <br>
+               <fieldset class="fieldset-limits">
+                  <legend>Lower and Higher Limits</legend>
+                  <label for="lower-limit">Lower Limit</label>
+                  <input id="lower-limit" class="input-coordinates lower-limit" type="number">
+                  <label for="higher-limit">Higher Limit</label>
+                  <input id="higher-limit" class="input-coordinates higher-limit" type="number">
+               </fieldset>
             </div>
-            <div class="inner-box">
-                <!-- <input id="guide" type="button" value="Guide"> -->
+         </div>
+         <div class="container-fieldset">
+            <fieldset class="additional-data">
+               <legend>Additional data
+                  <div class="tooltip">?
+                     <span class="tooltiptext">On "Reaction time" you can define how long
+                        will it take for Leon to react to the damage, value varies from 0 to
+                        255.<br><br>On "Damage amount" means how much damage will it
+                        deal, value varies from 0 to 65000.</span>
+                  </div>
+               </legend>
+               <label for="unk1">Unknown 1</label>
+               <input id="unk1" class="unknown-data unk1" type="number">
+               <label for="unk2">Unknown 2</label>
+               <input id="unk2" class="unknown-data unk2" type="number">
+               <label for="unk3">Unknown 3</label>
+               <input id="unk3" class="unknown-data unk3" type="number">
+            </fieldset>
+         </div>
+      </div>
+      <!-- EVENT CONFIG -->
+      <div class="container-event-config">
+         <div class="container-fieldset">
+            <div class="container-titles">
+               <h5>Event Config</h5>
             </div>
-            <div class="inner-box">
-                <!-- <input id="item-list" type="button" value="Item List"> -->
+            <br>
+            <fieldset class="fieldset-definition">
+               <legend>Definition bytes</legend>
+               <input id="def1" type="number" class="input-definition def1">
+               <input id="def2" type="number" class="input-definition def2">
+               <input id="def3" type="number" class="input-definition def3">
+               <input id="def4" type="number" class="input-definition def4">
+            </fieldset>
+         </div>
+         <!-- Event: General Purpose -->
+         <div class="event-config hide type0">
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Door Teleport -->
+         <div class="event-config hide type1">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-destination">
+                  <legend>Destination room</legend>
+                  <select id="room-select" class="room-select">
+                     <optgroup label="Village Rooms">
+                        <option value="r100">r100 - Starting room</option>
+                        <option value="r101">r101 - The main village</option>
+                        <option value="r102">r102 - The underground area</option>
+                        <option value="r103">r103 - Farm after main village</option>
+                        <option value="r104">r104 - The area you wake up in with Luis</option>
+                        <option value="r105">r105 - The chief's house</option>
+                        <option value="r106">r106 - Area with first boulder</option>
+                        <option value="r107">r107 - The area after using the hexagon pieces</option>
+                        <option value="r108">r108 - The graveyard</option>
+                        <option value="r109">r109 - The El Gigante area</option>
+                        <option value="r10a">r10a - The swamp</option>
+                        <option value="r10b">r10b - Del Lago area</option>
+                        <option value="r10c">r10c - Area past Del Lago - Waterfall</option>
+                        <option value="r10d">r10d - Merchant cave in Del Lago area</option>
+                        <option value="r10e">r10e - The save room in the El Gig area</option>
+                        <option value="r10f">r10f - The lifts</option>
+                     </optgroup>
+                     <optgroup label="Castle Rooms">
+                        <option value="">r200</option>
+                     </optgroup>
+                  </select>
+               </fieldset>
             </div>
-        </div>
-    </header>
-    <!-- TABLE DATA STARTS -->
-    <table>
-        <thead>
-            <tr>
-                <th colspan="8" class="tableHeader">Event List</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="tableRow">
-                <td class="number-sequential">01</td>
-                <td>
-                    <div class="event-container">
-                        <div class="event-bar">
-                            <span class="event-title">Event <span class="number-sequential"></span>: Door
-                                Teleport</span>
-                            <span class="event-title-sec">click to expand/hide</span>
-                        </div>
-                        <div class=" event-box">
-                            <div class="main-config">
-                                <h5>Main Config</h5>
-                                <fieldset class="fieldset-primary">
-                                    <label for="eventId">Event Type</label>
-                                    <select id="eventId" class="select selectEventName">
-                                        <option value="0">General Purpose</option>
-                                        <option value="1">Door Teleport</option>
-                                        <option value="2">Cutscene</option>
-                                        <option value="4">Enemy Group Trigger</option>
-                                        <option value="5">Message</option>
-                                        <option value="8">Typewriter Save</option>
-                                        <option value="10">Damage Event</option>
-                                        <option value="11">Temporary Collision</option>
-                                        <option value="14">Crouch</option>
-                                        <option value="16">Fixed Ladder Climb</option>
-                                        <option value="17">Item Dependencies</option>
-                                        <option value="18">HIDE Ashley</option>
-                                        <option value="20">Elevators</option>
-                                        <option value="21">Grapple Gun (Ada)</option>
-                                    </select>
-                                    <label for="index">Index</label>
-                                    <input id="index" class="index" type="number">
-                                </fieldset>
-                                <fieldset class="additional-data">
-                                    <legend>Additional data</legend>
-                                    <label for="unk1">Unknown 1</label>
-                                    <input id="unk1" class="unknown-data unk1" type="number">
-                                    <label for="unk2">Unknown 2</label>
-                                    <input id="unk2" class="unknown-data unk2" type="number">
-                                    <label for="unk3">Unknown 3</label>
-                                    <input id="unk3" class="unknown-data unk3" type="number">
-                                </fieldset>
-                                <div class="triggerzone">
-                                    <h5>Triggerzone Area</h5>
-                                    <canvas class="main-canvas"></canvas>
-                                    <fieldset class="fieldset-coordinates">
-                                        <legend>Triggerzone Coordinates</legend>
-                                        <div class="coordinates-box">
-                                            <label for="top-leftX">Top Left X</label>
-                                            <input id="top-leftX" class="input-coordinates top-leftX" type="number">
-                                            <label for="top-leftZ">Top Left Z</label>
-                                            <input id="top-leftZ" class="input-coordinates top-leftZ" type="number">
-                                        </div>
-                                        <div class="coordinates-box">
-                                            <label for="top-rightX">Top Right X</label>
-                                            <input id="top-rightX" class="input-coordinates top-rightX" type="number">
-                                            <label for="top-rightZ">Top Right Z</label>
-                                            <input id="top-rightZ" class="input-coordinates top-rightZ" type="number">
-                                        </div>
-                                        <div class="coordinates-box">
-                                            <label for="bottom-leftX">Bottom Left X</label>
-                                            <input id="bottom-leftX" class="input-coordinates bottom-leftX"
-                                                type="number">
-                                            <label for="bottom-leftZ">Bottom Left Z</label>
-                                            <input id="bottom-leftZ" class="input-coordinates bottom-leftZ"
-                                                type="number">
-                                        </div>
-                                        <div class="coordinates-box">
-                                            <label for="bottom-rightX">Bottom Right X</label>
-                                            <input id="bottom-rightX" class="input-coordinates bottom-rightX"
-                                                type="number">
-                                            <label for="bottom-rightZ">Bottom Right Z</label>
-                                            <input id="bottom-rightZ" class="input-coordinates bottom-rightZ"
-                                                type="number">
-                                        </div>
-                                    </fieldset>
-                                    <label for="lower-limit">Lower Limit</label>
-                                    <input id="lower-limit" class="input-coordinates lower-limit" type="number">
-                                    <label for="higher-limit">Higher Limit</label>
-                                    <input id="higher-limit" class="input-coordinates higher-limit" type="number">
-                                </div>
-                            </div>
-                            <!-- Event: General Purpose -->
-                            <div class="extra-config hide type0">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <h5>There are no more known parameters</h5>
-                            </div>
-                            <!-- Event: Door Teleport -->
-                            <div class="extra-config hide type1">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                    <input type="number" class="input-definition">
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-destination">
-                                    <legend>Destination room</legend>
-                                    <select id="room-select" class="room-select">
-                                        <optgroup label="Village Rooms">
-                                            <option value="r100">r100 - Starting room</option>
-                                            <option value="r101">r101 - The main village</option>
-                                            <option value="r102">r102 - The underground area</option>
-                                            <option value="r103">r103 - Farm after main village</option>
-                                            <option value="r104">r104 - The area you wake up in with Luis</option>
-                                            <option value="r105">r105 - The chief's house</option>
-                                            <option value="r106">r106 - Area with first boulder</option>
-                                            <option value="r107">r107 - The area after using the hexagon pieces</option>
-                                            <option value="r108">r108 - The graveyard</option>
-                                            <option value="r109">r109 - The El Gigante area</option>
-                                            <option value="r10a">r10a - The swamp</option>
-                                            <option value="r10b">r10b - Del Lago area</option>
-                                            <option value="r10c">r10c - Area past Del Lago - Waterfall</option>
-                                            <option value="r10d">r10d - Merchant cave in Del Lago area</option>
-                                            <option value="r10e">r10e - The save room in the El Gig area</option>
-                                            <option value="r10f">r10f - The lifts</option>
-                                        </optgroup>
-                                        <optgroup label="Castle Rooms">
-                                            <option value="">r200</option>
-                                        </optgroup>
-                                    </select>
-                                </fieldset>
-                                <fieldset class="fieldset-teleport">
-                                    <legend>Teleport coordinates</legend>
-                                    <label for="teleport-x">X Coordinates</label>
-                                    <input id="teleport-x" type="number" class="input-teleport">
-                                    <label for="teleport-y">Y Coordinates</label>
-                                    <input id="teleport-y" type="number" class="input-teleport">
-                                    <label for="teleport-z">Z Coordinates</label>
-                                    <input id="teleport-z" type="number" class="input-teleport">
-                                    <label title="The angle Leon will be looking after room loads"
-                                        for="teleport-rotation">Facing angle</label>
-                                    <input title="The angle Leon will be looking after room loads"
-                                        id="teleport-rotation" type="number" class="input-teleport">
-                                </fieldset>
-                            </div>
-                            <!-- Event: Cutscene -->
-                            <div class="extra-config hide type2">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                    <div>
-                                        <label for="offset73">offset 73</label>
-                                        <input id="offset73" type="number" class="input-definition">
-                                        <label for="offset74">offset 74</label>
-                                        <input id="offset74" type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <h5>There are no more known parameters</h5>
-                            </div>
-                            <!-- Event: Enemy Group Trigger -->
-                            <div class="extra-config hide type4">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                    <div>
-                                        <label for="offset73">Enemy group</label>
-                                        <input id="offset73" type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                            </div>
-                            <!-- Event: Message -->
-                            <div class="extra-config hide type5">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-message-parameters">
-                                    <legend>Message parameters</legend>
-                                    <label for="message">Message</label>
-                                    <input id="message" type="number" class="input-definition">
-                                    <div class="tooltip">?
-                                        <span class="tooltiptext">This is the message index being read from .MDT
-                                            file, example: "2" means it will show the second message from .MDT
-                                            file.</span>
-                                    </div><br>
-                                    <label for="camera-offset">Camera</label>
-                                    <input id="camera-offset" type="number" class="input-definition">
-                                    <div class="tooltip">?
-                                        <span class="tooltiptext">This is the camera index being read from .CAM
-                                            file, example: "6" means it will trigger the sixth camera from .CAM
-                                            file.</span>
-                                    </div><br>
-                                    <label for="sound-offset">Sound</label>
-                                    <input id="sound-offset" type="number" class="input-definition">
-                                    <div class="tooltip">?
-                                        <span class="tooltiptext">This is the sound index being read from .SND
-                                            file, example: "5" means it will play the fifth sound from .SND
-                                            file.</span>
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <!-- Event: Typewriter Save -->
-                            <div class="extra-config hide type8">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <h5>There are no more known parameters</h5>
-                            </div>
-                            <!-- Event: Temporary Collision -->
-                            <div class="extra-config hide type11">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition"><br>
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext-left">Known values:<br>08 00 02 24<br><br>
-                                                08: activator<br>00: padding<br>02: object dependent<br>24: box ETS
-                                                index<br><br>Use this config to make events remain active only while an
-                                                enemy or a desctructible object exists. If you change the "02" to "01"
-                                                the event will be attached to an enemy.</span>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <h5>There are no more known parameters</h5>
-                            </div>
-                            <!-- Event: Crouch -->
-                            <div class="extra-config hide type14">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <h5>There are no more known parameters</h5>
-                            </div>
-                            <!-- Event: Ladder Climb -->
-                            <div class="extra-config hide type16">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-ladder">
-                                    <legend>Ladder climb config <div class="tooltip">?
-                                            <span class="tooltiptext">These are the coordinates Leon will start the
-                                                climbing animation, they are slightly different from triggerzone
-                                                coordinates.<br><br>You can define the ladder lenght by modifying Ladder
-                                                Steps option.</span>
-                                        </div>
-                                    </legend>
-                                    <div>
-                                        <label for="ladder-x">X Coordinates</label>
-                                        <input id="ladder-x" type="number" class="input-ladder">
-                                        <label for="ladder-y">Y Coordinates</label>
-                                        <input id="ladder-y" type="number" class="input-ladder">
-                                    </div>
-                                    <div>
-                                        <label for="ladder-z">Z Coordinates</label>
-                                        <input id="ladder-z" type="number" class="input-ladder">
-                                        <label title="The angle Leon will be looking when the event triggers"
-                                            for="ladder-rotation">Facing angle</label>
-                                        <input title="The angle Leon will be looking when the event triggers"
-                                            id="ladder-rotation" type="number" class="input-ladder">
-                                    </div>
-                                    <div>
-                                        <label for="ladder-steps">Ladder steps</label>
-                                        <input id="ladder-steps" type="number" class="input-ladder">
-                                    </div>
-                                </fieldset>
-                                <fieldset class="fieldset-ladder-camera-parameters">
-                                    <legend>Camera parameters</legend>
-                                    <div>
-                                        <label for="cam-param1">Unknown</label>
-                                        <input type="number" class="input-ladder-camera" id="cam-param1">
-                                        <label for="cam-param2">Unknown</label>
-                                        <input type="number" class="input-ladder-camera" id="cam-param2">
-                                    </div>
-                                    <div>
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext">This is the index for triggering a camera as soon
-                                                as Leon <b>starts</b> climbing, located at .CAM file.</span>
-                                        </div>
-                                        <label for="cam-param3">Start camera</label>
-                                        <input type="number" class="input-ladder-camera" id="cam-param3">
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext">This is the index for triggering a second camera
-                                                as soon
-                                                as Leon <b>finishes</b> climbing a ladder, located at .CAM file as
-                                                well.</span>
-                                        </div>
-                                        <label for="cam-param4">End camera</label>
-                                        <input type="number" class="input-ladder-camera" id="cam-param4">
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <!-- Event: Item Dependencies -->
-                            <div class="extra-config hide type17">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-item-dependencies">
-                                    <legend>Item selector<div class="tooltip">?
-                                            <span class="tooltiptext">This is a item necessary to make progress in the
-                                                room, usually used to unlock a locked door or pathway.<br><br>You
-                                                can check the complete item list below, with the ID on the left.</span>
-                                        </div>
-                                    </legend>
-                                    <div>
-                                        <label for="item-dependent-id">Item ID</label>
-                                        <input id="item-dependent-id" type="number" class="input-ladder">
-                                    </div>
-                                </fieldset>
-                                <fieldset class="fieldset-object">
-                                    <legend>Item list</legend>
-                                    <object data="resources/item-list.txt" width="300" height="200">
-                                        Not available (if this message shows up, please give me a feedback about it.)
-                                    </object>
-                                </fieldset>
-                            </div>
-                            <!-- Event: HIDE Ashley -->
-                            <div class="extra-config hide type18">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-hide-event">
-                                    <legend>Hide animation config
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext">These are the coordinates Ashley will be sent to
-                                                search for trash bin model.<br><br>It is a funny thing to mess with,
-                                                although not necessary to edit.</span>
-                                        </div>
-                                    </legend>
-                                    <label for="hide-event-x">X Coordinates</label>
-                                    <input id="hide-event-x" type="number" class="input-hide-event">
-                                    <label for="hide-event-y">Y Coordinates</label>
-                                    <input id="hide-event-y" type="number" class="input-hide-event">
-                                    <label for="hide-event-z">Z Coordinates</label>
-                                    <input id="hide-event-z" type="number" class="input-hide-event">
-                                </fieldset>
-                            </div>
-                            <!-- Event: Elevators -->
-                            <div class="extra-config hide type20">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <h5>There are no more known parameters</h5>
-                            </div>
-                            <!-- Event: Grapple Gun -->
-                            <div class="extra-config hide type21">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-grapple-gun">
-                                    <legend>Grapple gun shot config
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext">Here you define where Ada will shoot the
-                                                grapple from.</span>
-                                        </div>
-                                    </legend>
-                                    <label for="grapple-gun-x">X Coordinates</label>
-                                    <input id="grapple-gun-x" type="number" class="input-grapple-gun">
-                                    <label for="grapple-gun-y">Y Coordinates</label>
-                                    <input id="grapple-gun-y" type="number" class="input-grapple-gun">
-                                    <label for="grapple-gun-z">Z Coordinates</label>
-                                    <input id="grapple-gun-z" type="number" class="input-grapple-gun">
-                                </fieldset>
-                                <fieldset class="fieldset-grapple-gun">
-                                    <legend>Destination config
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext">Here you define where Ada will land after
-                                                shooting.</span>
-                                        </div>
-                                    </legend>
-                                    <label for="grapple-destination-x">X Coordinates</label>
-                                    <input id="grapple-destination-x" type="number" class="input-grapple-destination">
-                                    <label for="grapple-destination-y">Y Coordinates</label>
-                                    <input id="grapple-destination-y" type="number" class="input-grapple-destination">
-                                    <label for="grapple-destination-z">Z Coordinates</label>
-                                    <input id="grapple-destination-z" type="number" class="input-grapple-destination">
-                                </fieldset>
-                            </div>
-                            <!-- Event: Damage -->
-                            <div class="extra-config hide type10">
-                                <h5>Event config</h5>
-                                <fieldset class="fieldset-definition">
-                                    <legend>Definition bytes</legend>
-                                    <div>
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                        <input type="number" class="input-definition">
-                                    </div>
-                                </fieldset>
-                                <br>
-                                <fieldset class="fieldset-damage-event">
-                                    <legend>Damage event config
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext">On "Reaction time" you can define how long
-                                                will it take for Leon to react to the damage, value varies from 0 to
-                                                255.<br><br>On "Damage amount" means how much damage will it
-                                                deal, value varies from 0 to 65000.</span>
-                                        </div>
-                                    </legend>
-                                    <div>
-                                        <label for="reaction-time">Reaction time</label>
-                                        <input id="reaction-time" type="number" class="input-damage-event">
-                                        <label for="damage-amount">Damage amount</label>
-                                        <input id="damage-amount" type="number" class="input-damage-event">
-                                    </div>
-                                </fieldset>
-                                <fieldset class="fieldset-damage-event">
-                                    <legend>Animation config
-                                        <div class="tooltip">?
-                                            <span class="tooltiptext-left">Here you can make different combinations to
-                                                find animations to the damage event.<br>On "Damage origin" it
-                                                kinda makes Leon rotate to the pivot center.<br><br>Known
-                                                animation types:<br>00: front damage<br>01: upper damage<br>02:
-                                                stomach damage<br>03: back damage<br>06: death<br>07: launched
-                                                back<br>09: cover explosion</span>
-                                        </div>
-                                    </legend>
-                                    <div>
-                                        <label for="animation-type">Animation type</label>
-                                        <input id="animation-type" type="number" class="input-damage-event">
-                                        <label for="damage-origin">Damage origin</label>
-                                        <input id="damage-origin" type="number" class="input-damage-event">
-                                    </div>
-                                </fieldset>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <!-- <textarea id="testes" cols="40" rows="10">
-
-    </textarea> -->
-    <script>
-        require('./aev.js');
-    </script>
+            <div class="container-fieldset">
+               <fieldset class="fieldset-teleport">
+                  <legend>Teleport coordinates</legend>
+                  <div>
+                     <label for="teleport-x">X Coordinates</label>
+                     <input id="teleport-x" type="number" class="input-teleport">
+                     <label for="teleport-y">Y Coordinates</label>
+                     <input id="teleport-y" type="number" class="input-teleport">
+                  </div>
+                  <div>
+                     <label for="teleport-z">Z Coordinates</label>
+                     <input id="teleport-z" type="number" class="input-teleport">
+                     <label title="The angle Leon will be looking after room loads" for="teleport-rotation">Facing
+                        angle &nbsp;&nbsp;</label>
+                     <input title="The angle Leon will be looking after room loads" id="teleport-rotation" type="number"
+                        class="input-teleport">
+                  </div>
+               </fieldset>
+            </div>
+         </div>
+         <!-- Event: Cutscene -->
+         <div class="event-config hide type2">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-cutscene">
+                  <legend>Additional bytes</legend>
+                  <label for="offset73">offset 73</label>
+                  <input id="offset73" type="number" class="input-cutscene">
+                  <label for="offset74">offset 74</label>
+                  <input id="offset74" type="number" class="input-cutscene">
+               </fieldset>
+            </div>
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Enemy Group Trigger -->
+         <div class="event-config hide type4">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-enemy-group">
+                  <legend>Additional parameter</legend>
+                  <label for="offset73">Enemy group</label>
+                  <input id="offset73" type="number" class="input-definition">
+               </fieldset>
+            </div>
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Message -->
+         <div class="event-config hide type5">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-message-parameters">
+                  <legend>Message parameters</legend>
+                  <label for="message">Message</label>
+                  <input id="message" type="number" class="input-definition">
+                  <div class="tooltip">?
+                     <span class="tooltiptext">This is the message index being read from .MDT
+                        file, example: "2" means it will show the second message from .MDT
+                        file.</span>
+                  </div><br>
+                  <label for="camera-offset">Camera &nbsp;</label>
+                  <input id="camera-offset" type="number" class="input-definition">
+                  <div class="tooltip">?
+                     <span class="tooltiptext">This is the camera index being read from .CAM
+                        file, example: "6" means it will trigger the sixth camera from .CAM
+                        file.</span>
+                  </div><br>
+                  <label for="sound-offset">Sound</label>
+                  <input id="sound-offset" type="number" class="input-definition">
+                  <div class="tooltip">?
+                     <span class="tooltiptext">This is the sound index being read from .SND
+                        file, example: "5" means it will play the fifth sound from .SND
+                        file.</span>
+                  </div>
+               </fieldset>
+            </div>
+         </div>
+         <!-- Event: Typewriter Save -->
+         <div class="event-config hide type8">
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Damage -->
+         <div class="event-config hide type10">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-damage-event">
+                  <legend>Damage event config
+                     <div class="tooltip">?
+                        <span class="tooltiptext">On "Reaction time" you can define how long
+                           will it take for Leon to react to the damage, value varies from 0 to
+                           255.<br><br>On "Damage amount" means how much damage will it
+                           deal, value varies from 0 to 65000.</span>
+                     </div>
+                  </legend>
+                  <div>
+                     <label for="reaction-time">Reaction time</label>
+                     <input id="reaction-time" type="number" class="input-damage-event">
+                  </div>
+                  <div>
+                     <label for="damage-amount">Damage amount</label>
+                     <input id="damage-amount" type="number" class="input-damage-event">
+                  </div>
+               </fieldset>
+            </div>
+            <div class="container-fieldset">
+               <fieldset class="fieldset-damage-event">
+                  <legend>Animation config
+                     <div class="tooltip">?
+                        <span class="tooltiptext-left">Here you can make different combinations to
+                           find animations to the damage event.<br>On "Damage origin" it
+                           kinda makes Leon rotate to the pivot center.<br><br>Known
+                           animation types:<br>00: front damage<br>01: upper damage<br>02:
+                           stomach damage<br>03: back damage<br>06: death<br>07: launched
+                           back<br>09: cover explosion</span>
+                     </div>
+                  </legend>
+                  <div>
+                     <label for="animation-type">Animation type</label>
+                     <input id="animation-type" type="number" class="input-damage-event">
+                  </div>
+                  <div>
+                     <label for="damage-origin">Damage origin</label>
+                     <input id="damage-origin" type="number" class="input-damage-event">
+                  </div>
+               </fieldset>
+            </div>
+         </div>
+         <!-- Event: Temporary Collision -->
+         <div class="event-config hide type11">
+            <div class="tooltip tooltip-collision-event">!!!
+               <span class="tooltiptext-left">For this event type you can make
+                  good use of the definition bytes.<br><br>Known
+                  values:<br>08 00 02 24<br><br>
+                  08: activator<br>00: padding<br>02: object dependent<br>24: box ETS
+                  index<br><br>Use this config to make events remain active only while an
+                  enemy or a desctructible object exists. If you change the "02" to "01"
+                  the event will be attached to an enemy.</span>
+            </div>
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Crouch -->
+         <div class="event-config hide type14">
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Ladder Climb -->
+         <div class="event-config hide type16">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-ladder">
+                  <legend>Ladder climb config <div class="tooltip">?
+                        <span class="tooltiptext">These are the coordinates Leon will start the
+                           climbing animation, they are slightly different from triggerzone
+                           coordinates.<br><br>You can define the ladder lenght by modifying Ladder
+                           Steps option.</span>
+                     </div>
+                  </legend>
+                  <div>
+                     <label for="ladder-x">X Coordinates</label>
+                     <input id="ladder-x" type="number" class="input-ladder">
+                     <label for="ladder-y">Y Coordinates</label>
+                     <input id="ladder-y" type="number" class="input-ladder">
+                  </div>
+                  <div>
+                     <label for="ladder-z">Z Coordinates</label>
+                     <input id="ladder-z" type="number" class="input-ladder">
+                     <label title="The angle Leon will be looking when the event triggers" for="ladder-rotation">Facing
+                        angle</label>
+                     <input title="The angle Leon will be looking when the event triggers" id="ladder-rotation"
+                        type="number" class="input-ladder">
+                  </div>
+                  <div>
+                     <label for="ladder-steps">Ladder steps</label>
+                     <input id="ladder-steps" type="number" class="input-ladder">
+                  </div>
+               </fieldset>
+            </div>
+            <div class="container-fieldset">
+               <fieldset class="fieldset-ladder-camera-parameters">
+                  <legend>Camera parameters</legend>
+                  <div>
+                     <label for="cam-param1">Unknown</label>
+                     <input type="number" class="input-ladder-camera" id="cam-param1">
+                     <label for="cam-param2">Unknown</label>
+                     <input type="number" class="input-ladder-camera" id="cam-param2">
+                  </div>
+                  <div>
+                     <div class="tooltip">?
+                        <span class="tooltiptext">This is the index for triggering a camera as soon
+                           as Leon <b>starts</b> climbing, located at .CAM file.</span>
+                     </div>
+                     <label for="cam-param3">Start camera</label>
+                     <input type="number" class="input-ladder-camera" id="cam-param3"><br>
+                     <div class="tooltip">?
+                        <span class="tooltiptext">This is the index for triggering a second camera
+                           as soon
+                           as Leon <b>finishes</b> climbing a ladder, located at .CAM file as
+                           well.</span>
+                     </div>
+                     <label for="cam-param4">End camera</label>
+                     <input type="number" class="input-ladder-camera" id="cam-param4">
+                  </div>
+               </fieldset>
+            </div>
+         </div>
+         <!-- Event: Item Dependencies -->
+         <div class="event-config hide type17">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-item-dependencies">
+                  <legend>Item selector<div class="tooltip">?
+                        <span class="tooltiptext">This is a item necessary to make progress in the
+                           room, usually used to unlock a locked door or pathway.<br><br>You
+                           can check the complete item list below, with the ID on the left.</span>
+                     </div>
+                  </legend>
+                  <div>
+                     <label for="item-dependent-id">Item ID</label>
+                     <input id="item-dependent-id" type="number" class="input-ladder">
+                  </div>
+               </fieldset>
+            </div>
+            <div class="container-fieldset">
+               <fieldset class="fieldset-object">
+                  <legend>Item list</legend>
+                  <object data="resources/item-list.txt" width="300" height="200">
+                     Not available (if this message shows up, please give me a feedback about it.)
+                  </object>
+               </fieldset>
+            </div>
+         </div>
+         <!-- Event: HIDE Ashley -->
+         <div class="event-config hide type18">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-hide-event">
+                  <legend>Hide animation config
+                     <div class="tooltip">?
+                        <span class="tooltiptext">These are the coordinates Ashley will be sent to
+                           search for a trash bin model.<br><br>It is a funny thing to mess with,
+                           although not necessary to edit.</span>
+                     </div>
+                  </legend>
+                  <label for="hide-event-x">X Coordinates</label>
+                  <input id="hide-event-x" type="number" class="input-hide-event"><br>
+                  <label for="hide-event-y">Y Coordinates</label>
+                  <input id="hide-event-y" type="number" class="input-hide-event"><br>
+                  <label for="hide-event-z">Z Coordinates</label>
+                  <input id="hide-event-z" type="number" class="input-hide-event">
+               </fieldset>
+            </div>
+         </div>
+         <!-- Event: Elevators -->
+         <div class="event-config hide type20">
+            <h5 class="noMoreParameters">There are no more known parameters</h5>
+         </div>
+         <!-- Event: Grapple Gun -->
+         <div class="event-config hide type21">
+            <div class="container-fieldset">
+               <fieldset class="fieldset-grapple-gun">
+                  <legend>Grapple gun shot config
+                     <div class="tooltip">?
+                        <span class="tooltiptext">Here you define where Ada will shoot the
+                           grapple from.</span>
+                     </div>
+                  </legend>
+                  <label for="grapple-gun-x">X Coordinates</label>
+                  <input id="grapple-gun-x" type="number" class="input-grapple-gun"><br>
+                  <label for="grapple-gun-y">Y Coordinates</label>
+                  <input id="grapple-gun-y" type="number" class="input-grapple-gun"><br>
+                  <label for="grapple-gun-z">Z Coordinates</label>
+                  <input id="grapple-gun-z" type="number" class="input-grapple-gun">
+               </fieldset>
+            </div>
+            <div class="container-fieldset">
+               <fieldset class="fieldset-grapple-gun">
+                  <legend>Destination config
+                     <div class="tooltip">?
+                        <span class="tooltiptext">Here you define where Ada will land after
+                           shooting.</span>
+                     </div>
+                  </legend>
+                  <label for="grapple-destination-x">X Coordinates</label>
+                  <input id="grapple-destination-x" type="number" class="input-grapple-destination"><br>
+                  <label for="grapple-destination-y">Y Coordinates</label>
+                  <input id="grapple-destination-y" type="number" class="input-grapple-destination"><br>
+                  <label for="grapple-destination-z">Z Coordinates</label>
+                  <input id="grapple-destination-z" type="number" class="input-grapple-destination">
+               </fieldset>
+            </div>
+         </div>
+      </div>
+   </main>
+   <script>
+      require('./aev.js'); // Used in electron
+   </script>
 </body>
 
 </html>
