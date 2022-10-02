@@ -5,6 +5,8 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="css/aev.css">
+   <!-- FONT AWESOME -->
+   <link rel="stylesheet" href="./css/all.min.css">
    <title>AEV Tool</title>
 </head>
 
@@ -35,19 +37,11 @@
             <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
          </div>
       </div>
-      </div>
-      <!-- <div class="dropdown">
-            <button class="menu-buttons" id="edit">Edit</button>
-            <div class="dropdown-content">
-                <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
-                <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
-            </div>
-        </div> -->
       <div class="dropdown">
          <button class="menu-buttons" id="options">Options</button>
          <div class="dropdown-content">
             <button class="menu-buttons"><img src="images/language.png"> Language</button>
-            <button class="menu-buttons"><img src="images/theme.png"> Theme</button>
+            <button id="changeTheme" class="menu-buttons"><img src="images/theme.png"> Theme</button>
          </div>
       </div>
       <div class="hide" id="fileSaved">File saved successfully!</div>
@@ -64,18 +58,35 @@
    </nav>
    <header>
       <div id="campo-superior">
-         <div class="inner-box">
-            <label for="header-filename">File name:</label>
-            <input id="header-filename" type="text" readonly value="">
+         <!-- BOX 1 -->
+         <div class="inner-box file-info">
+            <div>
+               <label for="header-filename">File name:</label>
+               <label for="header-filesize">File size:</label>
+            </div>
+            <div>
+               <input id="header-filename" type="text" readonly value="">
+               <input id="header-filesize" type="text" readonly value="">
+            </div>
          </div>
-         <div class="inner-box">
-            <label for="count">Total Events:</label>
-            <input id="count" type="text" readonly value="">
+         <!-- BOX 2 -->
+         <div class="inner-box event-changer">
+            <div>
+               <label for="event-changer-input">Event</label>
+               <input id="event-changer-input" readonly type="number" min="1" value="1">
+            </div>
+            <div>
+               <button id="prevBtn" class="win7-btn"><i class="fa-solid fa-arrow-left"></i></button>
+               <button id="nextBtn" class="win7-btn"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
          </div>
-         <div class="inner-box">
-            <!-- <input id="item-list" type="button" value="Item List"> -->
+         <!-- BOX 3 -->
+         <div class="inner-box total-events">
+            <div>
+               <label for="count">Total Events:</label>
+               <input id="count" type="text" readonly value="">
+            </div>
          </div>
-         <!-- <button hidden class="win7-btn">Botao</button> -->
       </div>
    </header>
    <!-- PROGRAM DATA STARTS -->
@@ -106,7 +117,7 @@
                   <option value="21">Grapple Gun (Ada)</option>
                </select>
                <label for="index">Index</label>
-               <input id="index" class="index" type="number">
+               <input id="index" class="index" max="255" type="number">
             </fieldset>
          </div>
          <div class="container-fieldset">
