@@ -15,6 +15,13 @@
     --main-background: #fff;
     --main-foreground: #ddd;
     --darken: #444;
+    --dark-yellow: #ECB365;
+
+    /* Dark theme */
+    --darkTheme-main-background: #041C32;
+    --darkTheme-main-foreground: #04293A;
+    --darkTheme-dark-blue: #064663;
+    --darkTheme-dark-yellow: #ECB365;
 }
 
 /* ===================== 
@@ -265,8 +272,14 @@ select:hover {
     background-color: #eee;
 }
 
+option:checked {
+    background-color: #ECB365;
+    color: #fff
+}
+
 fieldset {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    /* border: 1px solid rgba(0, 0, 0, 0.2); */
+    border: 1px solid var(--main-background);
     border-radius: 2px;
     padding: 10px;
     text-align: center;
@@ -280,7 +293,7 @@ fieldset:hover {
 }
 
 legend {
-    color: #000;
+    color: var(--darkTheme-dark-yellow);
     text-align: left;
     font-family: sans-serif;
     font-size: 10pt;
@@ -297,7 +310,7 @@ fieldset input {
 
 fieldset label {
     font-size: 9pt;
-    color: #333;
+    color: #fff;
     user-select: none;
     outline: none;
 }
@@ -310,6 +323,7 @@ fieldset input:focus {
 main {
     display: flex;
     background-color: #BD703E;
+    height: 100vh;
 }
 
 /* ==============
@@ -318,7 +332,7 @@ main {
 
 .container-main-config,
 .container-event-config {
-    background-color: var(--darken);
+    background-color: var(--darkTheme-main-background);
     padding: 20px;
     width: 49.999%;
     margin-top: 90px;
@@ -332,7 +346,7 @@ main {
     margin-bottom: 2px;
     padding: 20px;
     border: 1px solid rgba(0, 0, 0, 0.2);
-    background-color: var(--lightpurple);
+    background-color: var(--purple);
 }
 
 #eventId {
@@ -434,6 +448,17 @@ main {
 .fieldset-teleport input {
     width: 100px;
     margin: 10px;
+}
+
+.container-room-image {
+    width: 155px;
+    margin: auto;
+}
+
+.container-room-image img {
+    width: 150px;
+    height: 77px;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* EVENT TYPE 2 */

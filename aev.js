@@ -9,7 +9,8 @@ const { ipcRenderer } = require('electron');
 
 // Getting elements
 var rootEl = document.querySelector(":root");
-var containerMainConfig = document.querySelector(".container-main-config")
+var containerMainConfig = document.querySelector(".container-main-config");
+var containerEventConfig = document.querySelector(".container-event-config");
 var countEl = document.getElementById("count");
 var indexEl = document.querySelector(".index");
 var eventNumber = document.getElementById("event-changer-input");
@@ -63,6 +64,16 @@ var teleportXEl = document.querySelector("#teleport-x");
 var teleportYEl = document.querySelector("#teleport-y");
 var teleportZEl = document.querySelector("#teleport-z");
 var teleportFacingAngleEl = document.querySelector("#teleport-rotation");
+var roomSelectEl = document.querySelector(".room-select");
+var roomImage = document.querySelector(".room-image");
+
+// Getting elements from event type 2
+var offset88El = document.getElementById("offset88");
+var offset89El = document.getElementById("offset89");
+var offset90El = document.getElementById("offset90");
+
+// Getting elements from event type 4
+var enemyGroupEl = document.getElementById("enemyGroupByte");
 
 // Getting elements from event type HIDE
 var xAshley = document.querySelector("#hide-event-x");
@@ -241,9 +252,35 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     teleportZEl.value = getTeleportZ;
     teleportFacingAngleEl.value = getFacingAngle;
 
+    var getRoomID1 = buffer.readUint8(128);
+    var getRoomID2 = buffer.readUint8(129);
+    for (i = 0; i < roomSelectEl.length; i++) {
+        if (roomSelectEl.options[i].value.substring(0, 1) == getRoomID1 &&
+            roomSelectEl.options[i].value.substring(1, 2) == getRoomID2 ||
+            roomSelectEl.options[i].value.substring(0, 1) == getRoomID1 &&
+            roomSelectEl.options[i].value.substring(1, 3) == getRoomID2) {
+            roomSelectEl.selectedIndex = i;
+        }
+    }
+    //Change image acording to room ID
+    if (getEventType == 1) {
+        roomImage.src = `./images/rooms/${getRoomID1}${getRoomID2}.png`
+    }
+
     // Event type 2
-    var getXAshley = buffer.readFloatLE(112);
-    xAshley.value = getXAshley;
+    var getOffset88 = buffer.readUint8(88);
+    var getOffset89 = buffer.readUint8(89);
+    var getOffset90 = buffer.readUint8(90);
+    offset88El.value = getOffset88;
+    offset89El.value = getOffset89;
+    offset90El.value = getOffset90;
+
+    // Event type 4
+    var getEnemyGroupByte = buffer.readUint8(114);
+    enemyGroupEl.value = getEnemyGroupByte;
+
+    // Event type 5
+
 
     function showNextEvent(operator) {
         chunk = chunk + operator;
@@ -251,7 +288,6 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         // Reading event type
         let getCloneEventType = buffer.readUint8(69 + chunk);
         for (i = 0; i < eventIdSelect.length; i++) {
-            console.log(eventIdSelect.options[i].value)
             if (eventIdSelect.options[i].value == getCloneEventType) {
                 eventIdSelect.selectedIndex = i;
             }
@@ -280,9 +316,6 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         let getCloneUnk1 = buffer.readUint8(71 + chunk);
         let getCloneUnk2 = buffer.readUint8(72 + chunk);
         let getCloneUnk3 = buffer.readUint8(73 + chunk);
-        unk1El.id = unk1_id++;
-        unk2El.id = unk2_id++;
-        unk3El.id = unk3_id++;
         unk1El.value = getCloneUnk1;
         unk2El.value = getCloneUnk2;
         unk3El.value = getCloneUnk3;
@@ -296,14 +329,6 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         let getCloneBottomRightZ = buffer.readFloatLE(56 + chunk).toFixed(2);
         let getCloneBottomLeftX = buffer.readFloatLE(60 + chunk).toFixed(2);
         let getCloneBottomLeftZ = buffer.readFloatLE(64 + chunk).toFixed(2);
-        topLeftXEl.id = topLeftX_id++;
-        topLeftZEl.id = topLeftZ_id++;
-        topRightXEl.id = topRightX_id++;
-        topRightZEl.id = topRightZ_id++;
-        bottomRightXEl.id = bottomRightX_id++;
-        bottomRightZEl.id = bottomRightZ_id++;
-        bottomLeftXEl.id = bottomLeftX_id++;
-        bottomLeftZEl.id = bottomLeftZ_id++;
         topLeftXEl.value = getCloneTopLeftX;
         topLeftZEl.value = getCloneTopLeftZ;
         topRightXEl.value = getCloneTopRightX;
@@ -329,6 +354,42 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         definitionByte3.value = getCloneDefByte3;
         definitionByte4.value = getCloneDefByte4;
 
+
+        // Reading Event 1: Door Teleport 
+        var getCloneTeleportX = buffer.readFloatLE(112 + chunk).toFixed(2);
+        var getCloneTeleportY = buffer.readFloatLE(116 + chunk).toFixed(2);
+        var getCloneTeleportZ = buffer.readFloatLE(120 + chunk).toFixed(2);
+        var getCloneFacingAngle = buffer.readFloatLE(124 + chunk).toFixed(2);
+        teleportXEl.value = getCloneTeleportX;
+        teleportYEl.value = getCloneTeleportY;
+        teleportZEl.value = getCloneTeleportZ;
+        teleportFacingAngleEl.value = getCloneFacingAngle;
+
+        var getCloneRoomID1 = buffer.readUint8(128 + chunk);
+        var getCloneRoomID2 = buffer.readUint8(129 + chunk);
+        for (i = 0; i < roomSelectEl.length; i++) {
+            if (roomSelectEl.options[i].value.substring(0, 1) == getCloneRoomID1 &&
+                roomSelectEl.options[i].value.substring(1, 2) == getCloneRoomID2 ||
+                roomSelectEl.options[i].value.substring(0, 1) == getCloneRoomID1 &&
+                roomSelectEl.options[i].value.substring(1, 3) == getCloneRoomID2) {
+                roomSelectEl.selectedIndex = i;
+            }
+        }
+        if (getCloneEventType == 1) {
+            roomImage.src = `./images/rooms/${getCloneRoomID1}${getCloneRoomID2}.png`
+        }
+
+        // Reading Event 2: Cutscene 
+        var getCloneOffset88 = buffer.readUint8(88 + chunk);
+        var getCloneOffset89 = buffer.readUint8(89 + chunk);
+        var getCloneOffset90 = buffer.readUint8(90 + chunk);
+        offset88El.value = getCloneOffset88;
+        offset89El.value = getCloneOffset89;
+        offset90El.value = getCloneOffset90;
+
+        // Reading Event 4: Enemy Group Trigger
+        var getCloneEnemyGroupByte = buffer.readUint8(114 + chunk);
+        enemyGroupEl.value = getCloneEnemyGroupByte;
     }
 
 
@@ -339,7 +400,6 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     // Getting any change from Main Config Container values
     containerMainConfig.addEventListener("change", function (e) {
         if (e.target.classList.contains("selectEventName")) {
-            console.log(e.target);
             // Gets value from select/option and sets to buffer
             var select_number = parseInt(eventNumber.value + 1); // Get clicked select ID attribute
             var select_opt = e.target.selectedIndex; // Get *option* selected from the clicked select
@@ -348,7 +408,9 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
             // Showing event based on type
             for (i = 0; i < eventConfig.length; i++) {
                 if (eventConfig[i].classList.contains(`type${select_opt}`)) {
+                    buffer.writeUint8(select_opt, 69 + parseInt(chunk_save));
                     eventConfig[i].classList.remove("hide");
+
                 }
             }
             // Hiding event based on type
@@ -357,7 +419,7 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
                     eventConfig[i].classList.add("hide");
                 }
             }
-            buffer.writeUint8(select_opt, 69 + parseInt(chunk_save)); // Writes data on buffer on every hange
+            // Writes data on buffer on every hange
         }
         if (e.target.className == "index") {
             // Gets value from index input and sets to buffer
@@ -377,99 +439,259 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
             var top_leftX = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(top_leftX, 36 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("top-leftZ")) {
             // Gets value from Top Left Z and sets to buffer
             var top_leftZ = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(top_leftZ, 40 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("top-rightX")) {
             // Gets value from Top Right X and sets to buffer
             var top_rightX = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(top_rightX, 44 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("top-rightZ")) {
             // Gets value from Top Right Z and sets to buffer
             var top_rightZ = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(top_rightZ, 48 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("bottom-rightX")) {
             // Gets value from Bottom Right X and sets to buffer
             var bottom_rightX = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(bottom_rightX, 52 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("bottom-rightZ")) {
             // Gets value from Bottom Right Z and sets to buffer
             var bottom_rightZ = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(bottom_rightZ, 56 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("bottom-leftX")) {
             // Gets value from Bottom Left X and sets to buffer
             var bottom_leftX = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(bottom_leftX, 60 + chunk_save).toFixed(2);
-
         }
         if (e.target.classList.contains("bottom-leftZ")) {
             // Gets value from Bottom Left Z and sets to buffer
             var bottom_leftZ = e.target.value;
             var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
             buffer.writeFloatLE(bottom_leftZ, 64 + chunk_save).toFixed(2);
-
         }
-        if (e.target.className == "posY") {
-            // Gets value from posY and sets to buffer
-            var setPosY = e.target.value;
-            var setPosYid = e.target.id;
-            var chunk_save = 160 * (parseInt(setPosYid) - 1);
-            buffer.writeFloatLE(setPosY, 52 + chunk_save).toFixed(2);
-
+        if (e.target.classList.contains("lowerLimitEl")) {
+            // Gets value from Lower Limit and sets to buffer
+            var lower_limit = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeFloatLE(lower_limit, 24 + chunk_save).toFixed(2);
         }
-        if (e.target.className == "posZ") {
-            // Gets value from posY and sets to buffer
-            var setPosZ = e.target.value;
-            var setPosZid = e.target.id;
-            var chunk_save = 160 * (parseInt(setPosZid) - 1);
-            buffer.writeFloatLE(setPosZ, 56 + chunk_save).toFixed(2);
-
+        if (e.target.classList.contains("higherLimitEl")) {
+            // Gets value from Higher Limit and sets to buffer
+            var higher_limit = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeFloatLE(higher_limit, 28 + chunk_save).toFixed(2);
         }
-        if (e.target.className == "rotX") {
-            // Gets value from rotX and sets to buffer
-            var setRotX = e.target.value;
-            var setRotXid = e.target.id;
-            var chunk_save = 160 * (parseInt(setRotXid) - 1);
-            buffer.writeFloatLE(setRotX, 32 + chunk_save).toFixed(2);
-
+        if (e.target.classList.contains("unk1")) {
+            // Gets value from Unknown Bytes and sets to buffer
+            var setUnk1 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setUnk1 <= 255) {
+                buffer.writeUint8(setUnk1, 71 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
         }
-        if (e.target.className == "rotY") {
-            // Gets value from rotY and sets to buffer
-            var setRotY = e.target.value;
-            var setRotYid = e.target.id;
-            var chunk_save = 160 * (parseInt(setRotYid) - 1);
-            buffer.writeFloatLE(setRotY, 36 + chunk_save).toFixed(2);
-
+        if (e.target.classList.contains("unk2")) {
+            // Gets value from Unknown Bytes and sets to buffer
+            var setUnk2 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setUnk2 <= 255) {
+                buffer.writeUint8(setUnk2, 72 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
         }
-        if (e.target.className == "rotZ") {
-            // Gets value from rotZ and sets to buffer
-            var setRotZ = e.target.value;
-            var setRotZid = e.target.id;
-            var chunk_save = 160 * (parseInt(setRotZid) - 1);
-            buffer.writeFloatLE(setRotZ, 40 + chunk_save).toFixed(2);
-
+        if (e.target.classList.contains("unk3")) {
+            // Gets value from Unknown Bytes and sets to buffer
+            var setUnk3 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setUnk3 <= 255) {
+                buffer.writeUint8(setUnk3, 73 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
         }
     })
 
+    containerEventConfig.addEventListener("change", function (e) {
+        if (e.target.classList.contains("def1")) {
+            // Gets value from Definition Bytes and sets to buffer
+            var setDef1 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setDef1 <= 255) {
+                buffer.writeUint8(setDef1, 84 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+        if (e.target.classList.contains("def2")) {
+            // Gets value from Definition Bytes and sets to buffer
+            var setDef2 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setDef2 <= 255) {
+                buffer.writeUint8(setDef2, 85 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+        if (e.target.classList.contains("def3")) {
+            // Gets value from Definition Bytes and sets to buffer
+            var setDef3 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setDef3 <= 255) {
+                buffer.writeUint8(setDef3, 86 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+        if (e.target.classList.contains("def4")) {
+            // Gets value from Definition Bytes and sets to buffer
+            var setDef4 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setDef4 <= 255) {
+                buffer.writeUint8(setDef4, 87 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+        /* ===== Event: General Purpose ====== */
+
+        /* ===== Event: Door Teleport ====== */
+        if (e.target.classList.contains("room-select")) {
+            // Gets value from Room Selector and sets to buffer
+            let selectRoom_opt = e.target.selectedIndex;
+            let setRoomCompleteID = e.target.options[selectRoom_opt].value;
+            let stageID = setRoomCompleteID.substring(0, 1);
+
+            function getRoomID() {
+                if (setRoomCompleteID.length == 1) {
+                    return setRoomCompleteID.substring(1, 2);
+                } else {
+                    return setRoomCompleteID.substring(1, 3);
+                }
+            }
+
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeUint8(stageID, 128 + chunk_save);
+            buffer.writeUint8(getRoomID(), 129 + chunk_save);
+            // Changing image acording to room ID
+            roomImage.src = `./images/rooms/${stageID}${getRoomID()}.png`
+        }
+        if (e.target.classList.contains("teleport-x")) {
+            // Gets value from Teleport X and sets to buffer
+            var setTeleportX = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeFloatLE(setTeleportX, 112 + chunk_save).toFixed(2);
+        }
+        if (e.target.classList.contains("teleport-y")) {
+            // Gets value from Teleport Y and sets to buffer
+            var setTeleportY = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeFloatLE(setTeleportY, 116 + chunk_save).toFixed(2);
+        }
+        if (e.target.classList.contains("teleport-z")) {
+            // Gets value from Teleport Z and sets to buffer
+            var setTeleportZ = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeFloatLE(setTeleportZ, 120 + chunk_save).toFixed(2);
+        }
+        if (e.target.classList.contains("teleport-rotation")) {
+            // Gets value from Teleport Rotation and sets to buffer
+            var setTeleportZ = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            buffer.writeFloatLE(setTeleportZ, 124 + chunk_save).toFixed(2);
+        }
+
+        /* ===== Event: Cutscene ====== */
+        if (e.target.classList.contains("offset88")) {
+            // Gets value from Offset 88 and sets to buffer
+            var setOffset88 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setOffset88 <= 255) {
+                buffer.writeUint8(setOffset88, 88 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+        if (e.target.classList.contains("offset89")) {
+            // Gets value from Offset 89 and sets to buffer
+            var setOffset89 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setOffset89 <= 255) {
+                buffer.writeUint8(setOffset89, 89 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+        if (e.target.classList.contains("offset90")) {
+            // Gets value from Offset 90 and sets to buffer
+            var setOffset90 = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setOffset90 <= 255) {
+                buffer.writeUint8(setOffset90, 90 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+
+        /* ===== Event: Enemy Group Trigger ====== */
+        if (e.target.classList.contains("enemyGroupByte")) {
+            // Gets value from Enemy Group Byte and sets to buffer
+            var setEnemyGroup = e.target.value;
+            var chunk_save = 160 * (parseInt(eventNumber.value) - 1);
+            if (setEnemyGroup <= 255) {
+                buffer.writeUint8(setEnemyGroup, 114 + chunk_save);
+                indexEl.style.color = "#000";
+                indexEl.style.outline = "none";
+            } else {
+                indexEl.style.color = "red";
+                indexEl.style.outline = "1px solid red";
+            }
+        }
+    })
 
     // Save all modified buffer back to file
 
