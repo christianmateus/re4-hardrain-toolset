@@ -10,7 +10,7 @@ let mainWindow;
 function createWindow() {
 
   mainWindow = new BrowserWindow({
-    width: 1000, height: 500, minWidth: 600, minHeight: 300,
+    width: 1000, height: 500, minWidth: 600, minHeight: 300, maxWidth: 1000,
     autoHideMenuBar: true,
     frame: false,
     icon: "./icons/icon.png",
@@ -136,6 +136,21 @@ ipcMain.on("openAEVfile", () => {
       let AEVfile = um.filePaths.toString();
       mainWindow.webContents.send("aevFileChannel", AEVfile);
       console.log(AEVfile)
+    })
+})
+
+// Saving actual AEV file
+ipcMain.on("saveAsAEVfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'AEV Files', extensions: ['AEV'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsAEVfileContent", salvar);
+      console.log(salvar)
     })
 })
 

@@ -1,16 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="">
 
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="css/aev.css">
+   <link rel="stylesheet" href="css/navbar.css">
    <!-- FONT AWESOME -->
    <link rel="stylesheet" href="./css/all.min.css">
    <title>AEV Tool</title>
 </head>
 
 <body>
+   <div class="hide container-hide" id="fileSaved">
+      <span class="successfully-saved">
+         <i class="fa-regular fa-circle-check"></i>&nbsp;
+         File saved successfully!</span>
+   </div>
+   <div class="hide addedEntry container-hide" id="addedEntry">
+      <span class="successfully-added">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp;
+         New event added!</span>
+   </div>
+   <div class="hide removedEntry container-hide" id="removedEntry">
+      <span class="successfully-removed">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   </div>
    <nav id="menu-container">
       <div class="dropdown">
          <button class="menu-buttons" id="file">File</button>
@@ -33,18 +48,24 @@
             <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
             <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
             <hr>
-            <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
-            <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
+            <button id="undoBtn" class="menu-buttons"><img src="images/undo.png"> Undo</button>
+            <button id="redoBtn" class="menu-buttons"><img src="images/redo.png"> Redo</button>
          </div>
       </div>
       <div class="dropdown">
          <button class="menu-buttons" id="options">Options</button>
          <div class="dropdown-content">
-            <button class="menu-buttons"><img src="images/language.png"> Language</button>
-            <button id="changeTheme" class="menu-buttons"><img src="images/theme.png"> Theme</button>
+            <div class="show-theme">
+               <button class="menu-buttons"><img src="images/theme.png"> Theme ></button>
+               <div class="submenu">
+                  <input id="dark-theme" type="radio" name="theme" value="dark" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label dark-theme-btn" for="dark-theme">Dark</label>
+                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">White</label>
+               </div>
+            </div>
          </div>
       </div>
-      <div class="hide" id="fileSaved">File saved successfully!</div>
       <div id="control-window">
          <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
                src="./images/main-menu.png"></button>
@@ -163,10 +184,9 @@
             <fieldset class="additional-data">
                <legend>Additional data
                   <div class="tooltip">?
-                     <span class="tooltiptext">On "Reaction time" you can define how long
-                        will it take for Leon to react to the damage, value varies from 0 to
-                        255.<br><br>On "Damage amount" means how much damage will it
-                        deal, value varies from 0 to 65000.</span>
+                     <span class="tooltiptext">These bytes have an interesting behaviour,
+                        they can control if prompt buttons appear, also defines if
+                        enemy, player or ashley will trigger the event.</span>
                   </div>
                </legend>
                <label for="unk1">Unknown 1</label>
@@ -209,7 +229,7 @@
                         <option value="12">r102 - The underground area</option>
                         <option value="13">r103 - Farm after main village</option>
                         <option value="14">r104 - The area you wake up in with Luis</option>
-                        <option value="15">r105 - The chief's house</option>
+                        <option value="15">r105 - Bitores's house</option>
                         <option value="16">r106 - Area with first boulder</option>
                         <option value="17">r107 - The area after using the hexagon pieces</option>
                         <option value="18">r108 - The graveyard</option>
@@ -371,15 +391,20 @@
                      </optgroup>
                   </select>
                   <div class="container-room-image">
-                     <img src=""
-                        alt="Missing image. If this message appears, please let me know. Discord: HardRain#0533"
+                     <img src="" alt="No room selected. If this message appears, please reselect the room to update."
                         class="room-image">
                   </div>
                </fieldset>
             </div>
             <div class="container-fieldset">
                <fieldset class="fieldset-teleport">
-                  <legend>Teleport coordinates</legend>
+                  <legend>Teleport coordinates
+                     <div class="tooltip">?
+                        <span class="tooltiptext">Here you define the coordinates where the player
+                           will spawn in the next room.
+                        </span>
+                     </div>
+                  </legend>
                   <div>
                      <label for="teleport-x">X Coordinates</label>
                      <input id="teleport-x" type="number" class="input-teleport teleport-x">
@@ -429,21 +454,21 @@
                <fieldset class="fieldset-message-parameters">
                   <legend>Message parameters</legend>
                   <label for="message">Message</label>
-                  <input id="message" type="number" class="input-definition">
+                  <input id="message" type="number" class="input-definition message">
                   <div class="tooltip">?
                      <span class="tooltiptext">This is the message index being read from .MDT
                         file, example: "2" means it will show the second message from .MDT
                         file.</span>
                   </div><br>
                   <label for="camera-offset">Camera &nbsp;</label>
-                  <input id="camera-offset" type="number" class="input-definition">
+                  <input id="camera-offset" type="number" class="input-definition camera-offset">
                   <div class="tooltip">?
                      <span class="tooltiptext">This is the camera index being read from .CAM
                         file, example: "6" means it will trigger the sixth camera from .CAM
                         file.</span>
                   </div><br>
                   <label for="sound-offset">Sound</label>
-                  <input id="sound-offset" type="number" class="input-definition">
+                  <input id="sound-offset" type="number" class="input-definition sound-offset">
                   <div class="tooltip">?
                      <span class="tooltiptext">This is the sound index being read from .SND
                         file, example: "5" means it will play the fifth sound from .SND
@@ -552,27 +577,31 @@
             <div class="container-fieldset">
                <fieldset class="fieldset-ladder-camera-parameters">
                   <legend>Camera parameters</legend>
-                  <div>
-                     <label for="cam-param1">Unknown</label>
-                     <input type="number" class="input-ladder-camera" id="cam-param1">
-                     <label for="cam-param2">Unknown</label>
-                     <input type="number" class="input-ladder-camera" id="cam-param2">
-                  </div>
-                  <div>
+                  <div class="ladder-divs">
                      <div class="tooltip">?
                         <span class="tooltiptext">This is the index for triggering a camera as soon
                            as Leon <b>starts</b> climbing, located at .CAM file.</span>
                      </div>
-                     <label for="cam-param3">Start camera</label>
-                     <input type="number" class="input-ladder-camera" id="cam-param3"><br>
+                     <label for="cam-param3">Start camera</label><br>
+                     <input type="number" class="input-ladder-camera" id="cam-param3">
+                  </div>
+                  <div class="ladder-divs">
                      <div class="tooltip">?
                         <span class="tooltiptext">This is the index for triggering a second camera
                            as soon
                            as Leon <b>finishes</b> climbing a ladder, located at .CAM file as
                            well.</span>
                      </div>
-                     <label for="cam-param4">End camera</label>
+                     <label for="cam-param4">End camera</label><br>
                      <input type="number" class="input-ladder-camera" id="cam-param4">
+                  </div>
+                  <div class="ladder-divs">
+                     <label for="cam-param1">Unknown</label><br>
+                     <input type="number" class="input-ladder-camera" id="cam-param1">
+                  </div>
+                  <div class="ladder-divs">
+                     <label for="cam-param2">Unknown</label><br>
+                     <input type="number" class="input-ladder-camera" id="cam-param2">
                   </div>
                </fieldset>
             </div>

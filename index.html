@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar.css">
   <!-- !! IMPORTANT !! -->
   <!-- Content-Security-Policy no longer required. Will show warning in devtools. Can be ignored -->
   <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'"> -->
@@ -11,6 +12,11 @@
 </head>
 
 <body>
+  <div class="hide container-hide" id="fileSaved">
+    <span class="successfully-saved">
+      <i class="fa-regular fa-circle-check"></i>&nbsp;
+      File saved successfully!</span>
+  </div>
   <nav id="menu-container">
     <div class="dropdown">
       <button class="menu-buttons" id="file">File</button>
@@ -24,21 +30,6 @@
         <button id="quitApp" class="menu-buttons">Quit</button>
       </div>
     </div>
-    <!-- <div class="dropdown">
-      <button class="menu-buttons" id="edit">Edit</button>
-      <div class="dropdown-content">
-        <button class="menu-buttons"><img src="images/undo.png"> Undo</button>
-        <button class="menu-buttons"><img src="images/redo.png"> Redo</button>
-      </div>
-    </div>
-    <div class="dropdown">
-      <button class="menu-buttons" id="options">Options</button>
-      <div class="dropdown-content">
-        <button class="menu-buttons">Language</button>
-        <button class="menu-buttons">Theme</button>
-      </div>
-    </div> -->
-    <div class="hide" id="fileSaved">File saved successfully!</div>
     <div id="control-window">
       <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
           src="./images/main-menu.png"></button>

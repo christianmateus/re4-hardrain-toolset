@@ -27,9 +27,11 @@
 }
 
 body {
-    background-image: url("../images/texture.png"), linear-gradient(-25deg, #0F2027, #203A43, #2C5364);
-    /* background-size: cover; */
     height: 100%;
+    margin: 0;
+    background-attachment: fixed;
+    background-image: url("../images/texture-big.png"),
+        linear-gradient(-25deg, #1c4e51, #123234);
 }
 
 /* ===================== 
@@ -224,6 +226,12 @@ header p:nth-child(3) {
 
 #ets-card {
     background-image: url("../images/ETS_background.png");
+    background-size: 369px 105px;
+    background-repeat: no-repeat;
+}
+
+#aev-card {
+    background-image: url("../images/AEV_background.png");
     background-size: 369px 105px;
     background-repeat: no-repeat;
 }

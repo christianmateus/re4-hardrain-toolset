@@ -8,7 +8,7 @@
 }
 
 /* Cores da ferramenta */
-:root {
+html {
     --main-color: #1c4e51;
     --purple: #1c4e51;
     --lightpurple: #3c6e71;
@@ -24,102 +24,8 @@
     --darkTheme-dark-yellow: #ECB365;
 }
 
-/* ===================== 
-    Menu principal
-   ===================== */
-#menu-container {
-    display: flex;
-    width: 100%;
-    background-color: #fff;
-    height: 25px;
-    position: fixed;
-    top: 0;
-    z-index: 2;
-    -webkit-app-region: drag;
-}
-
-nav hr {
-    height: 1px;
-    background-color: rgba(140, 140, 140, 0.4);
-    margin: 2px 0;
-}
-
-.dropdown {
-    display: flex;
-    -webkit-app-region: no-drag;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 24px;
-    background-color: #fff;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-    width: 130px;
-    border: 1px solid rgba(140, 140, 140, 0.4);
-}
-
-.dropdown-content .menu-buttons {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 4px 10px;
-}
-
-.menu-buttons {
-    /* margin-right: 8px; */
-    text-align: center;
-    padding: 2px 8px;
-    font-size: 12px;
-    background-color: #fff;
-    font-family: "Segoe UI";
-    transition: .15s;
-    color: #333;
-}
-
-.menu-buttons:hover {
-    background-color: #3c6e71;
-    color: #fff;
-}
-
-#control-window {
-    display: flex;
-    flex: 1;
-    justify-content: right;
-}
-
-.control-buttons {
-    width: 30px;
-    background-color: #fff;
-    transition: .15s;
-    -webkit-app-region: no-drag;
-}
-
-.menuWindow,
-.minimize,
-.maximize,
-.closeWindow {
-    background-repeat: no-repeat;
-    border: none;
-}
-
-.menuWindow:hover,
-.minimize:hover,
-.maximize:hover,
-.closeWindow:hover {
-    background-color: #3c6e71;
-}
-
-#fileSaved {
-    background-color: #6c6;
-    color: #fff;
-    padding: 6px 8px;
-    font-size: 13px;
+body {
+    background-color: var(--darkTheme-main-background);
 }
 
 /* ===================== 
@@ -131,6 +37,7 @@ nav hr {
     width: 100%;
     height: 65px;
     background-color: var(--purple);
+    box-shadow: 0px 3px 6px 2px rgba(0, 0, 0, 0.4);
     font-size: 8pt;
     color: #fff;
     align-items: center;
@@ -199,8 +106,11 @@ nav hr {
 }
 
 .event-changer input {
-    width: 40px;
+    background-color: #ddd;
+    width: 38px;
     text-align: center;
+    cursor: default;
+    user-select: none;
 }
 
 .event-changer button:nth-child(1) {
@@ -287,8 +197,7 @@ fieldset {
 }
 
 fieldset:hover {
-    /* border: 1px solid rgba(35, 100, 180, 0.2); */
-    border: 1px solid rgba(235, 100, 180, 0.6);
+    border: 1px solid var(--darkTheme-dark-yellow);
 
 }
 
@@ -322,8 +231,7 @@ fieldset input:focus {
 
 main {
     display: flex;
-    background-color: #BD703E;
-    height: 100vh;
+    height: 100%;
 }
 
 /* ==============
@@ -459,6 +367,11 @@ main {
     width: 150px;
     height: 77px;
     box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
+    transition: .3s;
+}
+
+.container-room-image img:active {
+    transform: scale(1.5);
 }
 
 /* EVENT TYPE 2 */
@@ -495,6 +408,28 @@ main {
 
 input#sound-offset {
     margin-left: 12px;
+}
+
+/* Event Type 10 - Ladder Climb */
+
+.fieldset-ladder-camera-parameters .ladder-divs {
+    display: block;
+    width: 49.999%;
+    text-align: center;
+}
+
+.fieldset-ladder-camera-parameters .ladder-divs .tooltip {
+    transform: translateX(-15px);
+}
+
+.fieldset-ladder-camera-parameters label:nth-child(2) {
+    position: relative;
+    left: -14px;
+}
+
+.fieldset-ladder-camera-parameters input {
+    text-align: center;
+    width: 60px;
 }
 
 /* TOOLTIP POPUP */
@@ -633,11 +568,9 @@ input#sound-offset {
     align-items: center;
 }
 
-.fieldset-ladder legend {
-    width: 100%;
-}
-
-.fieldset-ladder .tooltip {
+.fieldset-ladder .tooltip,
+.fieldset-teleport .tooltip,
+.fieldset-damage-event .tooltip {
     text-align: center;
     width: 20px;
 }
@@ -688,12 +621,17 @@ input#sound-offset {
     width: 25% !important;
 }
 
+.fieldset-item-dependencies .tooltip {
+    width: 20px;
+    text-align: center;
+}
+
 .fieldset-object object {
     color: #fff;
     background-color: #ccc;
 }
 
-/* Event 12 - Item Dependent */
+/* Event 12 - HIDE Event */
 
 .fieldset-hide-event .input-hide-event {
     margin-bottom: 10px;
@@ -703,16 +641,12 @@ input#sound-offset {
     width: 100px;
 }
 
-.fieldset-hide-event legend {
-    width: 100%;
-}
-
 .fieldset-hide-event .tooltip {
     width: 20px;
     text-align: center;
 }
 
-/* Event 13 - Item Dependent */
+/* Event 13 - Grapple Gun */
 
 .fieldset-grapple-gun .input-grapple-gun,
 .fieldset-grapple-gun .input-grapple-destination {
