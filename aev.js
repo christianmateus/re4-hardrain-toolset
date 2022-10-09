@@ -249,37 +249,23 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     indexEl.setAttribute("value", getIndex);
 
     // Reading unk bytes
-    var getUnk1 = buffer.readUint8(71);
-    var getUnk2 = buffer.readUint8(72);
-    var getUnk3 = buffer.readUint8(73);
-    unk1El.value = getUnk1;
-    unk2El.value = getUnk2;
-    unk3El.value = getUnk3;
+    unk1El.value = buffer.readUint8(71);
+    unk2El.value = buffer.readUint8(72);
+    unk3El.value = buffer.readUint8(73);
 
     // Reading triggerzone coordinates
-    var getTopLeftX = buffer.readFloatLE(36).toFixed(2);
-    var getTopLeftZ = buffer.readFloatLE(40).toFixed(2);
-    var getTopRightX = buffer.readFloatLE(44).toFixed(2);
-    var getTopRightZ = buffer.readFloatLE(48).toFixed(2);
-    var getBottomRightX = buffer.readFloatLE(52).toFixed(2);
-    var getBottomRightZ = buffer.readFloatLE(56).toFixed(2);
-    var getBottomLeftX = buffer.readFloatLE(60).toFixed(2);
-    var getBottomLeftZ = buffer.readFloatLE(64).toFixed(2);
-
-    topLeftXEl.value = getTopLeftX;
-    topLeftZEl.value = getTopLeftZ;
-    topRightXEl.value = getTopRightX;
-    topRightZEl.value = getTopRightZ;
-    bottomRightXEl.value = getBottomRightX;
-    bottomRightZEl.value = getBottomRightZ;
-    bottomLeftXEl.value = getBottomLeftX;
-    bottomLeftZEl.value = getBottomLeftZ;
+    topLeftXEl.value = buffer.readFloatLE(36).toFixed(2);
+    topLeftZEl.value = buffer.readFloatLE(40).toFixed(2);
+    topRightXEl.value = buffer.readFloatLE(44).toFixed(2);
+    topRightZEl.value = buffer.readFloatLE(48).toFixed(2);
+    bottomRightXEl.value = buffer.readFloatLE(52).toFixed(2);
+    bottomRightZEl.value = buffer.readFloatLE(56).toFixed(2);
+    bottomLeftXEl.value = buffer.readFloatLE(60).toFixed(2);
+    bottomLeftZEl.value = buffer.readFloatLE(64).toFixed(2);
 
     // Reading lower and higher limits
-    var getLowerLimit = buffer.readFloatLE(24).toFixed(0);
-    var getHigherLimit = buffer.readFloatLE(28).toFixed(0);
-    lowerLimitEl.value = getLowerLimit;
-    higherLimitEl.value = getHigherLimit;
+    lowerLimitEl.value = buffer.readFloatLE(24).toFixed(0);
+    higherLimitEl.value = buffer.readFloatLE(28).toFixed(0);
 
     // Reading definition bytes
     definitionByte1.value = buffer.readUint8(84);
@@ -288,59 +274,55 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     definitionByte4.value = buffer.readUint8(87);
 
     // Event type 1
-    var getTeleportX = buffer.readFloatLE(112).toFixed(2);
-    var getTeleportY = buffer.readFloatLE(116).toFixed(2);
-    var getTeleportZ = buffer.readFloatLE(120).toFixed(2);
-    var getFacingAngle = buffer.readFloatLE(124).toFixed(2);
-    teleportXEl.value = getTeleportX;
-    teleportYEl.value = getTeleportY;
-    teleportZEl.value = getTeleportZ;
-    teleportFacingAngleEl.value = getFacingAngle;
+    teleportXEl.value = buffer.readFloatLE(112).toFixed(2);
+    teleportYEl.value = buffer.readFloatLE(116).toFixed(2);
+    teleportZEl.value = buffer.readFloatLE(120).toFixed(2);
+    teleportFacingAngleEl.value = buffer.readFloatLE(124).toFixed(2);
 
     var getRoomID1 = buffer.readUint8(128);
     var getRoomID2 = buffer.readUint8(129);
     for (i = 0; i < roomSelectEl.length; i++) {
-        if (roomSelectEl.options[i].value.substring(0, 1) == getRoomID1 &&
-            roomSelectEl.options[i].value.substring(1, 2) == getRoomID2 ||
-            roomSelectEl.options[i].value.substring(0, 1) == getRoomID1 &&
-            roomSelectEl.options[i].value.substring(1, 3) == getRoomID2) {
-            roomSelectEl.selectedIndex = i;
+        if (getRoomID2 < 10) {
+            if (roomSelectEl.options[i].value.substring(0, 1) == getRoomID1 &&
+                roomSelectEl.options[i].value.substring(1, 2) == getRoomID2) {
+                roomSelectEl.selectedIndex = i;
+                //Change image acording to room ID
+                if (getEventType == 1) {
+                    roomImage.src = `./images/rooms/${getRoomID1}${getRoomID2}.png`
+                }
+                break;
+            }
+        } else {
+            if (roomSelectEl.options[i].value.substring(0, 1) == getRoomID1 &&
+                roomSelectEl.options[i].value.substring(1, 3) == getRoomID2) {
+                roomSelectEl.selectedIndex = i;
+                //Change image acording to room ID
+                if (getEventType == 1) {
+                    roomImage.src = `./images/rooms/${getRoomID1}${getRoomID2}.png`
+                }
+                break;
+            }
         }
-    }
-    //Change image acording to room ID
-    if (getEventType == 1) {
-        roomImage.src = `./images/rooms/${getRoomID1}${getRoomID2}.png`
     }
 
     // Event type 2
-    var getOffset88 = buffer.readUint8(88);
-    var getOffset89 = buffer.readUint8(89);
-    var getOffset90 = buffer.readUint8(90);
-    offset88El.value = getOffset88;
-    offset89El.value = getOffset89;
-    offset90El.value = getOffset90;
+    offset88El.value = buffer.readUint8(88);
+    offset89El.value = buffer.readUint8(89);
+    offset90El.value = buffer.readUint8(90);
 
     // Event type 4
-    var getEnemyGroupByte = buffer.readUint8(114);
-    enemyGroupEl.value = getEnemyGroupByte;
+    enemyGroupEl.value = buffer.readUint8(114);
 
     // Event type 5
-    var getMessage = buffer.readUint8(114);
-    var getMessageCamera = buffer.readUint8(116);
-    var getMessageSound = buffer.readUint8(118);
-    messageEl.value = getMessage;
-    messageCameraEl.value = getMessageCamera;
-    messageSoundEl.value = getMessageSound;
+    messageEl.value = buffer.readUint8(114);
+    messageCameraEl.value = buffer.readUint8(116);
+    messageSoundEl.value = buffer.readUint8(118);
 
     // Event type A
-    var getReactionTime = buffer.readUint8(112);
-    var getAnimationType = buffer.readUint8(116);
-    var getDamageOrigin = buffer.readUint8(117);
-    var getDamageAmount = buffer.readUint8(120);
-    reactionTimeEl.value = getReactionTime;
-    animationTypeEl.value = getAnimationType;
-    damageOriginEl.value = getDamageOrigin;
-    damageAmountEl.value = getDamageAmount;
+    reactionTimeEl.value = buffer.readUint8(112);
+    animationTypeEl.value = buffer.readUint8(116);
+    damageOriginEl.value = buffer.readUint8(117);
+    damageAmountEl.value = buffer.readUint8(120);
 
     // Event type 10
     ladderXEl.value = buffer.readFloatLE(112);
@@ -1075,13 +1057,27 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     var BUFFER_final;     // Buffer used to merge initial buffer + new chunk
     var BUFFER_temporary; // Buffer used for removing CDCDCDCD bytes from the end of the file
     var BUFFER_topPart;   // Buffer used to split the file and get the top part
-    var BUFFER_downPart;  // Buffer used to split the file and get the bottom part 
+    var BUFFER_downPart;  // Buffer used to split the file and get the bottom part
 
-    // Functions for Dialog box
-    function showTextBox(message) {
+    // Functions for Text box
+    function showTextBox(message, status) {
         var removedMessage = document.querySelector(".removedEntry");
         removedMessage.style.display = "block"
-        removedMessage.firstElementChild.textContent = message;
+        removedMessage.style.backgroundColor = status;
+        if (status == "exported") {
+            document.getElementById("removedEntry").firstElementChild.style.backgroundColor = "#333"
+            document.getElementById("removedEntry").firstElementChild.style.border = "2px solid #ddd"
+            document.getElementById("removedEntry").firstElementChild.style.width = "35%"
+            document.getElementById("removedEntry").firstElementChild.innerHTML = '<i class="fa-solid fa-file-export"></i>&nbsp&nbsp' + message;
+        }
+        if (status == "imported") {
+            document.getElementById("removedEntry").firstElementChild.style.backgroundColor = "#353"
+            document.getElementById("removedEntry").firstElementChild.style.border = "2px solid #7f7"
+            document.getElementById("removedEntry").firstElementChild.style.color = "2px solid #7f7"
+            document.getElementById("removedEntry").firstElementChild.style.color = "2px solid #7f7"
+            document.getElementById("removedEntry").firstElementChild.style.width = "35%"
+            document.getElementById("removedEntry").firstElementChild.innerHTML = '<i class="fa-solid fa-file-import"></i>&nbsp&nbsp' + message;
+        }
         setTimeout(() => {
             removedMessage.style.display = "none"
         }, 2000);
@@ -1144,6 +1140,176 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         return showTextBox("You cannot remove any more events!")
     });
 
+    /* =================================
+        EXPORT/IMPORT FUNCTIONALITY
+       ================================= */
+
+    // Getting elements
+    const btnExportEl = document.getElementById("export-event");
+    const btnExportAllEl = document.getElementById("export-all-event");
+    const btnImportEl = document.getElementById("import-event");
+    const btnImportAllEl = document.getElementById("import-all-event");
+
+    // Function for generating faces
+    function generateFaces(quantity) {
+        let faces_complete = "";
+        sum = 0;
+        for (i = 0; i != buffer.readUint8(6); i++) {
+            if (quantity == 1) { i = eventNumber.value - 1; }
+            let faces = `o  event_${Number(i + 1)}_type_${buffer.readUint8(69 + (160 * i))}` +
+                `\n` +
+                "f " + (1 + sum) + " " + (2 + sum) + " " + (3 + sum) + `\n` +
+                "f " + (1 + sum) + " " + (3 + sum) + " " + (4 + sum) + `\n` +
+                "f " + (1 + sum) + " " + (5 + sum) + " " + (6 + sum) + `\n` +
+                "f " + (1 + sum) + " " + (6 + sum) + " " + (2 + sum) + `\n` +
+                "f " + (2 + sum) + " " + (6 + sum) + " " + (7 + sum) + `\n` +
+                "f " + (2 + sum) + " " + (7 + sum) + " " + (3 + sum) + `\n` +
+                "f " + (3 + sum) + " " + (7 + sum) + " " + (8 + sum) + `\n` +
+                "f " + (3 + sum) + " " + (8 + sum) + " " + (4 + sum) + `\n` +
+                "f " + (4 + sum) + " " + (8 + sum) + " " + (5 + sum) + `\n` +
+                "f " + (4 + sum) + " " + (5 + sum) + " " + (1 + sum) + `\n` +
+                "f " + (5 + sum) + " " + (7 + sum) + " " + (6 + sum) + `\n` +
+                "f " + (5 + sum) + " " + (8 + sum) + " " + (7 + sum) + `\n`
+            faces_complete = faces_complete + faces;
+            if (quantity == 1) { break } // If only one obj it's extracted, this breaks the loop
+            sum = sum + 8;
+        } return faces_complete;
+    }
+
+    // Function for getting coordinate values
+    function exportEvents_vertices(quantity) {
+        let objMaker = "";
+        let objComplete = "";
+        let vert_topLeftX = topLeftXEl.value / 1000;
+        let vert_topLeftZ = topLeftZEl.value / 1000;
+        let vert_topRightX = topRightXEl.value / 1000;
+        let vert_topRightZ = topRightZEl.value / 1000;
+        let vert_bottomRightX = bottomRightXEl.value / 1000;
+        let vert_bottomRightZ = bottomRightZEl.value / 1000;
+        let vert_bottomLeftX = bottomLeftXEl.value / 1000;
+        let vert_bottomLeftZ = bottomLeftZEl.value / 1000;
+        let vert_lowerLimit = lowerLimitEl.value / 1000;
+        let vert_higherLimit = higherLimitEl.value / 1000;
+
+        for (i = 0; i != buffer.readUint8(6); i++) {
+            vert_topLeftX = buffer.readFloatLE(36 + (160 * i)) / 1000;
+            vert_topLeftZ = buffer.readFloatLE(40 + (160 * i)) / 1000;
+            vert_topRightX = buffer.readFloatLE(44 + (160 * i)) / 1000;
+            vert_topRightZ = buffer.readFloatLE(48 + (160 * i)) / 1000;
+            vert_bottomRightX = buffer.readFloatLE(52 + (160 * i)) / 1000;
+            vert_bottomRightZ = buffer.readFloatLE(56 + (160 * i)) / 1000;
+            vert_bottomLeftX = buffer.readFloatLE(60 + (160 * i)) / 1000;
+            vert_bottomLeftZ = buffer.readFloatLE(64 + (160 * i)) / 1000;
+            vert_lowerLimit = buffer.readFloatLE(24 + (160 * i)) / 1000;
+            vert_higherLimit = buffer.readFloatLE(28 + (160 * i)) / 1000;
+
+            objMaker = "# Vertices" + ` Event ${i + 1}` +
+                `\n` +
+                "v " + String(vert_topLeftX.toFixed(5)) + " "
+                + String(vert_lowerLimit.toFixed(5)) + " "
+                + String(vert_topLeftZ.toFixed(5)) +
+                `\n` +
+                "v " + String(vert_topRightX.toFixed(5)) + " "
+                + String(vert_lowerLimit.toFixed(5)) + " "
+                + String(vert_topRightZ.toFixed(5)) +
+                `\n` +
+                "v " + String(vert_bottomRightX.toFixed(5)) + " "
+                + String(vert_lowerLimit.toFixed(5)) + " "
+                + String(vert_bottomRightZ.toFixed(5)) +
+                `\n` +
+                "v " + String(vert_bottomLeftX.toFixed(5)) + " "
+                + String(vert_lowerLimit.toFixed(5)) + " "
+                + String(vert_bottomLeftZ.toFixed(5)) +
+                `\n` + // --------- BELOW HERE STARTS WITH HIGHER LIMIT -------------
+                "v " + String(vert_topLeftX.toFixed(5)) + " "
+                + String(vert_higherLimit.toFixed(5)) + " "
+                + String(vert_topLeftZ.toFixed(5)) +
+                `\n` +
+                "v " + String(vert_topRightX.toFixed(5)) + " "
+                + String(vert_higherLimit.toFixed(5)) + " "
+                + String(vert_topRightZ.toFixed(5)) +
+                `\n` +
+                "v " + String(vert_bottomRightX.toFixed(5)) + " "
+                + String(vert_higherLimit.toFixed(5)) + " "
+                + String(vert_bottomRightZ.toFixed(5)) +
+                `\n` +
+                "v " + String(vert_bottomLeftX.toFixed(5)) + " "
+                + String(vert_higherLimit.toFixed(5)) + " "
+                + String(vert_bottomLeftZ.toFixed(5)) + `\n`
+            objComplete = objComplete + objMaker;
+            if (quantity == 1) break;
+        }
+        return objComplete
+    }
+
+    function importEvents_vertices(quantity) {
+        ipcRenderer.on("AEVobj", (e, objpath) => {
+            var importedObjContent = fs.readFileSync(objpath, { encoding: 'utf8' });
+            let sum = 0;
+            let regexFromX = /(v\s[-]?\d{1,}[.]\d{1,})/g;
+            let regexFromHeight = /(?!v\s[-]?\d{1,}[.]\d{1,})(\d\s[-]?\d{1,}[.]\d{5,})/g;
+            let regexFromZ = /(?!v\s[-]?\d{1,}[.]\d{1,})(?!\d\s\d{1,}[.]\d{1,})([-]?\d{1,}[.]\d{5,}[\r\n])/g;
+
+            let arrayFromX = importedObjContent.match(regexFromX);
+            let arrayFromHeight = importedObjContent.match(regexFromHeight);
+            let arrayFromZ = importedObjContent.match(regexFromZ);
+
+            for (let i = 0; i != buffer.readUint8(6); i++) {
+                // X values
+                buffer.writeFloatLE(Number(arrayFromX[0 + sum].substring(2)) * 1000, 36 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromX[1 + sum].substring(2)) * 1000, 44 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromX[2 + sum].substring(2)) * 1000, 52 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromX[3 + sum].substring(2)) * 1000, 60 + (160 * i));
+                // Z values
+                buffer.writeFloatLE(Number(arrayFromZ[0 + sum].substring(0, arrayFromZ[0].length - 2)) * 1000, 40 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromZ[1 + sum].substring(0, arrayFromZ[1].length - 2)) * 1000, 48 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromZ[2 + sum].substring(0, arrayFromZ[2].length - 2)) * 1000, 56 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromZ[3 + sum].substring(0, arrayFromZ[3].length - 2)) * 1000, 64 + (160 * i));
+                // Lower and Higher Limits
+                buffer.writeFloatLE(Number(arrayFromHeight[0 + sum].substring(2)) * 1000, 24 + (160 * i));
+                buffer.writeFloatLE(Number(arrayFromHeight[4 + sum].substring(2)) * 1000, 28 + (160 * i));
+                // Outputing values to screen
+                lowerLimitEl.value = buffer.readFloatLE(24 + (160 * (eventNumber.value - 1))).toFixed(2);
+                higherLimitEl.value = buffer.readFloatLE(28 + (160 * (eventNumber.value - 1))).toFixed(2);
+                topLeftXEl.value = buffer.readFloatLE(36 + (160 * (eventNumber.value - 1))).toFixed(2);
+                topRightXEl.value = buffer.readFloatLE(44 + (160 * (eventNumber.value - 1))).toFixed(2);
+                bottomLeftXEl.value = buffer.readFloatLE(52 + (160 * (eventNumber.value - 1))).toFixed(2);
+                bottomRightXEl.value = buffer.readFloatLE(60 + (160 * (eventNumber.value - 1))).toFixed(2);
+                topLeftZEl.value = buffer.readFloatLE(40 + (160 * (eventNumber.value - 1))).toFixed(2);
+                topRightZEl.value = buffer.readFloatLE(48 + (160 * (eventNumber.value - 1))).toFixed(2);
+                bottomLeftZEl.value = buffer.readFloatLE(56 + (160 * (eventNumber.value - 1))).toFixed(2);
+                bottomRightZEl.value = buffer.readFloatLE(64 + (160 * (eventNumber.value - 1))).toFixed(2);
+                if (quantity == 1) { break }
+                sum = sum + 8;
+            } if (quantity == 1) {
+                showTextBox("Event imported successfully!", "imported");
+            } else
+                showTextBox("All events imported successfully!", "imported");
+
+        })
+    }
+
+    // Event listener
+    var folderName = headerFileName.value.substring(0, headerFileName.value.length - 4);
+    btnExportEl.addEventListener("click", function exportOneEvent() {
+        showTextBox("Event exported to obj!", "exported");
+        fs.mkdirSync(`${__dirname}/${folderName}`, { recursive: true });
+        fs.writeFileSync(`${__dirname}\\${folderName}\\event_${eventNumber.value}_type_${buffer.readUint8(69 + (160 * (eventNumber.value - 1)))}.obj`, exportEvents_vertices(1) + generateFaces(1));
+    });
+    btnExportAllEl.addEventListener("click", function exportAllEvents() {
+        showTextBox("All events exported to obj!", "exported");
+        fs.mkdirSync(`${__dirname}/${folderName}`, { recursive: true });
+        fs.writeFileSync(`${__dirname}\\${folderName}\\event_all.obj`, exportEvents_vertices(0) + generateFaces(0));
+    });
+    btnImportEl.addEventListener("click", function importOneEvent() {
+        ipcRenderer.send("AEVimportBtn");
+        importEvents_vertices(1)
+    })
+    btnImportAllEl.addEventListener("click", function importAllEvents() {
+        ipcRenderer.send("AEVimportBtn");
+        importEvents_vertices(0);
+    })
+
     // Save all modified buffer back to file
     saveBtn.addEventListener("click", () => {
         fs.writeFileSync(filepath, buffer);
@@ -1161,4 +1327,4 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     ipcRenderer.on("saveAsAEVfileContent", (e, arg) => {
         fs.writeFileSync(arg, buffer);
     })
-});
+})

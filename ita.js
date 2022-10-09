@@ -10,6 +10,11 @@ const textarea = document.getElementById("testes");
    =============== */
 
 // Getting elements
+var rootEl = document.querySelector("html");
+var copyBtnEl = document.getElementById("copyBtn");
+var pasteBtnEl = document.getElementById("pasteBtn");
+var undoBtnEl = document.getElementById("undoBtn");
+var redoBtnEl = document.getElementById("redoBtn");
 var countEl = document.getElementById("count");
 var numberSequential = document.querySelector(".number-sequential");
 var selectItemID = document.querySelector(".item-id");
@@ -40,6 +45,9 @@ const saveAsBtn = document.getElementById("saveAs")
 const minimizeBtn = document.getElementById("minimize")
 const maximizeBtn = document.getElementById("maximize")
 const closeWindowBtn = document.getElementById("closeWindow")
+
+var toggleWhiteTheme = document.querySelector(".white-theme-btn");
+var toggleDarkTheme = document.querySelector(".dark-theme-btn");
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -93,6 +101,12 @@ var posZ_id = 2; // Add a new id for each cell in every row
 var rotX_id = 2; // Add a new id for each cell in every row
 var rotY_id = 2; // Add a new id for each cell in every row
 var rotZ_id = 2; // Add a new id for each cell in every row
+
+// Menu bar buttons 
+copyBtnEl.addEventListener("click", () => document.execCommand("copy")); // Copy function
+pasteBtnEl.addEventListener("click", () => document.execCommand("paste")); // Paste function
+undoBtnEl.addEventListener("click", () => document.execCommand("undo")); // Undo function
+redoBtnEl.addEventListener("click", () => document.execCommand("redo")); // Redo function
 
 ipcRenderer.on("dialog", (e, arg) => {
     let fd = fs.openSync(arg); // fd means file descriptor

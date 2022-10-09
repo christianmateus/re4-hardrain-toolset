@@ -66,6 +66,18 @@
             </div>
          </div>
       </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="advanced">Advanced</button>
+         <div class="dropdown-content">
+            <button class="menu-buttons" id="export-event"><img src="images/export.png"> Export event</button>
+            <button class="menu-buttons" id="export-all-event">
+               <img src="images/export_all.png"> Export all events</button>
+            <hr>
+            <button class="menu-buttons" id="import-event"><img src="images/import.png"> Import event</button>
+            <button class="menu-buttons" id="import-all-event">
+               <img src="images/import_all.png"> Import all events</button>
+         </div>
+      </div>
       <div id="control-window">
          <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
                src="./images/main-menu.png"></button>
@@ -694,6 +706,7 @@
    </main>
    <script>
       require('./aev.js'); // Used in electron
+      // require('./aa.js'); // Used in electron
    </script>
 </body>
 

@@ -9,6 +9,11 @@ const textarea = document.getElementById("testes");
    =============== */
 
 // Getting elements
+var rootEl = document.querySelector("html");
+var copyBtnEl = document.getElementById("copyBtn");
+var pasteBtnEl = document.getElementById("pasteBtn");
+var undoBtnEl = document.getElementById("undoBtn");
+var redoBtnEl = document.getElementById("redoBtn");
 var countEl = document.getElementById("count");
 var numberSequential = document.querySelector(".number-sequential");
 var imageEl = document.querySelector(".imageEl");
@@ -35,6 +40,9 @@ const quitApp = document.getElementById("quitApp");
 const minimizeBtn = document.getElementById("minimize");
 const maximizeBtn = document.getElementById("maximize");
 const closeWindowBtn = document.getElementById("closeWindow");
+
+var toggleWhiteTheme = document.querySelector(".white-theme-btn");
+var toggleDarkTheme = document.querySelector(".dark-theme-btn");
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -82,6 +90,12 @@ var posZ_id = 2; // Add a new id for each posX (used in cloneRow())
 var rotX_id = 2; // Add a new id for each posX (used in cloneRow())
 var rotY_id = 2; // Add a new id for each posX (used in cloneRow())
 var rotZ_id = 2; // Add a new id for each posX (used in cloneRow())
+
+// Menu bar buttons 
+copyBtnEl.addEventListener("click", () => document.execCommand("copy")); // Copy function
+pasteBtnEl.addEventListener("click", () => document.execCommand("paste")); // Paste function
+undoBtnEl.addEventListener("click", () => document.execCommand("undo")); // Undo function
+redoBtnEl.addEventListener("click", () => document.execCommand("redo")); // Redo function
 
 // Getting file path
 ipcRenderer.on("etsFileChannel", (e, filepath) => {

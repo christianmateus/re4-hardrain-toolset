@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/ets.css">
     <link rel="stylesheet" href="css/navbar.css">
-    <!-- <script src="ets.js" defer></script> -->
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="./css/all.min.css">
     <title>ETS Tool</title>
 </head>
 
 <body>
-    <div class="hide container-hide" id="fileSaved">
+    <div class="hide container-hide-ets" id="fileSaved">
         <span class="successfully-saved">
             <i class="fa-regular fa-circle-check"></i>&nbsp;
             File saved successfully!</span>
@@ -29,6 +30,30 @@
                 <button id="quitApp" class="menu-buttons">Quit</button>
             </div>
         </div>
+        <div class="dropdown">
+            <button class="menu-buttons" id="edit">Edit</button>
+            <div class="dropdown-content">
+                <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
+                <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
+                <hr>
+                <button id="undoBtn" class="menu-buttons"><img src="images/undo.png"> Undo</button>
+                <button id="redoBtn" class="menu-buttons"><img src="images/redo.png"> Redo</button>
+            </div>
+        </div>
+        <!-- <div class="dropdown">
+            <button class="menu-buttons" id="options">Options</button>
+            <div class="dropdown-content">
+                <div class="show-theme">
+                    <button class="menu-buttons"><img src="images/theme.png"> Theme ></button>
+                    <div class="submenu">
+                        <input id="dark-theme" type="radio" name="theme" value="dark" class="theme-radio-btn">
+                        <label class="menu-buttons radio-label dark-theme-btn" for="dark-theme">Dark</label>
+                        <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
+                        <label class="menu-buttons radio-label white-theme-btn" for="white-theme">White</label>
+                    </div>
+                </div>
+            </div>
+        </div> -->
         <div id="control-window">
             <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
                     src="./images/main-menu.png"></button>
@@ -199,6 +224,7 @@
     <script>
         require('./ets.js');
     </script>
+
 </body>
 
 </html>

@@ -10,7 +10,7 @@ let mainWindow;
 function createWindow() {
 
   mainWindow = new BrowserWindow({
-    width: 1000, height: 500, minWidth: 600, minHeight: 300, maxWidth: 1000,
+    width: 1000, height: 600, minWidth: 600, minHeight: 300, maxWidth: 1000,
     autoHideMenuBar: true,
     frame: false,
     icon: "./icons/icon.png",
@@ -23,11 +23,11 @@ function createWindow() {
 
   })
 
-  // Load index.html into the new BrowserWindow
-  mainWindow.loadFile('aev.html');
+  // Load menu.html into the new BrowserWindow
+  mainWindow.loadFile('menu.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -84,7 +84,7 @@ ipcMain.on("saveFile", (e, arg) => {
 
 // Closing ITA file (workaround)
 ipcMain.on("closeITAfile", (e, arg) => {
-  mainWindow.loadFile("index.html")
+  mainWindow.loadFile("ita.html")
 })
 
 
@@ -154,6 +154,19 @@ ipcMain.on("saveAsAEVfile", (e, arg) => {
     })
 })
 
+// Importing object files
+ipcMain.on("AEVimportBtn", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'OBJ Files', extensions: ['obj'] }
+    ]
+  }).then((dados) => {
+    let importObjPath = dados.filePaths.toString();
+    mainWindow.webContents.send("AEVobj", importObjPath);
+    console.log(importObjPath)
+  })
+})
+
 // Closing AEV file (workaround)
 ipcMain.on("closeAEVfile", (e, arg) => {
   mainWindow.loadFile("aev.html")
@@ -183,7 +196,7 @@ ipcMain.on("openMainMenu", (e, arg) => {
 })
 
 ipcMain.on("openITAtool", () => {
-  mainWindow.loadFile("index.html")
+  mainWindow.loadFile("ita.html")
 })
 
 ipcMain.on("openETStool", () => {
