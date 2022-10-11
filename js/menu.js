@@ -4,6 +4,7 @@ const { ipcRenderer } = require('electron');
 const ETS = document.getElementById("ets-card");
 const ITA = document.getElementById("ita-card");
 const AEV = document.getElementById("aev-card");
+const MDT = document.getElementById("mdt-card");
 
 // Window menu buttons
 const minimizeBtn = document.getElementById("minimize")
@@ -21,6 +22,10 @@ ITA.addEventListener("click", function () {
 
 AEV.addEventListener("click", function () {
     ipcRenderer.send("openAEVtool")
+})
+
+MDT.addEventListener("click", function () {
+    ipcRenderer.send("openMDTtool")
 })
 
 // Window menu actions

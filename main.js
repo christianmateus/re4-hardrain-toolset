@@ -27,7 +27,7 @@ function createWindow() {
   mainWindow.loadFile('menu.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -172,6 +172,40 @@ ipcMain.on("closeAEVfile", (e, arg) => {
   mainWindow.loadFile("aev.html")
 })
 
+// Function for sending MDT file path
+ipcMain.on("openMDTfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "MDT files", extensions: ["MDT"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let MDTfile = um.filePaths.toString();
+      mainWindow.webContents.send("mdtFileChannel", MDTfile);
+      console.log(MDTfile)
+    })
+})
+
+// Saving actual MDT file
+ipcMain.on("saveAsMDTfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'MDT Files', extensions: ['MDT'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsMDTfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Closing MDT file (workaround)
+ipcMain.on("closeMDTfile", (e, arg) => {
+  mainWindow.loadFile("mdt.html")
+})
+
+
 // Quiting application
 ipcMain.on("quitApp", (e, arg) => {
   mainWindow.close();
@@ -205,4 +239,8 @@ ipcMain.on("openETStool", () => {
 
 ipcMain.on("openAEVtool", () => {
   mainWindow.loadFile("aev.html")
+})
+
+ipcMain.on("openMDTtool", () => {
+  mainWindow.loadFile("mdt.html")
 })

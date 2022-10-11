@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/mdt.css">
+   <link rel="stylesheet" href="css/navbar.css">
+   <!-- FONT AWESOME -->
+   <link rel="stylesheet" href="./css/all.min.css">
+   <title>MDT Tool</title>
+</head>
+
+<body>
+   <div class="hide container-hide" id="fileSaved">
+      <span class="successfully-saved">
+         <i class="fa-regular fa-circle-check"></i>&nbsp;
+         File saved successfully!</span>
+   </div>
+   <div class="hide addedEntry container-hide" id="addedEntry">
+      <span class="successfully-added">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp;
+         New event added!</span>
+   </div>
+   <div class="hide removedEntry container-hide" id="removedEntry">
+      <span class="successfully-removed">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   </div>
+   <nav id="menu-container">
+      <div class="dropdown">
+         <button class="menu-buttons" id="file">File</button>
+         <div class="dropdown-content">
+            <button id="openMDTfile" class="menu-buttons"><img src="images/open.png"> Open MDT file</button>
+            <button id="closeMDTfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <hr>
+            <button id="saveMDTfile" class="menu-buttons"><img src="images/save.png"> Save MDT file</button>
+            <button id="saveMDTas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <hr>
+            <button id="quitApp" class="menu-buttons">Quit</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="edit">Edit</button>
+         <div class="dropdown-content">
+            <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
+            <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
+            <hr>
+            <button id="undoBtn" class="menu-buttons"><img src="images/undo.png"> Undo</button>
+            <button id="redoBtn" class="menu-buttons"><img src="images/redo.png"> Redo</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="options">Options</button>
+         <div class="dropdown-content">
+            <div class="show-theme">
+               <button class="menu-buttons"><img src="images/theme.png"> Theme ></button>
+               <div class="submenu">
+                  <input id="dark-theme" type="radio" name="theme" value="dark" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label dark-theme-btn" for="dark-theme">Dark</label>
+                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">White</label>
+               </div>
+            </div>
+         </div>
+         <div class="dropdown-content">
+            <div class="show-theme">
+               <button class="menu-buttons"><img src="images/theme.png"> Cards ></button>
+               <div class="submenu">
+                  <input id="dark-theme" type="radio" name="theme" value="dark" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label dark-theme-btn" for="dark-theme">1 per row</label>
+                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">2 per row</label>
+                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">3 per row</label>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="control-window">
+         <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+               src="./images/main-menu.png"></button>
+         <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+               src="./images/minimize.png"></button>
+         <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+               src="./images/expand-window.png"></button>
+         <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+               src="./images/close-window.png"></button>
+      </div>
+   </nav>
+   <div id="campo-superior">
+      <!-- BOX 1 -->
+      <div class="inner-box file-info">
+         <div>
+            <label for="header-filename">File name:</label>
+            <label for="header-filesize">File size:</label>
+         </div>
+         <div>
+            <input id="header-filename" type="text" readonly value="">
+            <input id="header-filesize" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 2 -->
+      <div class="inner-box total-events">
+         <div>
+            <label for="count">Total Languages:</label>
+            <input id="count" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 3 -->
+      <div class="inner-box">
+      </div>
+   </div>
+   <!-- PROGRAM DATA STARTS -->
+   <main>
+      <section class="container-languages">
+         <button class="language-buttons">English</button>
+         <button class="language-buttons">Deutsch</button>
+         <button class="language-buttons">Spanish</button>
+         <button class="language-buttons">French</button>
+         <button class="language-buttons">Italian</button>
+      </section>
+      <section class="container-text-and-config">
+         <div class="container-text">
+            <div class="container-titles">
+               <h5>Messages</h5>
+            </div>
+            <div>
+               <details open class="message-container">
+                  <summary>Message 01</summary>
+                  <div class="details-expanded">
+                     <textarea class="text-boxes"></textarea>
+                  </div>
+               </details>
+            </div>
+            <div>
+               <details class="message-container">
+                  <summary>Message 02</summary>
+                  <div class="details-expanded">
+                     <textarea></textarea>
+                  </div>
+               </details>
+            </div>
+            <div>
+               <details>
+                  <summary>Message 03</summary>
+                  <div class="details-expanded">
+                     <textarea></textarea>
+                  </div>
+               </details>
+            </div>
+            <div>
+               <details>
+                  <summary>Message 04</summary>
+                  <div class="details-expanded">
+                     <textarea></textarea>
+                  </div>
+               </details>
+            </div>
+            <div>
+               <details>
+                  <summary>Message 05</summary>
+                  <div class="details-expanded">
+                     <textarea></textarea>
+                  </div>
+               </details>
+            </div>
+         </div>
+         <div class="container-config">
+            <div class="container-titles">
+               <h5>Control panel</h5>
+            </div>
+            <div class="panel-buttons">
+               <button id="show-all-btn" class="win7-btn config-buttons">Show all</button><br>
+               <button id="hide-all-btn" class="win7-btn config-buttons">Hide all</button>
+            </div>
+         </div>
+      </section>
+   </main>
+   <script>
+      require('./js/mdt.js'); // Used in electron
+      require('./js/mdt-alphabet.js'); // Used in electron
+   </script>
+</body>
+
+</html>

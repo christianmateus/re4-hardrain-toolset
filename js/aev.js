@@ -396,10 +396,8 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         bottomLeftZEl.value = buffer.readFloatLE(64 + chunk).toFixed(2);
 
         // Getting lower and higher limits
-        let getCloneLowerLimit = buffer.readFloatLE(24).toFixed(2);
-        let getCloneHigherLimit = buffer.readFloatLE(28).toFixed(2);
-        lowerLimitEl.value = getCloneLowerLimit;
-        higherLimitEl.value = getCloneHigherLimit;
+        lowerLimitEl.value = buffer.readFloatLE(24 + chunk).toFixed(2);
+        higherLimitEl.value = buffer.readFloatLE(28 + chunk).toFixed(2);
 
         // Reading definition bytes
         definitionByte1.value = buffer.readUint8(84 + chunk);
@@ -1179,7 +1177,8 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     // Function for getting coordinate values
     function exportEvents_vertices(quantity) {
         let objMaker = "";
-        let objComplete = "";
+        let objComplete = `# Resident evil 4 - AEV Tool 2022` +
+            `\n` + `\n` + `# By HardRain` + `\n` + `\n`;
         let vert_topLeftX = topLeftXEl.value / 1000;
         let vert_topLeftZ = topLeftZEl.value / 1000;
         let vert_topRightX = topRightXEl.value / 1000;
@@ -1192,6 +1191,7 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
         let vert_higherLimit = higherLimitEl.value / 1000;
 
         for (i = 0; i != buffer.readUint8(6); i++) {
+            if (quantity == 1) { i = (eventNumber.value - 1) }
             vert_topLeftX = buffer.readFloatLE(36 + (160 * i)) / 1000;
             vert_topLeftZ = buffer.readFloatLE(40 + (160 * i)) / 1000;
             vert_topRightX = buffer.readFloatLE(44 + (160 * i)) / 1000;
@@ -1203,7 +1203,7 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
             vert_lowerLimit = buffer.readFloatLE(24 + (160 * i)) / 1000;
             vert_higherLimit = buffer.readFloatLE(28 + (160 * i)) / 1000;
 
-            objMaker = "# Vertices" + ` Event ${i + 1}` +
+            objMaker = "# Vertices" + ` Event ${Number(i + 1)}` +
                 `\n` +
                 "v " + String(vert_topLeftX.toFixed(5)) + " "
                 + String(vert_lowerLimit.toFixed(5)) + " "
@@ -1255,6 +1255,7 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
             let arrayFromZ = importedObjContent.match(regexFromZ);
 
             for (let i = 0; i != buffer.readUint8(6); i++) {
+                if (quantity == 1) { i = (eventNumber.value - 1) }
                 // X values
                 buffer.writeFloatLE(Number(arrayFromX[0 + sum].substring(2)) * 1000, 36 + (160 * i));
                 buffer.writeFloatLE(Number(arrayFromX[1 + sum].substring(2)) * 1000, 44 + (160 * i));
@@ -1293,13 +1294,14 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
     var folderName = headerFileName.value.substring(0, headerFileName.value.length - 4);
     btnExportEl.addEventListener("click", function exportOneEvent() {
         showTextBox("Event exported to obj!", "exported");
-        fs.mkdirSync(`${__dirname}/${folderName}`, { recursive: true });
-        fs.writeFileSync(`${__dirname}\\${folderName}\\event_${eventNumber.value}_type_${buffer.readUint8(69 + (160 * (eventNumber.value - 1)))}.obj`, exportEvents_vertices(1) + generateFaces(1));
+        fs.mkdirSync(`Events/${folderName}`, { recursive: true });
+        fs.writeFileSync(`Events/${folderName}/event_${eventNumber.value}_type_${buffer.readUint8(69 + (160 * (eventNumber.value - 1)))}.obj`, exportEvents_vertices(1) + generateFaces(1));
     });
     btnExportAllEl.addEventListener("click", function exportAllEvents() {
         showTextBox("All events exported to obj!", "exported");
-        fs.mkdirSync(`${__dirname}/${folderName}`, { recursive: true });
-        fs.writeFileSync(`${__dirname}\\${folderName}\\event_all.obj`, exportEvents_vertices(0) + generateFaces(0));
+        fs.mkdirSync(`Events/${folderName}`, { recursive: true });
+        fs.writeFileSync(`Events/${folderName}/event_all.obj`, exportEvents_vertices(0) + generateFaces(0));
+        console.log(__dirname);
     });
     btnImportEl.addEventListener("click", function importOneEvent() {
         ipcRenderer.send("AEVimportBtn");

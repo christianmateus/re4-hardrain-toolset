@@ -52,8 +52,10 @@ html {
     height: 25px;
     position: fixed;
     top: 0;
-    z-index: 2;
+    z-index: 4;
     -webkit-app-region: drag;
+    position: -webkit-sticky;
+    position: sticky;
 }
 
 nav hr {
