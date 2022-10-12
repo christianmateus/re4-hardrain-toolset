@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
+const Alphabet = require('./mdt-alphabet');
 
 // Const for testing text output (DEBUG)
 
@@ -31,7 +32,8 @@ const maximizeBtn = document.getElementById("maximize");
 const closeWindowBtn = document.getElementById("closeWindow");
 
 // Content elements
-let textBoxEl = document.querySelector(".text-boxes");
+let containerLeftSideEl = document.getElementById("container-text");
+let textBoxEl = document.getElementsByClassName("text-boxes");
 
 var toggleWhiteTheme = document.querySelector(".white-theme-btn");
 var toggleDarkTheme = document.querySelector(".dark-theme-btn");
@@ -68,9 +70,6 @@ closeWindowBtn.addEventListener("click", () => {
 })
 
 // 
-showAllBtn.addEventListener("click", function () {
-    messageContainerEl.setAttribute("open", "true");
-})
 
 /* ===============
     READ
@@ -85,8 +84,6 @@ pasteBtnEl.addEventListener("click", () => document.execCommand("paste")); // Pa
 undoBtnEl.addEventListener("click", () => document.execCommand("undo")); // Undo function
 redoBtnEl.addEventListener("click", () => document.execCommand("redo")); // Redo function
 
-
-
 // Getting file path
 ipcRenderer.on("mdtFileChannel", (e, filepath) => {
 
@@ -100,45 +97,85 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
     headerFileSize.value = buffer.length + " bytes";
     headerFileName.value = conv;
 
-    const Alphabet = {
-        131: '0',
-        194: 'b',
-        195: 'c',
-        196: 'd',
-        197: 'e',
-        e: 197
+    function createElement(index) {
+        let firstDivTag = document.createElement("div");
+        let detailsTag = document.createElement("details");
+        let summaryTag = document.createElement("summary");
+        let secondDivTag = document.createElement("div");
+        let textareaTag = document.createElement("textarea");
+
+        detailsTag.classList.add("message-container");
+        summaryTag.innerText = "Message " + index;
+        secondDivTag.classList.add("details-expanded");
+        textareaTag.classList.add("text-boxes");
+        textareaTag.id = index;
+
+        containerLeftSideEl.append(firstDivTag);
+        firstDivTag.appendChild(detailsTag);
+        secondDivTag.appendChild(textareaTag)
+        detailsTag.append(summaryTag, secondDivTag);
+
     }
 
-    function showOffsets() {
-        let count = 0;
-        let allOffsets = '';
-        let engLanguageKey = buffer.readUint32LE(8);
-        let engLanguageOffset = buffer.readUint8(engLanguageKey + 4);
-        let pointers = [];
 
-        for (let i = 0; i != engLanguageOffset; i++) {
-            let j = buffer.readUint32LE(engLanguageKey + 8 + count); //
-            count = count + 4;
-            pointers.push(j);
-        }
-        count = 0;
-        for (let k = 0; k < (pointers[1] - pointers[0]) / 2; k++) {
-            let tempChars = buffer.readUint16LE(engLanguageKey + pointers[0] + count);
-            count = count + 2;
-            allOffsets = allOffsets + tempChars;
-        }
-        for (let l = 0; l < Object.keys(Alphabet).length + 193; l++) {
-            if (allOffsets.includes(l)) {
-                console.log(l);
-                console.log(Alphabet[l + 193]);
+    function readMessages() {
+        let count = 0; // Used and reused for many loop reasons
+        let wordCollector = '';
+        let engLanguageKey = buffer.readUint32LE(8); // Search for English language KEY
+        let engLanguageOffset = buffer.readUint8(engLanguageKey + 4); // Read messages quantity for Eng
+        let pointers = []; // Array to every message pointer, for this particular language
+        let pointerSwap = 1; // Makes the pointer array increase by +1 on each iteration (reads next message)
+
+        // Loop for each message box
+        for (let index = 0; index < engLanguageOffset; index++) {
+            createElement(Number(index + 1));
+            count = 0;
+            wordCollector = ''; // Empties the collector
+
+            // Loop to detect and store every message pointer
+            for (let i = 0; i != engLanguageOffset && index == 0; i++) {
+                let j = buffer.readUint32LE(engLanguageKey + 8 + count); // Reads each message pointer
+                count = count + 4;
+                pointers.push(j); // Stores every message pointer, for this particular language
             }
-            allOffsets = allOffsets.replace(l + 130, Alphabet[l + 130])
+            count = 0;
+
+            // Loop to read every char from a string
+            for (let k = 0; k < (pointers[Number(pointerSwap)] - pointers[Number(pointerSwap - 1)]) / 2; k++) {
+                let tempChars = buffer.readUint16LE(engLanguageKey + pointers[Number(pointerSwap - 1)] + count); // Reads every short
+                count = count + 2;
+                wordCollector = wordCollector + "^" + tempChars; // Separate every 3-digit with ^ symbol
+            }
+            count = 0;
+
+            // Loop to converter every 3-digit numbers to alphabet characters
+            while (/([0-9]{3})/g.test(wordCollector)) {
+                wordCollector = wordCollector.replace((Number(count + 128)), Alphabet.Alphabet[(Number(count + 128))])
+                count = count + 1;
+                if (count == 311 && /([0-9]{3})/g.test(wordCollector)) {
+                    count = 0;
+                }
+                if (count == 312) {
+                    break
+                }
+            }
+            pointerSwap = pointerSwap + 1;
+            wordCollector = wordCollector.replace(/(\^)/gm, ''); // Checks for every ^ symbol and removes it
+            console.log(wordCollector.split(","))
+            let codeNumbers = wordCollector.match(/[0-9]/g); // 
+            // console.log(codeNumbers.map(i => `[${i}]`));
+
+
+            console.log(pointers);
+            textBoxEl[index].innerHTML = wordCollector;
         }
-        console.log(pointers);
-        return textBoxEl.innerText = allOffsets;
     }
 
-    showOffsets();
+    readMessages();
+
+    showAllBtn.addEventListener("click", function () {
+        messageContainerEl.setAttribute("open", "true");
+    })
 
     // Main Functions
     function showTextBox(message, status) {
