@@ -77,6 +77,7 @@ closeWindowBtn.addEventListener("click", () => {
 
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
+let wordCollector = '';
 
 // Menu bar buttons 
 copyBtnEl.addEventListener("click", () => document.execCommand("copy")); // Copy function
@@ -117,17 +118,27 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
 
     }
 
+    function wrapCodeMessages() {
+        wordCollector = wordCollector.replace(/\^10/g, "[item-QT]")
+        wordCollector = wordCollector.replace(/\^16/g, "[item-ID]")
+        wordCollector = wordCollector.replace("^0", "[message-start]");
+        wordCollector = wordCollector.replace(/[1]/g, "[message-end]");
+        wordCollector = wordCollector.replace(/[3]/g, "[line-break]");
+        wordCollector = wordCollector.replace(/[4]/g, "[new-page]");
+        wordCollector = wordCollector.replace(/[5]/g, "[itemname]");
+        wordCollector = wordCollector.replace(/[7]/g, "[option]");
+        wordCollector = wordCollector.replace(/[8]/g, "[pause]")
+    }
 
     function readMessages() {
         let count = 0; // Used and reused for many loop reasons
-        let wordCollector = '';
         let engLanguageKey = buffer.readUint32LE(8); // Search for English language KEY
         let engLanguageOffset = buffer.readUint8(engLanguageKey + 4); // Read messages quantity for Eng
         let pointers = []; // Array to every message pointer, for this particular language
         let pointerSwap = 1; // Makes the pointer array increase by +1 on each iteration (reads next message)
 
         // Loop for each message box
-        for (let index = 0; index < engLanguageOffset; index++) {
+        for (let index = 0; index != engLanguageOffset; index++) {
             createElement(Number(index + 1));
             count = 0;
             wordCollector = ''; // Empties the collector
@@ -145,6 +156,15 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
                 let tempChars = buffer.readUint16LE(engLanguageKey + pointers[Number(pointerSwap - 1)] + count); // Reads every short
                 count = count + 2;
                 wordCollector = wordCollector + "^" + tempChars; // Separate every 3-digit with ^ symbol
+
+                console.log((pointers[Number(pointerSwap)] - pointers[Number(pointerSwap - 1)]) / 2);
+                console.log("Index inside for: " + index);
+
+                /* ====================================================================================================
+                    Este "for" compara o tamanho entre cada 2 array e divide ao meio para pegar os shorts, ex: [30] - [20] / 2 == 5 
+                    FALTA PEGAR AS LETRAS DO ÚLTIMO ARRAY
+                   ==================================================================================================== */
+
             }
             count = 0;
 
@@ -159,13 +179,13 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
                     break
                 }
             }
+            // console.log(wordCollector);
             pointerSwap = pointerSwap + 1;
+            wrapCodeMessages();
+            // console.log(wordCollector);
+
             wordCollector = wordCollector.replace(/(\^)/gm, ''); // Checks for every ^ symbol and removes it
-            console.log(wordCollector.split(","))
-            let codeNumbers = wordCollector.match(/[0-9]/g); // 
-            // console.log(codeNumbers.map(i => `[${i}]`));
-
-
+            console.log("Index at the end: " + index);
             console.log(pointers);
             textBoxEl[index].innerHTML = wordCollector;
         }

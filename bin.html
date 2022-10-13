@@ -4,11 +4,11 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="css/mdt.css">
+   <link rel="stylesheet" href="css/bin.css">
    <link rel="stylesheet" href="css/navbar.css">
    <!-- FONT AWESOME -->
    <link rel="stylesheet" href="./css/all.min.css">
-   <title>MDT Tool</title>
+   <title>BIN Tool</title>
 </head>
 
 <body>
@@ -30,23 +30,13 @@
       <div class="dropdown">
          <button class="menu-buttons" id="file">File</button>
          <div class="dropdown-content">
-            <button id="openMDTfile" class="menu-buttons"><img src="images/open.png"> Open MDT file</button>
-            <button id="closeMDTfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <button id="openBINfile" class="menu-buttons"><img src="images/open.png"> Open BIN file</button>
+            <button id="closeBINfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
             <hr>
-            <button id="saveMDTfile" class="menu-buttons"><img src="images/save.png"> Save MDT file</button>
-            <button id="saveMDTas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <button id="saveBINfile" class="menu-buttons"><img src="images/save.png"> Save BIN file</button>
+            <button id="saveBINas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
             <hr>
             <button id="quitApp" class="menu-buttons">Quit</button>
-         </div>
-      </div>
-      <div class="dropdown">
-         <button class="menu-buttons" id="edit">Edit</button>
-         <div class="dropdown-content">
-            <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
-            <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
-            <hr>
-            <button id="undoBtn" class="menu-buttons"><img src="images/undo.png"> Undo</button>
-            <button id="redoBtn" class="menu-buttons"><img src="images/redo.png"> Redo</button>
          </div>
       </div>
       <div class="dropdown">
@@ -100,56 +90,26 @@
          </div>
       </div>
       <!-- BOX 2 -->
-      <div class="inner-box total-events">
+      <!-- <div class="inner-box total-events">
          <div>
             <label for="count">Total Languages:</label>
             <input id="count" type="text" readonly value="">
          </div>
-      </div>
+      </div> -->
       <!-- BOX 3 -->
       <div class="inner-box">
       </div>
    </div>
    <!-- PROGRAM DATA STARTS -->
    <main>
-      <section class="container-languages">
-         <button class="language-buttons">English</button>
-         <button class="language-buttons">Deutsch</button>
-         <button class="language-buttons">Spanish</button>
-         <button class="language-buttons">French</button>
-         <button class="language-buttons">Italian</button>
-      </section>
-      <section class="container-text-and-config">
-         <div id="container-text" class="container-text">
-            <div class="container-titles">
-               <h5>Messages</h5>
-            </div>
-         </div>
-         <div class="container-config">
-            <div class="container-titles">
-               <h5>Control panel</h5>
-            </div>
-            <div class="panel-buttons">
-               <button id="show-all-btn" class="win7-btn config-buttons">Show all</button><br>
-               <button id="hide-all-btn" class="win7-btn config-buttons">Hide all</button>
-            </div>
-            <div class="panel-buttons commands-box">
-               <h5>Commands</h5>
-               <button class="win7-btn config-buttons">[message-start]</button>
-               <button class="win7-btn config-buttons">[message-end]</button>
-               <button class="win7-btn config-buttons">[line-break]</button>
-               <button class="win7-btn config-buttons">[new-page]</button>
-               <button class="win7-btn config-buttons">[option]</button>
-               <button class="win7-btn config-buttons">[pause]</button>
-               <button class="win7-btn config-buttons">[item-qt]</button>
-               <button class="win7-btn config-buttons">[item-id]</button>
-            </div>
-         </div>
-      </section>
+      <fieldset class="fieldset-main">
+         <legend>BIN command panel</legend>
+         <button id="import-bin" class="win7-btn panel-btn">Convert obj to bin</button><br>
+         <button id="export-bin" class="win7-btn panel-btn">Convert bin to obj</button>
+      </fieldset>
    </main>
    <script>
-      require('./js/mdt.js'); // Used in electron
-      require('./js/mdt-alphabet.js'); // Used in electron
+      require('./js/bin.js'); // Used in electron
    </script>
 </body>
 

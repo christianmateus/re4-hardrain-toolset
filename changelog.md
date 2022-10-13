@@ -1,7 +1,8 @@
 # Changelog
 All changes that affects usability to this project will be documented here.
-## 1.1.2 - *WIP*
+## 1.2.0 - *WIP*
  - MDT tool under development
+ - BIN tool under development
  - Added two new cards at main menu
 ## 1.1.1 - *09, october 2022*
 `Added`

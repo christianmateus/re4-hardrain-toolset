@@ -205,6 +205,37 @@ ipcMain.on("closeMDTfile", (e, arg) => {
   mainWindow.loadFile("mdt.html")
 })
 
+// Function for sending BIN file path
+ipcMain.on("openBINfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "BIN files", extensions: ["bin"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let BINfile = um.filePaths.toString();
+      mainWindow.webContents.send("binFileChannel", BINfile);
+      console.log(BINfile)
+    })
+})
+
+// Importing OBJ to BIN files
+ipcMain.on("BINimportBtn", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'OBJ Files', extensions: ['obj'] }
+    ]
+  }).then((dados) => {
+    let importObjPath = dados.filePaths.toString();
+    mainWindow.webContents.send("BINobj", importObjPath);
+    console.log(importObjPath)
+  })
+})
+
+// Closing BIN file (workaround)
+ipcMain.on("closeBINfile", (e, arg) => {
+  mainWindow.loadFile("bin.html")
+})
 
 // Quiting application
 ipcMain.on("quitApp", (e, arg) => {
@@ -243,4 +274,8 @@ ipcMain.on("openAEVtool", () => {
 
 ipcMain.on("openMDTtool", () => {
   mainWindow.loadFile("mdt.html")
+})
+
+ipcMain.on("openBINtool", () => {
+  mainWindow.loadFile("bin.html")
 })

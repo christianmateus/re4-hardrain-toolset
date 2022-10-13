@@ -4,7 +4,8 @@ An updated toolset for editing Resident Evil 4 files, in constant development to
 ### Some of the **new features**:
 
 - Better layout visual appearence
+- Friendly for beginner modders
 - Reducing numbers and replacing by names or IDs
-- Faster way to mod, without the need to exit the app
+- Faster way to mod, with integrated tools
 - And many more to come...
 
