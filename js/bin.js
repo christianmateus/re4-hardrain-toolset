@@ -80,8 +80,8 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
     headerFileSize.value = buffer.length + " bytes";
     headerFileName.value = conv;
 
-    let materialStartOffset = buffer.readUint32LE(12);
-    let binFirstSubmeshOffset = buffer.readUint32LE(materialStartOffset + 12);
+    let materialStartOffset = buffer.readUint32LE(12); // Very first line, reads pointer to the material list
+    let binFirstSubmeshOffset = buffer.readUint32LE(materialStartOffset + 12); // Reads pointer from first material
     submeshSize = buffer.readUint8(binFirstSubmeshOffset + binHeaderSize);
 
     function covertBinToObj() {
@@ -90,13 +90,36 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
         let objComplete = `# Resident evil 4 - BIN Tool 2022` +
             `\n` + `\n` + `# By HardRain` + `\n` + `\n`;
         for (let i = 0; i < 24; i++) {
-            let X = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + padding) / 1000;
-            let Y = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 2 + padding) / 1000;
-            let Z = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 4 + padding) / 1000;
-            // console.log(' ');
+            // Reading vertices XYZ
+            let vert_X = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + padding) / 1.6 / 1000;
+            let vert_Y = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 2 + padding) / 1.6 / 1000;
+            let vert_Z = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 4 + padding) / 1.6 / 1000;
 
-            padding = padding + 24;
-            objMaker = "v " + String(X.toFixed(4)) + " " + String(Y.toFixed(4)) + " " + String(Z.toFixed(4)) + `\n`
+            padding = padding + 24; // padding between each set of data 
+            objMaker = "v " + String(vert_X.toFixed(4)) + " " + String(vert_Y.toFixed(4)) + " " + String(vert_Z.toFixed(4)) + `\n`
+            objComplete = objComplete + objMaker;
+        }
+        padding = 0;
+
+        // For used to read normals XYZ
+        for (let i = 0; i < 24; i++) {
+            let normal_X = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + padding) / 2.56 / 1000;
+            let normal_Y = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + 2 + padding) / 2.56 / 1000;
+            let normal_Z = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + 4 + padding) / 2.56 / 1000;
+
+            padding = padding + 24; // padding between each set of data 
+            objMaker = "vn " + String(normal_X.toFixed(4)) + " " + String(normal_Y.toFixed(4)) + " " + String(normal_Z.toFixed(4)) + `\n`
+            objComplete = objComplete + objMaker;
+        }
+        padding = 0;
+
+        // For used to read Textures UV
+        for (let i = 0; i < 24; i++) {
+            let texture_U = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 16 + padding) / 2.55 / 100;
+            let texture_V = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 16 + 2 + padding) / 2.55 / 100;
+
+            padding = padding + 24; // padding between each set of data 
+            objMaker = "vt " + String(texture_U.toFixed(4)) + " " + String(texture_V.toFixed(4)) + `\n`;
             objComplete = objComplete + objMaker;
         }
         return objComplete;
@@ -104,35 +127,52 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
 
     function convertObjToBin() {
         ipcRenderer.on("BINobj", (e, objpath) => {
-            var importedObjContent = fs.readFileSync(objpath, { encoding: 'utf8' });
+            var importedObjContent = fs.readFileSync(objpath, { encoding: 'utf8' }); // OBJ file converted to string
             let sum = 0;
             padding = 0;
-            let regexFromX = /(v\s[-]?\d{1,}[.]\d{1,})/g;
-            let regexFromHeight = /(?!v\s[-]?\d{1,}[.]\d{1,})(\d\s[-]?\d{1,}[.]\d{4,})/g;
-            let regexFromZ = /(?!v\s[-]?\d{1,}[.]\d{1,})(?!\d\s\d{1,}[.]\d{1,})([-]?\d{1,}[.]\d{4,}[\r\n])/g;
+            let UVpadding = 0;
 
-            let arrayFromX = importedObjContent.match(regexFromX);
-            let arrayFromHeight = importedObjContent.match(regexFromHeight);
-            let arrayFromZ = importedObjContent.match(regexFromZ);
+            // Regex for getting Vertices XYZ
+            let regexFromVert_X = /(v\s[-]?\d{1,}[.]\d{1,})/g;
+            let regexFromVert_Y = /(?!v\s[-]?\d{1,}[.]\d{1,})(\d\s[-]?\d{1,}[.]\d{4,})/g;
+            let regexFromVert_Z = /(?!v\s[-]?\d{1,}[.]\d{1,})(?!\d\s\d{1,}[.]\d{1,})([-]?\d{1,}[.]\d{4,}[\r\n])/g;
 
-            // console.log(arrayFromX[0 + 1].substring(2));
-            // console.log(arrayFromHeight[0].substring(2));
-            // console.log(arrayFromHeight[1].substring(2));
-            console.log(arrayFromHeight);
-            console.log(arrayFromZ[1]);
-            // console.log(padding);
+            // Regex for getting Normal X
+            let regexFromNormal_X = /(vn\s[-]?\d{1,}[.]\d{1,})/g; // Needs just this one because V changes to VN
+
+            // Regex for getting Texture U
+            let regexFromTexture_U = /(vt\s[-]?\d{1,}[.]\d{1,})/g; // Needs just this one because V changes to VT
+
+            // Looks for values that matches with Regex, used for Vertices, Normals and UV
+            let arrayFromX = importedObjContent.match(regexFromVert_X);
+            let arrayFromY = importedObjContent.match(regexFromVert_Y);
+            let arrayFromZ = importedObjContent.match(regexFromVert_Z);
+            let arrayFromNormalX = importedObjContent.match(regexFromNormal_X);
+            let arrayFromTexture_U = importedObjContent.match(regexFromTexture_U);
+
+            console.log(arrayFromTexture_U[0].substring(3) * 2.55 * 100);
+            console.log(arrayFromZ);
             for (let i = 0; i < 24; i++) {
 
-                // X values
-                buffer.writeInt16LE(arrayFromX[0 + sum].substring(2) * 1000, binFirstSubmeshOffset + binHeaderSize + padding);
-                buffer.writeInt16LE(arrayFromHeight[0 + sum].substring(2) * 1000, binFirstSubmeshOffset + binHeaderSize + 2 + padding);
-                buffer.writeInt16LE(arrayFromZ[0 + sum] * 1000, binFirstSubmeshOffset + binHeaderSize + 4 + padding);
-                console.log(`X: ${i} = ` + arrayFromX[i].substring(2) * 1000 + " | " + `Y: ${i} = ` + arrayFromHeight[i].substring(2) + " | " + `Z: ${i} = ` + arrayFromZ[i]);
+                // Writing vertices values
+                buffer.writeInt16LE(arrayFromX[0 + sum].substring(2) * 1.6 * 1000, binFirstSubmeshOffset + binHeaderSize + padding);
+                buffer.writeInt16LE(arrayFromY[0 + sum].substring(2) * 1.6 * 1000, binFirstSubmeshOffset + binHeaderSize + 2 + padding);
+                buffer.writeInt16LE(arrayFromZ[0 + sum] * 1.6 * 1000, binFirstSubmeshOffset + binHeaderSize + 4 + padding);
+
+                if (i < 12) { // There are only half normals, comparing to vertices
+                    // Writing Normals values, the two latter can use the same as vertices array, but getting value after vertices end
+                    buffer.writeInt16LE(arrayFromNormalX[0 + sum].substring(3) * 2.56 * 1000, binFirstSubmeshOffset + binHeaderSize + 8 + padding);
+                    buffer.writeInt16LE(arrayFromY[24 + sum].substring(3) * 2.56 * 1000, binFirstSubmeshOffset + binHeaderSize + 8 + 2 + padding);
+                    buffer.writeInt16LE(arrayFromZ[24 + sum] * 2.56 * 1000, binFirstSubmeshOffset + binHeaderSize + 8 + 4 + padding);
+                }
+
+                // Writing Texture UV values, the two latter can use the same as vertices array, but getting value after vertices end
+                buffer.writeInt16LE(arrayFromTexture_U[0 + sum].substring(3) * 2.55 * 100, binFirstSubmeshOffset + binHeaderSize + 16 + padding);
+                buffer.writeInt16LE(arrayFromZ[48 + sum] * 2.55 * 100, binFirstSubmeshOffset + binHeaderSize + 16 + 2 + padding);
+
                 padding = padding + 24;
                 sum = sum + 1;
-                // console.log(arrayFromZ[2 + sum].substring(1));
-                //.substring(0, arrayFromZ[2].length - 2)
-
+                UVpadding = 2;
             }
         })
     }
@@ -150,8 +190,14 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
         let faces_complete = `o  BIN Model` + `\n`;
         sum = 0;
         for (i = 1; i < 7; i++) {
-            let faces = "f " + (i + sum) + " " + (i + 1 + sum) + " " + (i + 2 + sum) + `\n` +
-                "f " + (i + 1 + sum) + " " + (i + 3 + sum) + " " + (i + 2 + sum) + `\n`
+            let faces = "f " + (i + sum) + "/" + (i + sum) + "/" + (i + sum) + " " +
+                " " + (i + 2 + sum) + "/" + (i + 2 + sum) + "/" + (i + 2 + sum) + " " +
+                (i + 1 + sum) + "/" + (i + 1 + sum) + "/" + (i + 1 + sum) +
+                `\n` +
+                "f " + (i + 1 + sum) + "/" + (i + 1 + sum) + "/" + (i + 1 + sum) + " " +
+                (i + 3 + sum) + "/" + (i + 3 + sum) + "/" + (i + 3 + sum) + " " +
+                (i + 2 + sum) + "/" + (i + 2 + sum) + "/" + (i + 2 + sum) +
+                `\n`
             faces_complete = faces_complete + faces;
             sum = sum + 3;
         } return faces_complete;

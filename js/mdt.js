@@ -78,6 +78,7 @@ closeWindowBtn.addEventListener("click", () => {
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
 let wordCollector = '';
+let messageIterator = 0;
 
 // Menu bar buttons 
 copyBtnEl.addEventListener("click", () => document.execCommand("copy")); // Copy function
@@ -118,24 +119,11 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
 
     }
 
-    function wrapCodeMessages() {
-        wordCollector = wordCollector.replace(/\^10/g, "[item-QT]")
-        wordCollector = wordCollector.replace(/\^16/g, "[item-ID]")
-        wordCollector = wordCollector.replace("^0", "[message-start]");
-        wordCollector = wordCollector.replace(/[1]/g, "[message-end]");
-        wordCollector = wordCollector.replace(/[3]/g, "[line-break]");
-        wordCollector = wordCollector.replace(/[4]/g, "[new-page]");
-        wordCollector = wordCollector.replace(/[5]/g, "[itemname]");
-        wordCollector = wordCollector.replace(/[7]/g, "[option]");
-        wordCollector = wordCollector.replace(/[8]/g, "[pause]")
-    }
-
     function readMessages() {
         let count = 0; // Used and reused for many loop reasons
         let engLanguageKey = buffer.readUint32LE(8); // Search for English language KEY
         let engLanguageOffset = buffer.readUint8(engLanguageKey + 4); // Read messages quantity for Eng
         let pointers = []; // Array to every message pointer, for this particular language
-        let pointerSwap = 1; // Makes the pointer array increase by +1 on each iteration (reads next message)
 
         // Loop for each message box
         for (let index = 0; index != engLanguageOffset; index++) {
@@ -151,42 +139,27 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
             }
             count = 0;
 
-            // Loop to read every char from a string
-            for (let k = 0; k < (pointers[Number(pointerSwap)] - pointers[Number(pointerSwap - 1)]) / 2; k++) {
-                let tempChars = buffer.readUint16LE(engLanguageKey + pointers[Number(pointerSwap - 1)] + count); // Reads every short
-                count = count + 2;
-                wordCollector = wordCollector + "^" + tempChars; // Separate every 3-digit with ^ symbol
+            // Loop to read every message chunk
+            for (let k = 0; k < pointers.length; k++) {
 
-                console.log((pointers[Number(pointerSwap)] - pointers[Number(pointerSwap - 1)]) / 2);
-                console.log("Index inside for: " + index);
+                // Loop to read every char from a string
+                for (let m = 0; ; m++) {
+                    let tempChars = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count); // Reads every short
+                    count = count + 2;
+                    wordCollector = wordCollector + tempChars; // Appends each character in the wordCollector
+                    wordCollector = wordCollector.replace(String(tempChars), Alphabet.Alphabet[tempChars]); // Convert short to char
 
-                /* ====================================================================================================
-                    Este "for" compara o tamanho entre cada 2 array e divide ao meio para pegar os shorts, ex: [30] - [20] / 2 == 5 
-                    FALTA PEGAR AS LETRAS DO ÚLTIMO ARRAY
-                   ==================================================================================================== */
-
+                    // Does the same of the above, but ends loop if finds flag [message-end] and completes one message
+                    if (buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count) == 1) {
+                        tempChars = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count);
+                        wordCollector = wordCollector + tempChars;
+                        wordCollector = wordCollector.replace(tempChars, Alphabet.Alphabet[tempChars]);
+                        break;
+                    }
+                } messageIterator++; // Changes which pointer should be read
+                break;
             }
             count = 0;
-
-            // Loop to converter every 3-digit numbers to alphabet characters
-            while (/([0-9]{3})/g.test(wordCollector)) {
-                wordCollector = wordCollector.replace((Number(count + 128)), Alphabet.Alphabet[(Number(count + 128))])
-                count = count + 1;
-                if (count == 311 && /([0-9]{3})/g.test(wordCollector)) {
-                    count = 0;
-                }
-                if (count == 312) {
-                    break
-                }
-            }
-            // console.log(wordCollector);
-            pointerSwap = pointerSwap + 1;
-            wrapCodeMessages();
-            // console.log(wordCollector);
-
-            wordCollector = wordCollector.replace(/(\^)/gm, ''); // Checks for every ^ symbol and removes it
-            console.log("Index at the end: " + index);
-            console.log(pointers);
             textBoxEl[index].innerHTML = wordCollector;
         }
     }
