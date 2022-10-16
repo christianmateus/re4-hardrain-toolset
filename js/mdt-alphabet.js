@@ -1,13 +1,4 @@
 exports.Alphabet = Alphabet = {
-    0: "[message-start]",
-    1: "[message-end]",
-    3: "[line-break]",
-    4: "[new-page]",
-    5: "[itemname]",
-    7: "[option]",
-    8: "[pause]",
-    10: "[item-QT]",
-    16: "[item-ID]",
     128: ' ',
     129: '►',
     130: '▼',
@@ -211,3 +202,81 @@ exports.Alphabet = Alphabet = {
     312: '{L1}',
 
 }
+
+exports.StringCodes = {
+    0: "[message-start]",
+    1: "[message-end]",
+    2: "[message-change]", // Insert another string from the room's MDT
+    3: "[line-break]",
+    4: "[new-page]",
+    5: "[print-speed]", // Prints each character one character at a time
+    6: "[color]", // Changes the color of all text that comes after this point
+    7: "[option]",
+    8: "[pause]",
+    9: "[sleep]", // Sleep for a specific duration before continuing
+    10: "[item-QT]",
+    11: "[align-left]", // Distance from the left side of the screen where the message will appear
+    12: "[align-top]", // Distance from the top of the screen where the message will appear
+    13: "[unknown]",
+    14: "[return]",
+    15: "[core-6]", // Inserts a string from core_6.mdt
+    16: "[item-ID]",
+    17: "[core-17]", // Inserts a string from core_17.mdt
+    18: "[character]" // Inserts a character name, based on index
+
+    // List found by Zatarita
+    // * Every commented value has a modifier (another short followed by it)
+}
+
+/* ========== Removing focus from button elements ========== */
+let messageStartBtn = document.getElementById("messageStartBtn");
+let messageEndBtn = document.getElementById("messageEndBtn");
+let lineBreakBtn = document.getElementById("lineBreakBtn");
+let newPageBtn = document.getElementById("newPageBtn");
+let optionBtn = document.getElementById("optionBtn");
+let pauseBtn = document.getElementById("pauseBtn");
+let itemQtBtn = document.getElementById("itemQtBtn");
+let itemIdBtn = document.getElementById("itemIdBtn");
+
+messageStartBtn.addEventListener("focus", function (e) {
+    if (e.relatedTarget) {
+        e.relatedTarget.focus();
+    } else {
+        e.currentTarget.focus();
+    }
+})
+messageEndBtn.addEventListener("focus", function (e) {
+    if (e.relatedTarget) {
+        e.relatedTarget.focus();
+    } else {
+        e.currentTarget.focus();
+    }
+})
+lineBreakBtn.addEventListener("focus", function (e) {
+    if (e.relatedTarget) {
+        e.relatedTarget.focus();
+    } else {
+        e.currentTarget.focus();
+    }
+})
+newPageBtn.addEventListener("focus", function (e) {
+    if (e.relatedTarget) {
+        e.relatedTarget.focus();
+    } else {
+        e.currentTarget.focus();
+    }
+})
+optionBtn.addEventListener("focus", function (e) {
+    if (e.relatedTarget) {
+        e.relatedTarget.focus();
+    } else {
+        e.currentTarget.focus();
+    }
+})
+pauseBtn.addEventListener("focus", function (e) {
+    if (e.relatedTarget) {
+        e.relatedTarget.focus();
+    } else {
+        e.currentTarget.focus();
+    }
+})

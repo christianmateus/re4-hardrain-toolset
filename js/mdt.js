@@ -19,7 +19,21 @@ var headerFileName = document.getElementById("header-filename");
 var headerFileSize = document.getElementById("header-filesize");
 var showAllBtn = document.getElementById("show-all-btn");
 var hideAllBtn = document.getElementById("hide-all-btn");
-var messageContainerEl = document.querySelector(".message-container");
+var messageContainerEl = document.getElementsByClassName("message-container");
+
+// Getting language elements
+const englishBtn = document.getElementById("englishBtn");
+const deutschBtn = document.getElementById("deutschBtn");
+const spanishBtn = document.getElementById("spanishBtn");
+const frenchBtn = document.getElementById("frenchBtn");
+const italianBtn = document.getElementById("italianBtn");
+const englishLabel = document.getElementById("englishLabel");
+const deutschLabel = document.getElementById("deutschLabel");
+const spanishLabel = document.getElementById("spanishLabel");
+const frenchLabel = document.getElementById("frenchLabel");
+const italianLabel = document.getElementById("italianLabel");
+const radioClassEl = document.getElementsByClassName("radio-languages");
+
 
 // Const for getting Menu elements
 const openFile = document.getElementById("openMDTfile");
@@ -30,13 +44,20 @@ const quitApp = document.getElementById("quitApp");
 const minimizeBtn = document.getElementById("minimize");
 const maximizeBtn = document.getElementById("maximize");
 const closeWindowBtn = document.getElementById("closeWindow");
+const oneRowBtn = document.getElementById("oneRow");
+const twoRowsBtn = document.getElementById("twoRows");
+const threeRowsBtn = document.getElementById("threeRows");
 
 // Content elements
 let containerLeftSideEl = document.getElementById("container-text");
+let containerTextBoxEl = document.getElementsByClassName("principal-div");
 let textBoxEl = document.getElementsByClassName("text-boxes");
-
-var toggleWhiteTheme = document.querySelector(".white-theme-btn");
-var toggleDarkTheme = document.querySelector(".dark-theme-btn");
+let messageStartBtn = document.getElementById("messageStartBtn");
+let messageEndBtn = document.getElementById("messageEndBtn");
+let lineBreakBtn = document.getElementById("lineBreakBtn");
+let newPageBtn = document.getElementById("newPageBtn");
+let optionBtn = document.getElementById("optionBtn");
+let pauseBtn = document.getElementById("pauseBtn");
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -69,7 +90,22 @@ closeWindowBtn.addEventListener("click", () => {
     ipcRenderer.send("closeWindow")
 })
 
-// 
+// Change layout
+oneRowBtn.addEventListener("click", function () {
+    for (let i = 0; i < messageContainerEl.length; i++) {
+        document.getElementsByClassName("principal-div")[i].style.width = "85%";
+    }
+})
+twoRowsBtn.addEventListener("click", function () {
+    for (let i = 0; i < messageContainerEl.length; i++) {
+        document.getElementsByClassName("principal-div")[i].style.width = "47%";
+    }
+})
+threeRowsBtn.addEventListener("click", function () {
+    for (let i = 0; i < messageContainerEl.length; i++) {
+        document.getElementsByClassName("principal-div")[i].style.width = "32%";
+    }
+})
 
 /* ===============
     READ
@@ -79,6 +115,7 @@ closeWindowBtn.addEventListener("click", () => {
 var chunk = 0; // Will be incremented in each chunk
 let wordCollector = '';
 let messageIterator = 0;
+let tempChars = '';
 
 // Menu bar buttons 
 copyBtnEl.addEventListener("click", () => document.execCommand("copy")); // Copy function
@@ -95,10 +132,20 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
     var conv = MDTFileName.replace(/^[^.]*\\/gm, '');
 
     let total_languages = buffer.readUInt8(0); // Reading number of languages
-    countEl.setAttribute("value", total_languages);
+    if (total_languages > 6) {
+        countEl.setAttribute("value", 1);
+        deutschBtn.remove(); deutschLabel.remove();
+        spanishBtn.remove(); spanishLabel.remove();
+        frenchBtn.remove(); frenchLabel.remove();
+        italianBtn.remove(); italianLabel.remove();
+        englishLabel.innerText = "Single language"
+    } else {
+        countEl.setAttribute("value", total_languages - 1);
+    }
     headerFileSize.value = buffer.length + " bytes";
     headerFileName.value = conv;
 
+    // Core functions
     function createElement(index) {
         let firstDivTag = document.createElement("div");
         let detailsTag = document.createElement("details");
@@ -106,6 +153,7 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
         let secondDivTag = document.createElement("div");
         let textareaTag = document.createElement("textarea");
 
+        firstDivTag.classList.add("principal-div")
         detailsTag.classList.add("message-container");
         summaryTag.innerText = "Message " + index;
         secondDivTag.classList.add("details-expanded");
@@ -118,59 +166,6 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
         detailsTag.append(summaryTag, secondDivTag);
 
     }
-
-    function readMessages() {
-        let count = 0; // Used and reused for many loop reasons
-        let engLanguageKey = buffer.readUint32LE(8); // Search for English language KEY
-        let engLanguageOffset = buffer.readUint8(engLanguageKey + 4); // Read messages quantity for Eng
-        let pointers = []; // Array to every message pointer, for this particular language
-
-        // Loop for each message box
-        for (let index = 0; index != engLanguageOffset; index++) {
-            createElement(Number(index + 1));
-            count = 0;
-            wordCollector = ''; // Empties the collector
-
-            // Loop to detect and store every message pointer
-            for (let i = 0; i != engLanguageOffset && index == 0; i++) {
-                let j = buffer.readUint32LE(engLanguageKey + 8 + count); // Reads each message pointer
-                count = count + 4;
-                pointers.push(j); // Stores every message pointer, for this particular language
-            }
-            count = 0;
-
-            // Loop to read every message chunk
-            for (let k = 0; k < pointers.length; k++) {
-
-                // Loop to read every char from a string
-                for (let m = 0; ; m++) {
-                    let tempChars = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count); // Reads every short
-                    count = count + 2;
-                    wordCollector = wordCollector + tempChars; // Appends each character in the wordCollector
-                    wordCollector = wordCollector.replace(String(tempChars), Alphabet.Alphabet[tempChars]); // Convert short to char
-
-                    // Does the same of the above, but ends loop if finds flag [message-end] and completes one message
-                    if (buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count) == 1) {
-                        tempChars = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count);
-                        wordCollector = wordCollector + tempChars;
-                        wordCollector = wordCollector.replace(tempChars, Alphabet.Alphabet[tempChars]);
-                        break;
-                    }
-                } messageIterator++; // Changes which pointer should be read
-                break;
-            }
-            count = 0;
-            textBoxEl[index].innerHTML = wordCollector;
-        }
-    }
-
-    readMessages();
-
-    showAllBtn.addEventListener("click", function () {
-        messageContainerEl.setAttribute("open", "true");
-    })
-
-    // Main Functions
     function showTextBox(message, status) {
         var removedMessage = document.querySelector(".removedEntry");
         removedMessage.style.display = "block"
@@ -193,10 +188,194 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
             removedMessage.style.display = "none"
         }, 2000);
     }
+    function readMessages(languageOffset) {
+        let count = 0; // Used and reused for many loop reasons
+        messageIterator = 0;
+        let engLanguageKey = buffer.readUint32LE(languageOffset); // Search for English language KEY
+        if (total_languages > 6) { engLanguageKey = 0 }; // If the file contains a single language, it will read from start
+        let engLanguageOffset = buffer.readUint8(engLanguageKey + 4); // Read messages quantity
+        let pointers = []; // Array to every message pointer, for this particular language
+
+        // Loop for each message box
+        for (let index = 0; index != engLanguageOffset; index++) {
+            createElement(Number(index + 1));
+            count = 0;
+            wordCollector = ''; // Empties the collector
+
+            // Loop to detect and store every message pointer
+            for (let i = 0; i != engLanguageOffset && index == 0; i++) {
+                let j = buffer.readUint32LE(engLanguageKey + 8 + count); // Reads each message pointer
+                count = count + 4;
+                pointers.push(j); // Stores every message pointer, for this particular language
+            }
+            count = 0;
+
+            // Loop to read every message chunk
+            for (let k = 0; k < pointers.length; k++) {
+
+                // Loop to read every char from a string
+                for (let m = 0; ; m++) {
+                    tempChars = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count); // Reads every short
+
+                    // Loop to check if the short read is a String Code
+                    for (let n = 0; n < Object.keys(Alphabet.StringCodes).length; n++) {
+                        if (tempChars == Object.keys(Alphabet.StringCodes)[n]) {
+                            tempChars = Alphabet.StringCodes[n]
+
+                            // Check if the String Code have a modifier (another short followed by it)
+                            if (tempChars == "[print-speed]" || tempChars == "[core-17]" || tempChars == "[sleep]" ||
+                                tempChars == "[align-left]" || tempChars == "[align-top]" || tempChars == "[core-6]" ||
+                                tempChars == "[character]" || tempChars == "[message-change]" || tempChars == "[color]") {
+                                wordCollector = wordCollector + tempChars; // Appends String Code character in the wordCollector
+                                count = count + 2; // Reads modifier short
+                                let modifierByte = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count)
+                                tempChars = `{${modifierByte}}`
+                            }
+                        }
+                    }
+
+                    count = count + 2; // Moves to next short
+                    wordCollector = wordCollector + tempChars; // Appends each character in the wordCollector
+
+                    // Only replace numbers that are bigger than 18, this skips the String Codes
+                    if (tempChars > 18) {
+                        wordCollector = wordCollector.replace(String(tempChars), Alphabet.Alphabet[tempChars]); // Convert short to char
+                    }
+
+                    // Does the same of the above, but ends loop if finds String Code [message-end] and completes one message
+                    if (buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count) == 1) {
+                        tempChars = buffer.readUint16LE(engLanguageKey + pointers[messageIterator] + count);
+                        if (tempChars == 1) {
+                            tempChars = "[message-end]";
+                        }
+                        wordCollector = wordCollector + tempChars;
+                        break;
+                    }
+                } messageIterator++; // Changes which pointer should be read
+                break;
+            }
+            count = 0;
+            textBoxEl[index].innerHTML = wordCollector; // Outputs the converted string into the text boxes
+        }
+    }
+
+
+    // Language buttons
+    englishBtn.addEventListener("click", () => {
+        while (containerTextBoxEl[0]) {
+            containerTextBoxEl[0].parentNode.removeChild(containerTextBoxEl[0]);
+        }
+        readMessages(8)
+    });
+    frenchBtn.addEventListener("click", () => {
+        while (containerTextBoxEl[0]) {
+            containerTextBoxEl[0].parentNode.removeChild(containerTextBoxEl[0]);
+        }
+        readMessages(12)
+    });
+    deutschBtn.addEventListener("click", () => {
+        while (containerTextBoxEl[0]) {
+            containerTextBoxEl[0].parentNode.removeChild(containerTextBoxEl[0]);
+        }
+        readMessages(16)
+    });
+    italianBtn.addEventListener("click", () => {
+        while (containerTextBoxEl[0]) {
+            containerTextBoxEl[0].parentNode.removeChild(containerTextBoxEl[0]);
+        }
+        readMessages(20)
+    });
+    spanishBtn.addEventListener("click", () => {
+        while (containerTextBoxEl[0]) {
+            containerTextBoxEl[0].parentNode.removeChild(containerTextBoxEl[0]);
+        }
+        readMessages(24)
+    });
+
+    // Panel buttons
+    showAllBtn.addEventListener("click", function () {
+        for (i = 0; i < messageContainerEl.length; i++) {
+            messageContainerEl[i].setAttribute("open", "true");
+        }
+    })
+    hideAllBtn.addEventListener("click", function () {
+        for (i = 0; i < messageContainerEl.length; i++) {
+            messageContainerEl[i].removeAttribute("open");
+        }
+    })
+
 
     /* ===============
         UPDATE
        =============== */
+
+    const LanguagesObject = {
+        0: 8,
+        1: 12,
+        2: 16,
+        3: 20,
+        4: 24
+    }
+
+    containerLeftSideEl.addEventListener("change", function (e) {
+        let languageKey = 0;
+        let messageCount = 0;
+        let arrayOffsets = [];
+        for (let index = 0; index < 5; index++) {
+            if (radioClassEl[index].checked) {
+                languageKey = buffer.readUint32LE(LanguagesObject[index]);
+                messageCount = buffer.readUint8(languageKey + 4);
+                for (let index = 0; index < array.length; index++) {
+                    const element = array[index];
+
+                }
+            }
+        }
+
+    })
+
+    messageStartBtn.addEventListener("click", function (e) {
+        for (let i = 0; i < textBoxEl.length; i++) {
+            if (document.activeElement === textBoxEl[i]) {
+                textBoxEl[i].innerHTML += "[message-start]"
+            }
+        }
+    })
+    messageEndBtn.addEventListener("click", function (e) {
+        for (let i = 0; i < textBoxEl.length; i++) {
+            if (document.activeElement === textBoxEl[i]) {
+                textBoxEl[i].innerHTML += "[message-end]"
+            }
+        }
+    })
+    lineBreakBtn.addEventListener("click", function (e) {
+        for (let i = 0; i < textBoxEl.length; i++) {
+            if (document.activeElement === textBoxEl[i]) {
+                textBoxEl[i].innerHTML += "[line-break]"
+            }
+        }
+    })
+    newPageBtn.addEventListener("click", function (e) {
+        for (let i = 0; i < textBoxEl.length; i++) {
+            if (document.activeElement === textBoxEl[i]) {
+                textBoxEl[i].innerHTML += "[new-page]"
+            }
+        }
+    })
+    optionBtn.addEventListener("click", function (e) {
+        for (let i = 0; i < textBoxEl.length; i++) {
+            if (document.activeElement === textBoxEl[i]) {
+                textBoxEl[i].innerHTML += "[option]"
+            }
+        }
+    })
+    pauseBtn.addEventListener("click", function (e) {
+        for (let i = 0; i < textBoxEl.length; i++) {
+            if (document.activeElement === textBoxEl[i]) {
+                textBoxEl[i].innerHTML += "[pause]"
+            }
+        }
+    })
 
     /* ==========================================
         NEW FUNCIONALITY: 

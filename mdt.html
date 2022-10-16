@@ -53,25 +53,14 @@
          <button class="menu-buttons" id="options">Options</button>
          <div class="dropdown-content">
             <div class="show-theme">
-               <button class="menu-buttons"><img src="images/theme.png"> Theme ></button>
+               <button class="menu-buttons"><img src="images/theme.png">&nbsp;&nbsp; Cards ></button>
                <div class="submenu">
-                  <input id="dark-theme" type="radio" name="theme" value="dark" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label dark-theme-btn" for="dark-theme">Dark</label>
-                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">White</label>
-               </div>
-            </div>
-         </div>
-         <div class="dropdown-content">
-            <div class="show-theme">
-               <button class="menu-buttons"><img src="images/theme.png"> Cards ></button>
-               <div class="submenu">
-                  <input id="dark-theme" type="radio" name="theme" value="dark" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label dark-theme-btn" for="dark-theme">1 per row</label>
-                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">2 per row</label>
-                  <input id="white-theme" type="radio" name="theme" value="white" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label white-theme-btn" for="white-theme">3 per row</label>
+                  <input id="oneRow" type="radio" name="theme" value="oneRow" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label" for="oneRow">1 per row</label>
+                  <input id="twoRows" type="radio" name="theme" value="twoRows" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label" for="twoRows">2 per row</label>
+                  <input id="threeRows" type="radio" name="theme" value="threeRows" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label" for="threeRows">3 per row</label>
                </div>
             </div>
          </div>
@@ -113,11 +102,26 @@
    <!-- PROGRAM DATA STARTS -->
    <main>
       <section class="container-languages">
-         <button class="language-buttons">English</button>
-         <button class="language-buttons">Deutsch</button>
-         <button class="language-buttons">Spanish</button>
-         <button class="language-buttons">French</button>
-         <button class="language-buttons">Italian</button>
+         <div>
+            <input value="english" type="radio" name="radio-languages" id="englishBtn" class="radio-languages">
+            <label id="englishLabel" for="englishBtn" class="label-languages win7-btn">English</label>
+         </div>
+         <div>
+            <input value="deutsch" type="radio" name="radio-languages" id="deutschBtn" class="radio-languages">
+            <label id="deutschLabel" for="deutschBtn" class="label-languages win7-btn">Deutsch</label>
+         </div>
+         <div>
+            <input value="spanish" type="radio" name="radio-languages" id="spanishBtn" class="radio-languages">
+            <label id="spanishLabel" for="spanishBtn" class="label-languages win7-btn">Spanish</label>
+         </div>
+         <div>
+            <input value="french" type="radio" name="radio-languages" id="frenchBtn" class="radio-languages">
+            <label id="frenchLabel" for="frenchBtn" class="label-languages win7-btn">French</label>
+         </div>
+         <div>
+            <input value="italian" type="radio" name="radio-languages" id="italianBtn" class="radio-languages">
+            <label id="italianLabel" for="italianBtn" class="label-languages win7-btn">Italian</label>
+         </div>
       </section>
       <section class="container-text-and-config">
          <div id="container-text" class="container-text">
@@ -135,14 +139,12 @@
             </div>
             <div class="panel-buttons commands-box">
                <h5>Commands</h5>
-               <button class="win7-btn config-buttons">[message-start]</button>
-               <button class="win7-btn config-buttons">[message-end]</button>
-               <button class="win7-btn config-buttons">[line-break]</button>
-               <button class="win7-btn config-buttons">[new-page]</button>
-               <button class="win7-btn config-buttons">[option]</button>
-               <button class="win7-btn config-buttons">[pause]</button>
-               <button class="win7-btn config-buttons">[item-qt]</button>
-               <button class="win7-btn config-buttons">[item-id]</button>
+               <button unselectable="on" id="messageStartBtn" class="win7-btn config-buttons">[message-start]</button>
+               <button id="messageEndBtn" class="win7-btn config-buttons">[message-end]</button>
+               <button id="lineBreakBtn" class="win7-btn config-buttons">[line-break]</button>
+               <button id="newPageBtn" class="win7-btn config-buttons">[new-page]</button>
+               <button id="optionBtn" class="win7-btn config-buttons">[option]</button>
+               <button id="pauseBtn" class="win7-btn config-buttons">[pause]</button>
             </div>
          </div>
       </section>

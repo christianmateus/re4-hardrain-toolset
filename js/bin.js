@@ -1,7 +1,5 @@
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
-const Alphabet = require('./mdt-alphabet');
-const { sign } = require('crypto');
 
 // Const for testing text output (DEBUG)
 
