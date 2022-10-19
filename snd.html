@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/snd.css">
+   <link rel="stylesheet" href="css/navbar.css">
+   <!-- FONT AWESOME -->
+   <link rel="stylesheet" href="./css/all.min.css">
+   <title>MDT Tool</title>
+</head>
+
+<body>
+   <div class="hide container-hide" id="fileSaved">
+      <span class="successfully-saved">
+         <i class="fa-regular fa-circle-check"></i>&nbsp;
+         File saved successfully!</span>
+   </div>
+   <div class="hide addedEntry container-hide" id="addedEntry">
+      <span class="successfully-added">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp;
+         New event added!</span>
+   </div>
+   <div class="hide removedEntry container-hide" id="removedEntry">
+      <span class="successfully-removed">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   </div>
+   <nav id="menu-container">
+      <div class="dropdown">
+         <button class="menu-buttons" id="file">File</button>
+         <div class="dropdown-content">
+            <button id="openSNDfile" class="menu-buttons"><img src="images/open.png"> Open SND file</button>
+            <button id="closeSNDfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <hr>
+            <button id="saveSNDfile" class="menu-buttons"><img src="images/save.png"> Save SND file</button>
+            <button id="saveSNDas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <hr>
+            <button id="quitApp" class="menu-buttons">Quit</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="edit">Edit</button>
+         <div class="dropdown-content">
+            <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
+            <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
+            <hr>
+            <button id="undoBtn" class="menu-buttons"><img src="images/undo.png"> Undo</button>
+            <button id="redoBtn" class="menu-buttons"><img src="images/redo.png"> Redo</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="options">Options</button>
+         <div class="dropdown-content">
+            <div class="show-theme">
+               <button class="menu-buttons"><img src="images/theme.png">&nbsp;&nbsp; Cards ></button>
+               <div class="submenu">
+                  <input id="oneRow" type="radio" name="theme" value="oneRow" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label" for="oneRow">1 per row</label>
+                  <input id="twoRows" type="radio" name="theme" value="twoRows" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label" for="twoRows">2 per row</label>
+                  <input id="threeRows" type="radio" name="theme" value="threeRows" class="theme-radio-btn">
+                  <label class="menu-buttons radio-label" for="threeRows">3 per row</label>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="control-window">
+         <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+               src="./images/main-menu.png"></button>
+         <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+               src="./images/minimize.png"></button>
+         <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+               src="./images/expand-window.png"></button>
+         <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+               src="./images/close-window.png"></button>
+      </div>
+   </nav>
+   <div id="campo-superior">
+      <!-- BOX 1 -->
+      <div class="inner-box file-info">
+         <div>
+            <label for="header-filename">File name:</label>
+            <label for="header-filesize">Total size:</label>
+         </div>
+         <div>
+            <input id="header-filename" type="text" readonly value="">
+            <input id="header-filesize" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 2 -->
+      <div class="inner-box total-events">
+         <div>
+            <label for="count">Total Audios:</label>
+            <input id="count" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 3 -->
+      <div class="inner-box">
+      </div>
+   </div>
+   <!-- PROGRAM DATA STARTS -->
+   <main>
+      <section>
+         <div class="container-geral">
+            <h5>Audio List</h5>
+            <div class="container-audio-items">
+               <span>Audio 001</span>
+               <button class="win7-btn">Importar</button>
+               <button class="win7-btn">Exportar</button>
+            </div>
+            <div class="container-audio-items">
+               <span>Audio 001</span>
+               <button class="win7-btn">Importar</button>
+               <button class="win7-btn">Exportar</button>
+            </div>
+            <div class="container-audio-items">
+               <span>Audio 001</span>
+               <button class="win7-btn">Importar</button>
+               <button class="win7-btn">Exportar</button>
+            </div>
+         </div>
+      </section>
+      <section>
+         <div class="container-geral">
+            <audio controls src=""></audio>
+         </div>
+      </section>
+   </main>
+   <script>
+      require('./js/mdt.js'); // Used in electron
+   </script>
+</body>
+
+</html>

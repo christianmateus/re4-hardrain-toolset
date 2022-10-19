@@ -237,6 +237,39 @@ ipcMain.on("closeBINfile", (e, arg) => {
   mainWindow.loadFile("bin.html")
 })
 
+// Function for sending SMD file path
+ipcMain.on("openSMDfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "SMD files", extensions: ["SMD"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let SMDfile = um.filePaths.toString();
+      mainWindow.webContents.send("smdFileChannel", SMDfile);
+      console.log(SMDfile)
+    })
+})
+
+// Saving actual SMD file
+ipcMain.on("saveAsSMDfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'SMD Files', extensions: ['SMD'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsSMDfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Closing SMD file (workaround)
+ipcMain.on("closeSMDfile", (e, arg) => {
+  mainWindow.loadFile("smd.html")
+})
+
 // Quiting application
 ipcMain.on("quitApp", (e, arg) => {
   mainWindow.close();
@@ -278,4 +311,8 @@ ipcMain.on("openMDTtool", () => {
 
 ipcMain.on("openBINtool", () => {
   mainWindow.loadFile("bin.html")
+})
+
+ipcMain.on("openSMDtool", () => {
+  mainWindow.loadFile("smd.html")
 })

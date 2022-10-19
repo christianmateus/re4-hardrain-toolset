@@ -6,6 +6,7 @@ const ITA = document.getElementById("ita-card");
 const AEV = document.getElementById("aev-card");
 const MDT = document.getElementById("mdt-card");
 const BIN = document.getElementById("bin-card");
+const SMD = document.getElementById("smd-card");
 
 // Window menu buttons
 const minimizeBtn = document.getElementById("minimize")
@@ -31,6 +32,10 @@ MDT.addEventListener("click", function () {
 
 BIN.addEventListener("click", function () {
     ipcRenderer.send("openBINtool")
+})
+
+SMD.addEventListener("click", function () {
+    ipcRenderer.send("openSMDtool")
 })
 
 // Window menu actions

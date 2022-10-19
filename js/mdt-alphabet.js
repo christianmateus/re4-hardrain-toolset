@@ -1,4 +1,4 @@
-exports.Alphabet = Alphabet = {
+exports.Alphabet = {
     128: ' ',
     129: '►',
     130: '▼',

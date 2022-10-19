@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
 const Alphabet = require('./mdt-alphabet');
+const { triggerAsyncId } = require('async_hooks');
 
 // Const for testing text output (DEBUG)
 
@@ -265,7 +266,7 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
         while (containerTextBoxEl[0]) {
             containerTextBoxEl[0].parentNode.removeChild(containerTextBoxEl[0]);
         }
-        readMessages(8)
+        readMessages(8);
     });
     frenchBtn.addEventListener("click", () => {
         while (containerTextBoxEl[0]) {
@@ -320,18 +321,61 @@ ipcRenderer.on("mdtFileChannel", (e, filepath) => {
     containerLeftSideEl.addEventListener("change", function (e) {
         let languageKey = 0;
         let messageCount = 0;
-        let arrayOffsets = [];
+        let pointers = [];
+        let count = 0;
+        let content = "";
+        let char = "";
+        let frenchOffset = buffer.readUint32LE(12);
+        let deutschOffset = buffer.readUint32LE(16);
+        let italianOffset = buffer.readUint32LE(20);
+        let spanishOffset = buffer.readUint32LE(24);
+        let regexNumber = /\[[\d]\]/gm;
+        let regexStringCodes = /(\[(?:\[??[^\[]*?\]))/gm;
+        let regexCodes = /\[[\w].*?\]/gm; // Same as above, but simpler
+        let regexletterOutside = /[^\[\d\]]+/g;
+
         for (let index = 0; index < 5; index++) {
             if (radioClassEl[index].checked) {
                 languageKey = buffer.readUint32LE(LanguagesObject[index]);
                 messageCount = buffer.readUint8(languageKey + 4);
-                for (let index = 0; index < array.length; index++) {
-                    const element = array[index];
 
+                // Stores every message pointer inside
+                for (let index = 0; index < messageCount; index++) {
+                    pointers.push(buffer.readUint32LE(languageKey + 8 + count))
+                    count += 4;
                 }
+                if (document.activeElement.nodeName == "TEXTAREA") {
+                    content = document.activeElement.value;
+                    document.activeElement.value = content;
+                }
+
+                // Gets all String Codes and envolves them into square brackets
+                for (let m = 0; m < content.length; m++) {
+                    content = content.replaceAll(Alphabet.StringCodes[m], `[${Object.keys(Alphabet.StringCodes)[m]}]`);
+                }
+
+                // Gets all characters outside square brackets and converts them to number
+                for (let n = 0; n < content.length; n++) {
+                    for (let j = 0; j < Object.keys(Alphabet.Alphabet).length; j++) {
+
+                        if (content[n] == Alphabet.Alphabet[j + 128] && regexletterOutside.test(content[n])) {
+                            content = content.replace(Alphabet.Alphabet[j + 128], Object.keys(Alphabet.Alphabet)[j]);
+                        }
+                    }
+                }
+
+                /* ======================================================================
+                    FALTA: escrever campo de texto de volta pro arquivo;
+                    criar padding de 0x20 bytes zerados antes do language key
+                    criar lógica para adicionar padding, ex: digitou 1 caractere, adiciona 15 padding
+                    --
+                    fazer testes com MDT de 1 idioma
+                    cirar lógica para pegar modifier dos string codes
+                   ====================================================================== */
+
+                console.log(content);
             }
         }
-
     })
 
     messageStartBtn.addEventListener("click", function (e) {
