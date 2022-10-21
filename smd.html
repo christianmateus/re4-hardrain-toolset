@@ -101,6 +101,7 @@
    <main>
       <section class="container-geral">
          <h5>Entries list</h5>
+         <button id="import">IMPORT IMAGE</button>
          <div class="container-row">
             <span>&nbsp;</span>
             <span>X</span>
@@ -140,7 +141,7 @@
             <div class="entry-config">
                <span>Change entry</span><br>
                <input readonly id="entry-number" value="1" type="number">
-               of
+               <b>of</b>
                <input readonly id="entry-total" type="number">
                <br>
                <button id="prevBtn" class="win7-btn"><i class="fa-solid fa-arrow-left"></i></button>
@@ -149,10 +150,79 @@
          </div>
       </section>
       <section class="container-geral container-geral-extra">
-         <button id="export-model" class="win7-btn">Export Model</button>
-         <button id="exportall-model" class="win7-btn">Export All Models</button>
-         <button id="import-model" class="win7-btn">Import Model</button>
-         <button id="importall-model" class="win7-btn">Import All Models</button>
+         <div>
+            <div>
+               <button id="add-new-model" class="win7-btn">Add New Model</button>
+               <button id="import-model" class="win7-btn">Import Model</button>
+               <button id="importall-model" class="win7-btn">Import All Models</button>
+               <hr>
+               <button id="export-model" class="win7-btn">Export Model</button>
+               <button id="exportall-model" class="win7-btn">Export All Models</button>
+            </div>
+         </div>
+      </section>
+      <section class="container-geral container-textures">
+         <div>
+            <h5>Textures</h5>
+            <span>Number: </span>
+            <input id="texture-number" readonly type="number" value="1">
+            <b>of</b>
+            <input id="textures-total" readonly type="number"><br>
+            <button id="prevTextureBtn" class="win7-btn"><i class="fa-solid fa-arrow-left"></i></button>
+            <button id="nextTextureBtn" class="win7-btn"><i class="fa-solid fa-arrow-right"></i></button>
+            <div class="texture-viewer">
+               <img id="texture-image" src="" alt="missing image processing">
+            </div>
+         </div>
+         <div>
+            <h5>Texture specifications</h5>
+            <div class="container-texture-specs">
+               <article>
+                  <div class="texture-specs">
+                     <label for="texture-width">Width</label><br>
+                     <input type="number" id="texture-width">
+                  </div>
+                  <div class="texture-specs">
+                     <label for="texture-height">Height</label><br>
+                     <input type="number" id="texture-height">
+                  </div>
+                  <div class="texture-specs">
+                     <label for="texture-mode">Mode</label><br>
+                     <input type="number" id="texture-mode">
+                  </div>
+                  <div class="texture-specs">
+                     <label for="texture-interlace">Interlace</label><br>
+                     <input type="number" id="texture-interlace">
+                  </div>
+                  <br>
+                  <hr>
+                  <div class="texture-specs">
+                     <label for="texture-unk1">Unk 1</label><br>
+                     <input type="number" id="texture-unk1">
+                  </div>
+                  <div class="texture-specs">
+                     <label for="texture-unk2">Unk 2</label><br>
+                     <input type="number" id="texture-unk2">
+                  </div>
+                  <div class="texture-specs">
+                     <label for="texture-unk3">Unk 3</label><br>
+                     <input type="number" id="texture-unk3">
+                  </div>
+               </article>
+            </div>
+         </div>
+      </section>
+      <section class="container-geral container-geral-extra">
+         <div>
+            <div>
+               <button id="add-new-texture" class="win7-btn">Add New Texture</button>
+               <button id="import-texture" class="win7-btn">Import Texture</button>
+               <button id="importall-texture" class="win7-btn">Import All Textures</button>
+               <hr>
+               <button id="export-texture" class="win7-btn">Export Texture</button>
+               <button id="exportall-texture" class="win7-btn">Export All Textures</button>
+            </div>
+         </div>
       </section>
    </main>
    <script>

@@ -237,6 +237,7 @@ ipcMain.on("closeBINfile", (e, arg) => {
   mainWindow.loadFile("bin.html")
 })
 
+// SMD -------------------------------------------
 // Function for sending SMD file path
 ipcMain.on("openSMDfile", () => {
   dialog.showOpenDialog(mainWindow, {
@@ -264,6 +265,20 @@ ipcMain.on("saveAsSMDfile", (e, arg) => {
       console.log(salvar)
     })
 })
+
+// Importing BIN model to SMD file
+ipcMain.on("BINtoSMDBtn", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'BIN Model', extensions: ['bin'] }
+    ]
+  }).then((dados) => {
+    let importBinPath = dados.filePaths.toString();
+    mainWindow.webContents.send("BINmodel", importBinPath);
+    console.log("Bin imported: " + importBinPath);
+  })
+})
+
 
 // Closing SMD file (workaround)
 ipcMain.on("closeSMDfile", (e, arg) => {

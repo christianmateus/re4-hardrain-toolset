@@ -40,6 +40,27 @@ const exportOneModelBtn = document.getElementById("export-model");
 const importOneModelBtn = document.getElementById("import-model");
 const exportAllModelsBtn = document.getElementById("exportall-model");
 const importAllModelsBtn = document.getElementById("importall-model");
+const importNewModelBtn = document.getElementById("add-new-model");
+
+// Getting textures elements
+const exportOneTextureBtn = document.getElementById("export-texture");
+const importOneTextureBtn = document.getElementById("import-texture");
+const exportAllTexturesBtn = document.getElementById("exportall-texture");
+const importAllTexturesBtn = document.getElementById("importall-texture");
+const importNewTextureBtn = document.getElementById("add-new-texture");
+
+// Getting textures elements
+const texturesTotal = document.getElementById("textures-total");
+const textureNumber = document.getElementById("texture-number");
+const textureWidth = document.getElementById("texture-width");
+const textureHeight = document.getElementById("texture-height");
+const textureMode = document.getElementById("texture-mode");
+const textureInterlace = document.getElementById("texture-interlace");
+const textureUnk1 = document.getElementById("texture-unk1");
+const textureUnk2 = document.getElementById("texture-unk2");
+const textureUnk3 = document.getElementById("texture-unk3");
+const prevTextureBtn = document.getElementById("prevTextureBtn");
+const nextTextureBtn = document.getElementById("nextTextureBtn");
 
 // Const for getting Menu elements
 const openFile = document.getElementById("openSMDfile");
@@ -50,6 +71,9 @@ const quitApp = document.getElementById("quitApp");
 const minimizeBtn = document.getElementById("minimize");
 const maximizeBtn = document.getElementById("maximize");
 const closeWindowBtn = document.getElementById("closeWindow");
+
+const importImage = document.getElementById("import");
+const imageContainer = document.getElementById("texture-image");
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -91,6 +115,7 @@ closeWindowBtn.addEventListener("click", () => {
 
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
+var chunk_texture = 0;
 var entrySize = 64;
 var allEntriesSize = 0;
 var pointerModelsArea = 0;
@@ -124,8 +149,16 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     // Spliting the file in 3 parts
     var buffer_entries = buffer.subarray(0, pointerModelsArea);
     var buffer_models = buffer.subarray(pointerModelsArea, pointerTexturesArea);
-    var buffer_textures = buffer.subarray(pointerTexturesArea);
+    var buffer_padding = buffer.subarray(pointerTexturesArea, pointerTexturesArea + 16);
+    var buffer_textures = buffer.subarray(pointerTexturesArea + 16);
 
+    // Reading SMD textures header
+    texturesTotal.value = buffer_textures.readUint8(4);
+
+    importImage.addEventListener("click", () => {
+
+        console.log("Falta fazer renderização de textura");
+    })
 
     // Core functions
     function createElement(index) {
@@ -194,9 +227,6 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         }
         return pointersModel;
     }
-
-    var modelComplete = "";
-    var bytes = 0;
     function readBinModel(modelChunk) {
         if (modelChunk != pointersModel.length && pointersModel[modelChunk] != 0) {
             return buffer_models.subarray(pointersModel[modelChunk - 1], pointersModel[modelChunk]);
@@ -204,10 +234,91 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             return buffer_models.subarray(pointersModel[modelChunk - 1]);
         }
     }
+    function readTexture(textureChunk) {
+        chunk_texture = chunk_texture + textureChunk;
+        textureWidth.value = buffer_textures.readUint16LE(16 + chunk_texture);
+        textureHeight.value = buffer_textures.readUint16LE(28 + chunk_texture);
+        textureMode.value = buffer_textures.readUint8(20 + chunk_texture);
+        textureInterlace.value = buffer_textures.readUint8(22 + chunk_texture);
+        let unkResolution = buffer_textures.readUint16LE(24 + chunk_texture);
+        let mipmapCount = buffer_textures.readUint8(26 + chunk_texture);
+        let multipliedResolution = buffer_textures.readUint8(28 + chunk_texture);
+        let mipmap_1 = buffer_textures.readUint32LE(32 + chunk_texture);
+        let mipmap_2 = buffer_textures.readUint32LE(36 + chunk_texture);
+        let indicesOffset = buffer_textures.readUint32LE(48 + chunk_texture);
+        let palleteOffset = buffer_textures.readUint32LE(52 + chunk_texture);
+        textureUnk1.value = buffer_textures.readUint8(58 + chunk_texture);
+        textureUnk2.value = buffer_textures.readUint8(59 + chunk_texture);
+        textureUnk3.value = buffer_textures.readUint8(60 + chunk_texture);
+
+    }
+    function exportTexture(chunk, allTextures) {
+        // Creates a Header for TPL count
+        let mainHeader = Buffer.alloc(16, "00100000010000001000000000000000", "hex");
+        let header;
+        let indices;
+        let pallete;
+        let bufferComplete;
+        // Chunk is used for extracting one texture, allTextures is used for batch extraction
+        if (chunk != texturesTotal.value) {
+            header = buffer_textures.subarray((16 + allTextures + (48 * (chunk - 1))), (16 + allTextures + (48 * (chunk - 1))) + 48);
+            console.log(header);
+            indices = buffer_textures.subarray(header.readUint32LE(32), header.readUint32LE(36));
+            if (textureMode.value == 8) {
+                pallete = buffer_textures.subarray(buffer_textures.readUint32LE(52), buffer_textures.readUint32LE(52) + 128);
+            } else if (textureMode.value == 9) {
+                pallete = buffer_textures.subarray(buffer_textures.readUint32LE(52), buffer_textures.readUint32LE(52) + 394);
+            }
+
+            bufferComplete = Buffer.concat([mainHeader, header, indices, pallete]);
+            return bufferComplete;
+        } else {
+            console.log("Deu zero");
+            return;
+        }
+    }
 
     readEntry(0);
     readModelOffsets();
+    readTexture(0);
 
+    function importNewModel() {
+        ipcRenderer.send("BINtoSMDBtn");
+        ipcRenderer.on("BINmodel", function (e, filepath) {
+            let addNewBinBuffer = Buffer.alloc(0);
+            let binFD = fs.openSync(filepath)
+            addNewBinBuffer = fs.readFileSync(binFD);
+
+            // Check if there's any zeroed pointers, then updates it with new bin starting offset
+            let bytesRows = buffer_models.readUint32LE(0) / 4;
+            iterator = 0;
+            for (let i = 0; i < bytesRows; i++) {
+                if (buffer_models.readUint32LE(0 + iterator) == 0) {
+                    buffer_models.writeUint32LE(buffer_models.length, iterator);
+                    console.log("Tamanho bin: " + addNewBinBuffer.length);
+                    console.log("Antes: " + buffer_entries.readUint32LE(8));
+                    buffer_entries.writeUint32LE(buffer_entries.readUint32LE(8) + addNewBinBuffer.length, 8);
+                    console.log("Depois: " + buffer_entries.readUint32LE(8));
+
+                    break;
+                }
+                // CRIAR O ELSE PARA QUANDO NÃO ENCONTRAR PONTEIRO VAZIO
+                iterator += 4;
+            }
+            console.log("Models antes: " + buffer_models.length);
+            buffer_models = Buffer.concat([buffer_models, addNewBinBuffer]);
+            console.log("Models depois: " + buffer_models.length);
+
+            addNewBinBuffer = Buffer.alloc(0);
+            filepath = "";
+            fs.closeSync(binFD);
+
+            return;
+        });
+        return;
+    }
+
+    // Models
     nextBtn.addEventListener("click", function () {
         if (entryNumber.value != buffer_entries.readUint16LE(2)) {
             entryNumber.value = Number(entryNumber.value) + 1;
@@ -225,13 +336,47 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         }
     })
     exportOneModelBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${SMDFileName_converted}`, { recursive: true });
-        fs.writeFileSync(`SMD/${SMDFileName_converted}/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
+        fs.mkdirSync(`SMD/${SMDFileName_converted}/Models`, { recursive: true });
+        fs.writeFileSync(`SMD/${SMDFileName_converted}/Models/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
     })
     exportAllModelsBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${SMDFileName_converted}`, { recursive: true });
+        fs.mkdirSync(`SMD/${SMDFileName_converted}/Models`, { recursive: true });
         for (let i = 0; i < entryTotal.value; i++) {
-            fs.writeFileSync(`SMD/${SMDFileName_converted}/${i}.bin`, readBinModel(i + 1));
+            fs.writeFileSync(`SMD/${SMDFileName_converted}/Models/${i}.bin`, readBinModel(i + 1));
+        }
+    })
+    importNewModelBtn.addEventListener("click", function () {
+        importNewModel()
+    })
+
+    // Textures
+    nextTextureBtn.addEventListener("click", function () {
+        if (textureNumber.value != texturesTotal) {
+            textureNumber.value = Number(textureNumber.value) + 1;
+            readTexture(48);
+        } else {
+            return;
+        }
+    })
+    prevTextureBtn.addEventListener("click", function () {
+        if (textureNumber.value > 1) {
+            textureNumber.value = Number(textureNumber.value) - 1;
+            readTexture(-48);
+        } else {
+            return;
+        }
+    })
+    exportOneTextureBtn.addEventListener("click", function () {
+        // console.log(exportTexture(textureNumber.value));
+        fs.mkdirSync(`SMD/${SMDFileName_converted}/Textures`, { recursive: true });
+        fs.writeFileSync(`SMD/${SMDFileName_converted}/Textures/${textureNumber.value}.tpl`, exportTexture(textureNumber.value, 0));
+    })
+    exportAllTexturesBtn.addEventListener("click", function () {
+        fs.mkdirSync(`SMD/${SMDFileName_converted}/Textures`, { recursive: true });
+        let textureHeaderChunk = 0;
+        for (let i = 0; i < texturesTotal.value; i++) {
+            fs.writeFileSync(`SMD/${SMDFileName_converted}/Textures/${i}.tpl`, exportTexture(1, textureHeaderChunk));
+            textureHeaderChunk += 48;
         }
     })
 
@@ -247,7 +392,8 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
 
     // Save all modified buffer back to file
     saveBtn.addEventListener("click", () => {
-        fs.writeFileSync(filepath, buffer);
+        let COMPLETE_BUFFER = Buffer.concat([buffer_entries, buffer_models, buffer_padding, buffer_textures])
+        fs.writeFileSync(filepath, COMPLETE_BUFFER);
         var saveMessage = document.querySelector(".hide");
         saveMessage.style.display = "block"
         setTimeout(() => {

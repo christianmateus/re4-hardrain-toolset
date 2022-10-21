@@ -28,6 +28,10 @@ body {
     background-color: var(--darkTheme-main-background);
 }
 
+body:not(input) {
+    user-select: none;
+}
+
 /* ===================== 
     Conteúdo superior
    ===================== */
@@ -177,6 +181,11 @@ h5 {
     text-align: center;
 }
 
+b {
+    font-weight: 200;
+    color: #eee;
+}
+
 hr {
     height: 1px;
     background-color: rgba(0, 0, 0, 0.4);
@@ -318,7 +327,9 @@ main {
 }
 
 .entry-config label,
-.entry-config span {
+.entry-config span,
+.container-textures span,
+.container-textures label {
     display: inline-block;
     width: 110px;
     padding: 1px 3px;
@@ -337,7 +348,13 @@ main {
     text-align: center;
 }
 
-.entry-config:nth-child(2) input {
+.entry-config input::-webkit-outer-spin-button,
+.entry-config input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.entry-config:nth-child(2) input,
+.container-textures input {
     margin: 6px 0;
     height: 20px;
     width: 40px;
@@ -349,11 +366,85 @@ main {
     text-align: center;
 }
 
+.container-geral-extra>div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
 .container-geral-extra button {
-    width: fit-content;
+    width: 140px;
     height: fit-content;
     padding: 4px 6px;
     border-radius: 4px;
+    margin: 10px 0;
+}
+
+#add-new-model,
+#add-new-texture {
+    background: linear-gradient(to bottom, #d1d1ff 0%, #c1c1ff 42%, #b1b1ff 47%, #a1a1ff 100%);
+    transition: 1.3s;
+}
+
+#add-new-model:hover,
+#add-new-texture:hover {
+    background: linear-gradient(to bottom, #a1a1ff 0%, #9191ff 42%, #8181ff 47%, #7171ff 100%);
+
+}
+
+.container-textures {
+    display: flex;
+    justify-content: space-evenly;
+    width: 70%;
+    text-align: center;
+}
+
+#texture-number,
+#textures-total {
+    text-align: center;
+}
+
+#texture-number::-webkit-outer-spin-button,
+#texture-number::-webkit-inner-spin-button,
+#textures-total::-webkit-outer-spin-button,
+#textures-total::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.texture-viewer {
+    width: 100%;
+    height: 140px;
+    margin: auto;
+    margin-top: 15px;
+    background-color: #707070;
+}
+
+.container-textures span {
+    padding: 2px 3px;
+}
+
+.container-textures label {
+    width: 80px;
+}
+
+.container-texture-specs {
+    height: 80%;
+    display: flex;
+    align-items: center;
+}
+
+.texture-specs {
+    display: inline-block;
+}
+
+.texture-specs hr {
+    background-color: rgba(28, 41, 50, 0.4);
+}
+
+.texture-specs input {
+    width: 70px;
+    text-align: center;
 }
 
 /* ---------------- */
