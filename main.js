@@ -266,7 +266,7 @@ ipcMain.on("saveAsSMDfile", (e, arg) => {
     })
 })
 
-// Importing BIN model to SMD file
+// Adding new BIN model to SMD file
 ipcMain.on("BINtoSMDBtn", (e, arg) => {
   dialog.showOpenDialog(mainWindow, {
     filters: [
@@ -279,6 +279,18 @@ ipcMain.on("BINtoSMDBtn", (e, arg) => {
   })
 })
 
+// Adding new TPL texture to SMD file
+ipcMain.on("addNewTPLBtn", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'TPL Texture', extensions: ['tpl'] }
+    ]
+  }).then((dados) => {
+    let addedNewTexture = dados.filePaths.toString();
+    mainWindow.webContents.send("addTPLtexture", addedNewTexture);
+    console.log("TPL imported: " + addedNewTexture);
+  })
+})
 
 // Closing SMD file (workaround)
 ipcMain.on("closeSMDfile", (e, arg) => {

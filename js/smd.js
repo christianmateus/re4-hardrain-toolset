@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
+const { toNamespacedPath } = require('path');
 
 // Const for testing text output (DEBUG)
 
@@ -155,10 +156,10 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     // Reading SMD textures header
     texturesTotal.value = buffer_textures.readUint8(4);
 
-    importImage.addEventListener("click", () => {
+    // importImage.addEventListener("click", () => {
 
-        console.log("Falta fazer renderização de textura");
-    })
+    //     console.log("Falta fazer renderização de textura");
+    // })
 
     // Core functions
     function createElement(index) {
@@ -182,26 +183,26 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
 
     }
     function showTextBox(message, status) {
-        var removedMessage = document.querySelector(".removedEntry");
+        var removedMessage = document.querySelector(".infoBox");
         removedMessage.style.display = "block"
         removedMessage.style.backgroundColor = status;
         if (status == "exported") {
-            document.getElementById("removedEntry").firstElementChild.style.backgroundColor = "#333"
-            document.getElementById("removedEntry").firstElementChild.style.border = "2px solid #ddd"
-            document.getElementById("removedEntry").firstElementChild.style.width = "35%"
-            document.getElementById("removedEntry").firstElementChild.innerHTML = '<i class="fa-solid fa-file-export"></i>&nbsp&nbsp' + message;
+            document.getElementById("infoBox").firstElementChild.style.backgroundColor = "#333"
+            document.getElementById("infoBox").firstElementChild.style.border = "2px solid #ddd"
+            document.getElementById("infoBox").firstElementChild.style.width = "35%"
+            document.getElementById("infoBox").firstElementChild.innerHTML = '<i class="fa-solid fa-file-export"></i>&nbsp&nbsp' + message;
         }
-        if (status == "imported") {
-            document.getElementById("removedEntry").firstElementChild.style.backgroundColor = "#353"
-            document.getElementById("removedEntry").firstElementChild.style.border = "2px solid #7f7"
-            document.getElementById("removedEntry").firstElementChild.style.color = "2px solid #7f7"
-            document.getElementById("removedEntry").firstElementChild.style.color = "2px solid #7f7"
-            document.getElementById("removedEntry").firstElementChild.style.width = "35%"
-            document.getElementById("removedEntry").firstElementChild.innerHTML = '<i class="fa-solid fa-file-import"></i>&nbsp&nbsp' + message;
+        if (status == "added") {
+            document.getElementById("infoBox").firstElementChild.style.backgroundColor = "#353"
+            document.getElementById("infoBox").firstElementChild.style.border = "2px solid #7f7"
+            document.getElementById("infoBox").firstElementChild.style.color = "2px solid #7f7"
+            document.getElementById("infoBox").firstElementChild.style.color = "2px solid #7f7"
+            document.getElementById("infoBox").firstElementChild.style.width = "35%"
+            document.getElementById("infoBox").firstElementChild.innerHTML = '<i class="fa-solid fa-file-import"></i>&nbsp&nbsp' + message;
         }
         setTimeout(() => {
             removedMessage.style.display = "none"
-        }, 2000);
+        }, 3000);
     }
 
     function readEntry(entryChunk) {
@@ -284,39 +285,98 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
 
     function importNewModel() {
         ipcRenderer.send("BINtoSMDBtn");
-        ipcRenderer.on("BINmodel", function (e, filepath) {
-            let addNewBinBuffer = Buffer.alloc(0);
-            let binFD = fs.openSync(filepath)
-            addNewBinBuffer = fs.readFileSync(binFD);
-
-            // Check if there's any zeroed pointers, then updates it with new bin starting offset
-            let bytesRows = buffer_models.readUint32LE(0) / 4;
-            iterator = 0;
-            for (let i = 0; i < bytesRows; i++) {
-                if (buffer_models.readUint32LE(0 + iterator) == 0) {
-                    buffer_models.writeUint32LE(buffer_models.length, iterator);
-                    console.log("Tamanho bin: " + addNewBinBuffer.length);
-                    console.log("Antes: " + buffer_entries.readUint32LE(8));
-                    buffer_entries.writeUint32LE(buffer_entries.readUint32LE(8) + addNewBinBuffer.length, 8);
-                    console.log("Depois: " + buffer_entries.readUint32LE(8));
-
-                    break;
-                }
-                // CRIAR O ELSE PARA QUANDO NÃO ENCONTRAR PONTEIRO VAZIO
-                iterator += 4;
-            }
-            console.log("Models antes: " + buffer_models.length);
-            buffer_models = Buffer.concat([buffer_models, addNewBinBuffer]);
-            console.log("Models depois: " + buffer_models.length);
-
-            addNewBinBuffer = Buffer.alloc(0);
-            filepath = "";
-            fs.closeSync(binFD);
-
-            return;
-        });
-        return;
     }
+    ipcRenderer.on("BINmodel", function (e, filepath) {
+        let addNewBinBuffer = Buffer.alloc(0);
+        let binFD = fs.openSync(filepath)
+        addNewBinBuffer = fs.readFileSync(binFD);
+
+        // Check if there's any zeroed pointers, then updates it with new bin starting offset
+        let bytesRows = buffer_models.readUint32LE(0) / 4; // Gets first value, divides it by 4 to get total lines
+        iterator = 0;
+        for (let i = 0; i <= bytesRows; i++) {
+
+            // If it doesn't encounter any empty pointer, this creates 4 new empty pointers and restarts the loop
+            if (i == bytesRows) {
+                let createFourEmptyPointers = Buffer.alloc(16, 0);
+                let topPart = buffer_models.subarray(0, bytesRows * 4);
+                let downPart = buffer_models.subarray(bytesRows * 4);
+                buffer_models = Buffer.concat([topPart, createFourEmptyPointers, downPart]);
+
+                // Updating every pointer by +16
+                iterator = 0;
+                for (let j = 0; j < bytesRows; j++) {
+                    buffer_models.writeUint32LE(buffer_models.readUint32LE(0 + iterator) + 16, 0 + iterator);
+                    iterator += 4;
+                }
+                i = 0; // Restarts the loop 
+                iterator = 0;
+                bytesRows += 16; // Increases loop length
+                buffer_entries.writeUint32LE(buffer_entries.readUint32LE(8) + 16, 8);
+            }
+            // Searches for the first empty pointer and adds the new value to it
+            if (i < bytesRows && buffer_models.readUint32LE(0 + iterator) == 0) {
+                buffer_models.writeUint32LE(buffer_models.length, iterator);
+                buffer_entries.writeUint32LE(buffer_entries.readUint32LE(8) + addNewBinBuffer.length, 8);
+                break;
+            }
+            iterator += 4;
+        }
+        buffer_models = Buffer.concat([buffer_models, addNewBinBuffer]);
+        showTextBox("New object added sucessfully!", "added")
+        fs.closeSync(binFD);
+    });
+
+    function importNewTexture() {
+        ipcRenderer.send("addNewTPLBtn");
+    }
+    ipcRenderer.on("addTPLtexture", function (e, filepath) {
+        let addNewTextureBuffer = Buffer.alloc(0);
+        let iterator = 0;
+        let textureFD = fs.openSync(filepath);
+        addNewTextureBuffer = fs.readFileSync(textureFD);
+
+        let fileHeader = addNewTextureBuffer.subarray(0, 16);
+        let textureHeader = addNewTextureBuffer.subarray(16, 64);
+        let indices = addNewTextureBuffer.subarray(64, addNewTextureBuffer.readUint32LE(52));
+        let pallete = addNewTextureBuffer.subarray(addNewTextureBuffer.readUint32LE(52));
+
+        let complete_mainHeader = buffer_textures.subarray(0, 16);
+        let complete_textureHeader = buffer_textures.subarray(16, buffer_textures.readUint32LE(48));
+        let complete_indicesAndPallete = buffer_textures.subarray(buffer_textures.readUint32LE(48));
+
+
+        // Updates new texture header pointers before inserting
+        console.log(buffer_textures.length);
+        console.log(indices.length);
+        textureHeader.writeUint32LE(buffer_textures.length + 48, 32);
+
+        // Check bit depth
+        if (textureHeader.readUint8(4) == 8) {
+            console.log("4-bit texture");
+            textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48) - 128, 36);
+        } else {
+            console.log("8-bit texture");
+            textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48) - 1024, 36);
+        }
+        textureHeader.writeUint8(0, 10);
+
+        // Add new texture header to the end of headers area and updates every pointer by +48
+        complete_indicesAndPallete = Buffer.concat([complete_indicesAndPallete, indices, pallete]);
+
+        for (let i = 0; i != complete_mainHeader.readUint8(4); i++) {
+            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(32 + iterator) + 48, 32 + iterator)
+            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(36 + iterator) + 48, 36 + iterator)
+            iterator += 48;
+        }
+
+        // Updates main header count by +1
+        complete_mainHeader.writeUint8(complete_mainHeader.readUint8(4) + 1, 4);
+        complete_textureHeader = Buffer.concat([complete_textureHeader, textureHeader]);
+
+        buffer_textures = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
+        fs.closeSync(textureFD);
+    })
 
     // Models
     nextBtn.addEventListener("click", function () {
@@ -335,14 +395,16 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             return;
         }
     })
+
+    var folderName = headerFileName.value.substring(0, headerFileName.value.length - 4);
     exportOneModelBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${SMDFileName_converted}/Models`, { recursive: true });
-        fs.writeFileSync(`SMD/${SMDFileName_converted}/Models/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
+        fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
+        fs.writeFileSync(`SMD/${folderName}/Models/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
     })
     exportAllModelsBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${SMDFileName_converted}/Models`, { recursive: true });
+        fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
         for (let i = 0; i < entryTotal.value; i++) {
-            fs.writeFileSync(`SMD/${SMDFileName_converted}/Models/${i}.bin`, readBinModel(i + 1));
+            fs.writeFileSync(`SMD/${folderName}/Models/${i}.bin`, readBinModel(i + 1));
         }
     })
     importNewModelBtn.addEventListener("click", function () {
@@ -368,18 +430,20 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     })
     exportOneTextureBtn.addEventListener("click", function () {
         // console.log(exportTexture(textureNumber.value));
-        fs.mkdirSync(`SMD/${SMDFileName_converted}/Textures`, { recursive: true });
-        fs.writeFileSync(`SMD/${SMDFileName_converted}/Textures/${textureNumber.value}.tpl`, exportTexture(textureNumber.value, 0));
+        fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
+        fs.writeFileSync(`SMD/${folderName}/Textures/${textureNumber.value}.tpl`, exportTexture(textureNumber.value, 0));
     })
     exportAllTexturesBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${SMDFileName_converted}/Textures`, { recursive: true });
+        fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
         let textureHeaderChunk = 0;
         for (let i = 0; i < texturesTotal.value; i++) {
-            fs.writeFileSync(`SMD/${SMDFileName_converted}/Textures/${i}.tpl`, exportTexture(1, textureHeaderChunk));
+            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(1, textureHeaderChunk));
             textureHeaderChunk += 48;
         }
     })
-
+    importNewTextureBtn.addEventListener("click", function () {
+        importNewTexture()
+    })
     /* ===============
         UPDATE
        =============== */
@@ -403,6 +467,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
 
     closeBtn.addEventListener("click", () => {
         ipcRenderer.send("closeSMDfile");
+        fs.closeSync(fd);
     })
 
     ipcRenderer.on("saveAsSMDfileContent", (e, arg) => {
