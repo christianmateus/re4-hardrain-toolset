@@ -333,6 +333,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     ipcRenderer.on("addTPLtexture", function (e, filepath) {
         let addNewTextureBuffer = Buffer.alloc(0);
         let iterator = 0;
+        let mipMapCount = 0;
         let textureFD = fs.openSync(filepath);
         addNewTextureBuffer = fs.readFileSync(textureFD);
 
@@ -342,37 +343,50 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         let pallete = addNewTextureBuffer.subarray(addNewTextureBuffer.readUint32LE(52));
 
         let complete_mainHeader = buffer_textures.subarray(0, 16);
-        let complete_textureHeader = buffer_textures.subarray(16, buffer_textures.readUint32LE(48));
+        let complete_textureHeader = buffer_textures.subarray(16, (48 * complete_mainHeader.readUint8(4)) + 16);
+        let complete_mipMapHeader = buffer_textures.subarray((48 * complete_mainHeader.readUint8(4)) + 16, buffer_textures.readUint32LE(48))
         let complete_indicesAndPallete = buffer_textures.subarray(buffer_textures.readUint32LE(48));
 
-
         // Updates new texture header pointers before inserting
-        console.log(buffer_textures.length);
-        console.log(indices.length);
         textureHeader.writeUint32LE(buffer_textures.length + 48, 32);
+
+        // Removing MipMaps
+        textureHeader.writeUint8(0, 10);
 
         // Check bit depth
         if (textureHeader.readUint8(4) == 8) {
             console.log("4-bit texture");
-            textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48) - 128, 36);
+            textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48), 36);
         } else {
             console.log("8-bit texture");
-            textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48) - 1024, 36);
+            textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48), 36);
         }
-        textureHeader.writeUint8(0, 10);
 
         // Add new texture header to the end of headers area and updates every pointer by +48
         complete_indicesAndPallete = Buffer.concat([complete_indicesAndPallete, indices, pallete]);
 
+        // Updates every pointer by +48
         for (let i = 0; i != complete_mainHeader.readUint8(4); i++) {
             complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(32 + iterator) + 48, 32 + iterator)
             complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(36 + iterator) + 48, 36 + iterator)
+            if (complete_textureHeader.readUint32LE(16 + iterator) > 0) {
+                complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(16 + iterator) + 48, 16 + iterator)
+                complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(20 + iterator) + 48, 20 + iterator)
+            }
+            iterator += 48;
+        }
+
+        // Gets mipmap quantity
+        mipMapCount = complete_mipMapHeader.length / 48;
+        iterator = 0;
+        for (let j = 0; j != (complete_mipMapHeader.length / 48); j++) {
+            complete_mipMapHeader.writeUint32LE(complete_mipMapHeader.readUint32LE(32 + iterator) + 48, 32 + iterator);
             iterator += 48;
         }
 
         // Updates main header count by +1
         complete_mainHeader.writeUint8(complete_mainHeader.readUint8(4) + 1, 4);
-        complete_textureHeader = Buffer.concat([complete_textureHeader, textureHeader]);
+        complete_textureHeader = Buffer.concat([complete_textureHeader, textureHeader, complete_mipMapHeader]);
 
         buffer_textures = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
         fs.closeSync(textureFD);
