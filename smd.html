@@ -37,6 +37,9 @@
       <div class="dropdown">
          <button class="menu-buttons" id="edit">Edit</button>
          <div class="dropdown-content">
+            <button id="addEntry" class="menu-buttons"><img src="images/add.png"> Add new entry</button>
+            <button id="removeEntry" class="menu-buttons"><img src="images/remove.png"> Remove entry</button>
+            <hr>
             <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
             <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
             <hr>
@@ -93,7 +96,7 @@
       </div>
    </div>
    <!-- PROGRAM DATA STARTS -->
-   <main>
+   <main id="main">
       <section class="container-geral">
          <h5>Entries list</h5>
          <!-- <button id="import">IMPORT IMAGE</button> -->
@@ -143,17 +146,21 @@
                <button id="nextBtn" class="win7-btn"><i class="fa-solid fa-arrow-right"></i></button>
             </div>
          </div>
+         <div class="models-buttons">
+            <button id="add-new-model" class="win7-btn"><i class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Add New
+               Model</button>
+            <button id="export-model" class="win7-btn"><i class="fa-solid fa-file-export"></i>&nbsp;&nbsp;Export
+               Model</button>
+            <button id="exportall-model" class="win7-btn"><i class="fa-solid fa-file-export"></i>&nbsp;&nbsp;Export All
+               Models</button>
+         </div>
       </section>
       <section class="container-geral container-geral-extra">
          <div>
-            <div>
-               <button id="add-new-model" class="win7-btn">Add New Model</button>
-               <button id="import-model" class="win7-btn">Import Model</button>
-               <button id="importall-model" class="win7-btn">Import All Models</button>
-               <hr>
-               <button id="export-model" class="win7-btn">Export Model</button>
-               <button id="exportall-model" class="win7-btn">Export All Models</button>
-            </div>
+            <h5>Bin Models</h5><br>
+            <fieldset id="fieldset-bin-textures">
+               <legend>Textures used</legend>
+            </fieldset>
          </div>
       </section>
       <section class="container-geral container-textures">
@@ -206,17 +213,13 @@
                </article>
             </div>
          </div>
-      </section>
-      <section class="container-geral container-geral-extra">
-         <div>
-            <div>
-               <button id="add-new-texture" class="win7-btn">Add New Texture</button>
-               <button id="import-texture" class="win7-btn">Import Texture</button>
-               <button id="importall-texture" class="win7-btn">Import All Textures</button>
-               <hr>
-               <button id="export-texture" class="win7-btn">Export Texture</button>
-               <button id="exportall-texture" class="win7-btn">Export All Textures</button>
-            </div>
+         <div class="models-buttons textures-buttons">
+            <button id="add-new-texture" class="win7-btn"><i class="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;Add New
+               Texture</button>
+            <button id="export-texture" class="win7-btn"><i class="fa-solid fa-file-export"></i>&nbsp;&nbsp;Export
+               Texture</button>
+            <button id="exportall-texture" class="win7-btn"><i class="fa-solid fa-file-export"></i>&nbsp;&nbsp;Export
+               All Textures</button>
          </div>
       </section>
    </main>

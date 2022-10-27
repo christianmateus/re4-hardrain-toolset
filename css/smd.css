@@ -249,20 +249,19 @@ fieldset input:focus {
 main {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     height: 100%;
     padding: 30px;
 }
 
 /* ===================== 
-    Languages Container
+    Entries Container
    ===================== */
 
 .container-geral {
     padding: 12px 20px;
     width: 70%;
-    height: 300px;
     border-radius: 4px;
     margin-bottom: 5px;
     background-color: #1c4e51;
@@ -270,7 +269,7 @@ main {
 
 .container-geral h5 {
     font-size: 14pt;
-    padding: 10px;
+    padding-bottom: 10px;
 }
 
 .container-row {
@@ -310,7 +309,6 @@ main {
 
 .container-row-config {
     display: flex;
-    /* justify-content: center; */
     align-items: center;
     border: 1px solid rgba(0, 0, 0, 0.4);
     height: 90px;
@@ -360,41 +358,56 @@ main {
     width: 40px;
 }
 
-.container-geral-extra {
-    width: 28%;
-    margin-left: 5px;
-    text-align: center;
-}
-
-.container-geral-extra>div {
+.models-buttons {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    justify-content: space-evenly;
+    background-color: var(--lightpurple);
+    margin-top: 4px;
 }
 
-.container-geral-extra button {
-    width: 140px;
+.models-buttons button {
+    width: fit-content;
     height: fit-content;
+    font-size: 13px;
     padding: 4px 6px;
     border-radius: 4px;
     margin: 10px 0;
 }
 
-#add-new-model,
-#add-new-texture {
-    background: linear-gradient(to bottom, #d1d1ff 0%, #c1c1ff 42%, #b1b1ff 47%, #a1a1ff 100%);
-    transition: 1.3s;
+.models-buttons i {
+    color: var(--main-color);
 }
 
-#add-new-model:hover,
-#add-new-texture:hover {
-    background: linear-gradient(to bottom, #a1a1ff 0%, #9191ff 42%, #8181ff 47%, #7171ff 100%);
 
+/* ===================== 
+    Models Container
+   ===================== */
+
+
+.container-geral-extra {
+    width: 28%;
+    margin-left: 5px;
+    text-align: center;
+    height: 335px;
 }
+
+.container-geral-extra>div {
+    height: 100%;
+}
+
+.container-geral-extra>div input {
+    width: 50px;
+    padding: 6px;
+}
+
+/* ===================== 
+    Textures Container
+   ===================== */
+
 
 .container-textures {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-evenly;
     width: 70%;
     text-align: center;
@@ -445,6 +458,10 @@ main {
 .texture-specs input {
     width: 70px;
     text-align: center;
+}
+
+.textures-buttons {
+    width: 100%;
 }
 
 /* ---------------- */

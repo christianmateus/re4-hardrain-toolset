@@ -10,11 +10,13 @@ const { toNamespacedPath } = require('path');
 
 // Getting elements
 var rootEl = document.querySelector("html");
+var addEntryEl = document.getElementById("addEntry");
+var removeEntryEl = document.getElementById("removeEntry");
 var copyBtnEl = document.getElementById("copyBtn");
 var pasteBtnEl = document.getElementById("pasteBtn");
 var undoBtnEl = document.getElementById("undoBtn");
 var redoBtnEl = document.getElementById("redoBtn");
-var countEl = document.getElementById("count");
+var containerInputsEl = document.getElementById("main");
 var headerFileName = document.getElementById("header-filename");
 var headerFileSize = document.getElementById("header-filesize");
 
@@ -36,18 +38,17 @@ const nextBtn = document.getElementById("nextBtn");
 const entryNumber = document.getElementById("entry-number");
 const entryTotal = document.getElementById("entry-total");
 
+// Getting fieldset bin models elements
+const fieldsetBinModelsEl = document.getElementById("fieldset-bin-textures");
+
 // Getting models elements
 const exportOneModelBtn = document.getElementById("export-model");
-const importOneModelBtn = document.getElementById("import-model");
 const exportAllModelsBtn = document.getElementById("exportall-model");
-const importAllModelsBtn = document.getElementById("importall-model");
 const importNewModelBtn = document.getElementById("add-new-model");
 
 // Getting textures elements
 const exportOneTextureBtn = document.getElementById("export-texture");
-const importOneTextureBtn = document.getElementById("import-texture");
 const exportAllTexturesBtn = document.getElementById("exportall-texture");
-const importAllTexturesBtn = document.getElementById("importall-texture");
 const importNewTextureBtn = document.getElementById("add-new-texture");
 
 // Getting textures elements
@@ -117,8 +118,6 @@ closeWindowBtn.addEventListener("click", () => {
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
 var chunk_texture = 0;
-var entrySize = 64;
-var allEntriesSize = 0;
 var pointerModelsArea = 0;
 var pointerTexturesArea = 0;
 var pointersModel = [];
@@ -157,30 +156,61 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     texturesTotal.value = buffer_textures.readUint8(4);
 
     // importImage.addEventListener("click", () => {
-
     //     console.log("Falta fazer renderização de textura");
     // })
 
     // Core functions
-    function createElement(index) {
-        let firstDivTag = document.createElement("div");
-        let detailsTag = document.createElement("details");
-        let summaryTag = document.createElement("summary");
-        let secondDivTag = document.createElement("div");
-        let textareaTag = document.createElement("textarea");
+    function createFieldsetInputElement(index, inputValue) {
+        let label = document.createElement("label");
+        let br = document.createElement("br");
+        let input = document.createElement("input");
 
-        firstDivTag.classList.add("principal-div")
-        detailsTag.classList.add("message-container");
-        summaryTag.innerText = "Message " + index;
-        secondDivTag.classList.add("details-expanded");
-        textareaTag.classList.add("text-boxes");
-        textareaTag.id = index;
+        label.setAttribute("for", `texture-${index}`);
+        label.innerHTML = `Texture ${index} `;
+        input.id = `texture-${index}`;
+        input.classList.add("texture-number");
+        input.setAttribute("type", "number");
+        input.value = inputValue;
 
-        containerLeftSideEl.append(firstDivTag);
-        firstDivTag.appendChild(detailsTag);
-        secondDivTag.appendChild(textareaTag)
-        detailsTag.append(summaryTag, secondDivTag);
+        fieldsetBinModelsEl.appendChild(label);
+        fieldsetBinModelsEl.appendChild(input);
+        fieldsetBinModelsEl.appendChild(br);
+    }
+    function removeFieldsetElements() {
+        if (fieldsetBinModelsEl.childElementCount > 1) {
+            fieldsetBinModelsEl.innerHTML = "";
+            let legend = document.createElement("legend");
+            legend.innerText = "Textures used";
+            fieldsetBinModelsEl.appendChild(legend);
+        }
+    }
+    function addNewEntry() {
+        // Creates new empty entry 
+        let new_entry = Buffer.alloc(64);
+        new_entry.writeUint32LE(1, 12);
+        new_entry.writeUint32LE(1, 28);
+        new_entry.writeUint32LE(1, 44);
+        new_entry.writeUint8(255, 50);
+        new_entry.writeUint8(254, 51);
+        new_entry.writeUint8(8, 56);
+        // Update entries count
+        buffer_entries.writeUint16LE(buffer_entries.readUint16LE(2) + 1, 2);
+        buffer_entries.writeUint32LE(buffer_entries.readUint32LE(4) + 64, 4);
+        buffer_entries.writeUint32LE(buffer_entries.readUint32LE(8) + 64, 8);
+        entryTotal.value = buffer_entries.readUint16LE(2);
+        buffer_entries = Buffer.concat([buffer_entries, new_entry]);
+    }
+    function removeEntry() {
+        let topPart = buffer_entries.subarray(0, (64 * (entryNumber.value - 1)) + 16);
+        let downPart = buffer_entries.subarray((64 * (entryNumber.value - 1)) + 16 + 64);
 
+        // Updating entry count and pointers
+        buffer_entries.writeUint16LE(buffer_entries.readUint16LE(2) - 1, 2);
+        buffer_entries.writeUint32LE(buffer_entries.readUint32LE(4) - 64, 4);
+        buffer_entries.writeUint32LE(buffer_entries.readUint32LE(8) - 64, 8);
+        entryTotal.value = buffer_entries.readUint16LE(2);
+
+        buffer_entries = Buffer.concat([topPart, downPart]);
     }
     function showTextBox(message, status) {
         var removedMessage = document.querySelector(".infoBox");
@@ -204,7 +234,6 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             removedMessage.style.display = "none"
         }, 3000);
     }
-
     function readEntry(entryChunk) {
         chunk = chunk + entryChunk;
         positionX.value = buffer_entries.readFloatLE(16 + chunk).toFixed(2);
@@ -238,7 +267,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     function readTexture(textureChunk) {
         chunk_texture = chunk_texture + textureChunk;
         textureWidth.value = buffer_textures.readUint16LE(16 + chunk_texture);
-        textureHeight.value = buffer_textures.readUint16LE(28 + chunk_texture);
+        textureHeight.value = buffer_textures.readUint16LE(18 + chunk_texture);
         textureMode.value = buffer_textures.readUint8(20 + chunk_texture);
         textureInterlace.value = buffer_textures.readUint8(22 + chunk_texture);
         let unkResolution = buffer_textures.readUint16LE(24 + chunk_texture);
@@ -279,10 +308,100 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         }
     }
 
+    function checkBinTexturesCount() {
+        let modelPointer = buffer_models.readUint32LE(4 * modelNumber.value);
+        let texturePointer = buffer_models.readUint32LE(modelPointer + 12);
+        let textureCount = buffer_models.readUint8(modelPointer + 10);
+        let binTextureIterator = 0;
+        removeFieldsetElements();
+
+        for (let i = 0; i != textureCount; i++) {
+            let textureNumber = buffer_models.readUint8(modelPointer + texturePointer + 1 + binTextureIterator)
+            createFieldsetInputElement(i + 1, textureNumber);
+
+            binTextureIterator += 16;
+        }
+    }
+
     readEntry(0);
     readModelOffsets();
     readTexture(0);
+    checkBinTexturesCount();
 
+    // Models
+    var folderName = headerFileName.value.substring(0, headerFileName.value.length - 4);
+    nextBtn.addEventListener("click", function () {
+        if (entryNumber.value != buffer_entries.readUint16LE(2)) {
+            entryNumber.value = Number(entryNumber.value) + 1;
+            readEntry(64);
+            checkBinTexturesCount();
+        } else {
+            return;
+        }
+    })
+    prevBtn.addEventListener("click", function () {
+        if (entryNumber.value > 1) {
+            entryNumber.value = Number(entryNumber.value) - 1;
+            readEntry(-64);
+            checkBinTexturesCount();
+
+        } else {
+            return;
+        }
+    })
+    exportOneModelBtn.addEventListener("click", function () {
+        fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
+        fs.writeFileSync(`SMD/${folderName}/Models/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
+    })
+    exportAllModelsBtn.addEventListener("click", function () {
+        fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
+        for (let i = 0; i < entryTotal.value; i++) {
+            fs.writeFileSync(`SMD/${folderName}/Models/${i}.bin`, readBinModel(i + 1));
+        }
+    })
+    importNewModelBtn.addEventListener("click", function () {
+        importNewModel()
+    })
+    // ===============================================================
+    // Textures
+    nextTextureBtn.addEventListener("click", function () {
+        if (textureNumber.value != texturesTotal.value) {
+            textureNumber.value = Number(textureNumber.value) + 1;
+            readTexture(48);
+        } else {
+            return;
+        }
+    })
+    prevTextureBtn.addEventListener("click", function () {
+        if (textureNumber.value > 1) {
+            textureNumber.value = Number(textureNumber.value) - 1;
+            readTexture(-48);
+        } else {
+            return;
+        }
+    })
+    exportOneTextureBtn.addEventListener("click", function () {
+        // console.log(exportTexture(textureNumber.value));
+        fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
+        fs.writeFileSync(`SMD/${folderName}/Textures/${textureNumber.value}.tpl`, exportTexture(textureNumber.value, 0));
+    })
+    exportAllTexturesBtn.addEventListener("click", function () {
+        fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
+        let textureHeaderChunk = 0;
+        for (let i = 0; i < texturesTotal.value; i++) {
+            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(1, textureHeaderChunk));
+            textureHeaderChunk += 48;
+        }
+    })
+    importNewTextureBtn.addEventListener("click", function () {
+        importNewTexture()
+    })
+
+    /* ===============
+        UPDATE
+       =============== */
+
+    // ADD NEW MODEL
     function importNewModel() {
         ipcRenderer.send("BINtoSMDBtn");
     }
@@ -327,9 +446,10 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         fs.closeSync(binFD);
     });
 
+    // ADD NEW TEXTURE
     function importNewTexture() {
         ipcRenderer.send("addNewTPLBtn");
-    }
+    };
     ipcRenderer.on("addTPLtexture", function (e, filepath) {
         let addNewTextureBuffer = Buffer.alloc(0);
         let iterator = 0;
@@ -390,79 +510,95 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
 
         buffer_textures = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
         fs.closeSync(textureFD);
-    })
+    });
 
-    // Models
-    nextBtn.addEventListener("click", function () {
-        if (entryNumber.value != buffer_entries.readUint16LE(2)) {
-            entryNumber.value = Number(entryNumber.value) + 1;
-            readEntry(64);
-        } else {
-            return;
-        }
-    })
-    prevBtn.addEventListener("click", function () {
-        if (entryNumber.value > 1) {
-            entryNumber.value = Number(entryNumber.value) - 1;
-            readEntry(-64);
-        } else {
-            return;
-        }
-    })
+    // ADD NEW ENTRY
+    addEntryEl.addEventListener("click", () => {
+        addNewEntry();
+    });
+    removeEntryEl.addEventListener("click", () => {
+        removeEntry();
+        readEntry(0);
+    });
 
-    var folderName = headerFileName.value.substring(0, headerFileName.value.length - 4);
-    exportOneModelBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
-        fs.writeFileSync(`SMD/${folderName}/Models/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
-    })
-    exportAllModelsBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
-        for (let i = 0; i < entryTotal.value; i++) {
-            fs.writeFileSync(`SMD/${folderName}/Models/${i}.bin`, readBinModel(i + 1));
+    containerInputsEl.addEventListener("change", function ({ target }) {
+        // Entry inputs
+        if (target.id == "pos-x") {
+            buffer_entries.writeFloatLE(positionX.value, (64 * (entryNumber.value - 1)) + 16);
         }
-    })
-    importNewModelBtn.addEventListener("click", function () {
-        importNewModel()
-    })
+        if (target.id == "pos-y") {
+            buffer_entries.writeFloatLE(positionY.value, 4 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "pos-z") {
+            buffer_entries.writeFloatLE(positionZ.value, 8 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "rot-x") {
+            buffer_entries.writeFloatLE(rotationX.value, 16 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "rot-y") {
+            buffer_entries.writeFloatLE(rotationY.value, 20 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "rot-z") {
+            buffer_entries.writeFloatLE(rotationZ.value, 24 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "scale-x") {
+            buffer_entries.writeFloatLE(scaleX.value, 32 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "scale-y") {
+            buffer_entries.writeFloatLE(scaleY.value, 36 + (64 * (entryNumber.value - 1)) + 16);
+        }
+        if (target.id == "scale-z") {
+            buffer_entries.writeFloatLE(scaleZ.value, 40 + (64 * (entryNumber.value - 1)) + 16);
+        }
 
-    // Textures
-    nextTextureBtn.addEventListener("click", function () {
-        if (textureNumber.value != texturesTotal) {
-            textureNumber.value = Number(textureNumber.value) + 1;
-            readTexture(48);
-        } else {
-            return;
+        // Entry special bytes
+        if (target.id == "model-number") {
+            buffer_entries.writeUint8(modelNumber.value, 48 + (64 * (entryNumber.value - 1)) + 16);
+            checkBinTexturesCount();
         }
-    })
-    prevTextureBtn.addEventListener("click", function () {
-        if (textureNumber.value > 1) {
-            textureNumber.value = Number(textureNumber.value) - 1;
-            readTexture(-48);
-        } else {
-            return;
+        if (target.id == "smx-number") {
+            buffer_entries.writeUint8(SMXNumber.value, 51 + (64 * (entryNumber.value - 1)) + 16);
         }
-    })
-    exportOneTextureBtn.addEventListener("click", function () {
-        // console.log(exportTexture(textureNumber.value));
-        fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
-        fs.writeFileSync(`SMD/${folderName}/Textures/${textureNumber.value}.tpl`, exportTexture(textureNumber.value, 0));
-    })
-    exportAllTexturesBtn.addEventListener("click", function () {
-        fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
-        let textureHeaderChunk = 0;
-        for (let i = 0; i < texturesTotal.value; i++) {
-            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(1, textureHeaderChunk));
-            textureHeaderChunk += 48;
+        if (target.id == "type-number") {
+            buffer_entries.writeUint8(typeNumber.value, 56 + (64 * (entryNumber.value - 1)) + 16);
         }
-    })
-    importNewTextureBtn.addEventListener("click", function () {
-        importNewTexture()
-    })
-    /* ===============
-        UPDATE
-       =============== */
 
+        // Texture container
+        if (target.id == "texture-width") {
+            buffer_textures.writeUint16LE(textureWidth.value, (48 * (textureNumber.value - 1)) + 16);
+        }
+        if (target.id == "texture-height") {
+            buffer_textures.writeUint16LE(textureHeight.value, 2 + (48 * (textureNumber.value - 1)) + 16);
+        }
+        if (target.id == "texture-mode") {
+            buffer_textures.writeUint8(textureMode.value, 4 + (48 * (textureNumber.value - 1)) + 16);
+        }
+        if (target.id == "texture-interlace") {
+            buffer_textures.writeUint8(textureInterlace.value, 6 + (48 * (textureNumber.value - 1)) + 16);
+        }
+        if (target.id == "texture-unk1") {
+            buffer_textures.writeUint8(textureUnk1.value, 42 + (48 * (textureNumber.value - 1)) + 16);
+        }
+        if (target.id == "texture-unk2") {
+            buffer_textures.writeUint8(textureUnk2.value, 43 + (48 * (textureNumber.value - 1)) + 16);
+        }
+        if (target.id == "texture-unk3") {
+            buffer_textures.writeUint8(textureUnk3.value, 44 + (48 * (textureNumber.value - 1)) + 16);
+        }
 
+        // Bin model textures
+        let modelPointer = buffer_models.readUint32LE(4 * modelNumber.value);
+        for (let l = 1; l != buffer_models.readUint8(modelPointer + 10) + 1; l++) {
+
+            // Check which texture input was modified
+            if (target.id == `texture-${l}`) {
+                let texturePointer = buffer_models.readUint32LE(modelPointer + 12);
+                buffer_models.writeUint8(target.value, modelPointer + texturePointer + 1 + ((l - 1) * 16))
+                break;
+            }
+        }
+
+    })
 
     /* ==========================================
         NEW FUNCIONALITY: 
