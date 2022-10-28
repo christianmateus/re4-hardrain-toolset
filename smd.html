@@ -6,6 +6,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="css/smd.css">
    <link rel="stylesheet" href="css/navbar.css">
+   <link rel="stylesheet" href="css/tooltip.css">
    <!-- FONT AWESOME -->
    <link rel="stylesheet" href="./css/all.min.css">
    <title>SMD Tool</title>
@@ -50,17 +51,8 @@
       <div class="dropdown">
          <button class="menu-buttons" id="options">Options</button>
          <div class="dropdown-content">
-            <div class="show-theme">
-               <button class="menu-buttons"><img src="images/theme.png">&nbsp;&nbsp; Cards ></button>
-               <div class="submenu">
-                  <input id="oneRow" type="radio" name="theme" value="oneRow" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label" for="oneRow">1 per row</label>
-                  <input id="twoRows" type="radio" name="theme" value="twoRows" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label" for="twoRows">2 per row</label>
-                  <input id="threeRows" type="radio" name="theme" value="threeRows" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label" for="threeRows">3 per row</label>
-               </div>
-            </div>
+            <label for="include-mipmap">Mipmap bytes</label>
+            <input id="include-mipmap" type="checkbox" checked class="menu-inputs">
          </div>
       </div>
       <div id="control-window">
@@ -127,20 +119,22 @@
          <br>
          <div class="container-row-config">
             <div class="entry-config">
-               <label for="model-number">Model Number</label>
-               <label for="smx-number">SMX Number</label>
+               <label title="Bin model number" for="model-number">Model Number</label>
+               <label title="SMX index number" for="smx-number">SMX Number</label>
                <label title="8 means it's static, 9 means it's used together with hardcoded info"
                   for="type-number">Type</label>
                <br>
-               <input type="number" id="model-number">
-               <input type="number" id="smx-number">
-               <input type="number" id="type-number">
+               <input title="Bin model number" type="number" id="model-number">
+               <small id="models-total"></small>
+               <input title="SMX index number" max="255" type="number" id="smx-number">
+               <input title="8 means it's static, 9 means it's used together with hardcoded info" max="255"
+                  type="number" id="type-number">
             </div>
             <div class="entry-config">
                <span>Change entry</span><br>
-               <input readonly id="entry-number" value="1" type="number">
+               <input id="entry-number" value="1" type="number">
                <b>of</b>
-               <input readonly id="entry-total" type="number">
+               <input title="Entries total quantity" readonly id="entry-total" type="number">
                <br>
                <button id="prevBtn" class="win7-btn"><i class="fa-solid fa-arrow-left"></i></button>
                <button id="nextBtn" class="win7-btn"><i class="fa-solid fa-arrow-right"></i></button>
@@ -157,7 +151,11 @@
       </section>
       <section class="container-geral container-geral-extra">
          <div>
-            <h5>Bin Models</h5><br>
+            <h5>Bin Models</h5>
+            <div class="tooltip">?
+               <span class="tooltiptext">Here you can view and define which textures are being used by this
+                  particular model.</span>
+            </div>
             <fieldset id="fieldset-bin-textures">
                <legend>Textures used</legend>
             </fieldset>
@@ -167,7 +165,7 @@
          <div>
             <h5>Textures</h5>
             <span>Number: </span>
-            <input id="texture-number" readonly type="number" value="1">
+            <input id="texture-number" type="number" value="1">
             <b>of</b>
             <input id="textures-total" readonly type="number"><br>
             <button id="prevTextureBtn" class="win7-btn"><i class="fa-solid fa-arrow-left"></i></button>
@@ -189,26 +187,27 @@
                      <input type="number" id="texture-height">
                   </div>
                   <div class="texture-specs">
-                     <label for="texture-mode">Mode</label><br>
-                     <input type="number" id="texture-mode">
+                     <label title="8 means 16 colors, 9 means 256 colors" for="texture-mode">Mode</label><br>
+                     <input title="8 means 16 colors, 9 means 256 colors" max="255" type="number" id="texture-mode">
                   </div>
                   <div class="texture-specs">
-                     <label for="texture-interlace">Interlace</label><br>
-                     <input type="number" id="texture-interlace">
+                     <label title="0: bgra, 1: bgra+i, 2: PS2, 3: Unknown" for="texture-interlace">Interlace</label><br>
+                     <input title="0: bgra, 1: bgra+i, 2: PS2, 3: Unknown" max="255" type="number"
+                        id="texture-interlace">
                   </div>
                   <br>
                   <hr>
                   <div class="texture-specs">
                      <label for="texture-unk1">Unk 1</label><br>
-                     <input type="number" id="texture-unk1">
+                     <input max="255" type="number" id="texture-unk1">
                   </div>
                   <div class="texture-specs">
                      <label for="texture-unk2">Unk 2</label><br>
-                     <input type="number" id="texture-unk2">
+                     <input max="255" type="number" id="texture-unk2">
                   </div>
                   <div class="texture-specs">
                      <label for="texture-unk3">Unk 3</label><br>
-                     <input type="number" id="texture-unk3">
+                     <input max="255" type="number" id="texture-unk3">
                   </div>
                </article>
             </div>

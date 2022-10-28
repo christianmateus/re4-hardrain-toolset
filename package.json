@@ -1,7 +1,7 @@
 {
   "name": "re4-toolset",
   "productName": "Resident Evil 4 Toolset",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Toolset for modders of Resident Evil 4",
   "main": "main.js",
   "scripts": {

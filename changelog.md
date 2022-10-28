@@ -1,10 +1,21 @@
 # Changelog
 All changes that affects usability to this project will be documented here.
-## 1.2.0 - *WIP*
- - MDT tool under development
- - BIN tool under development
- - SMD tool under development
- - Added two new cards at main menu
+## 1.2.x - *WIP*
+- MDT tool under development
+- SND tool under development
+
+## 1.2.0 - *28, october 2022*
+`Added`
+- SMD tool v1 released
+- Added two new cards at main menu
+
+`Fixed`
+- Fix ITA tool showing wrong glow color names
+- Fix some broken layout bugs
+
+`Changed`
+- Repositioned some cards at main menu 
+- AEV tool "add new event" now creates event with some zeroed config parameters
 ## 1.1.1 - *09, october 2022*
 `Added`
 - Support for AEV to OBJ conversion (export and reimport), best viewed on blender

@@ -26,9 +26,9 @@ AEV.addEventListener("click", function () {
     ipcRenderer.send("openAEVtool")
 })
 
-MDT.addEventListener("click", function () {
-    ipcRenderer.send("openMDTtool")
-})
+// MDT.addEventListener("click", function () {
+//     ipcRenderer.send("openMDTtool")
+// })
 
 BIN.addEventListener("click", function () {
     ipcRenderer.send("openBINtool")

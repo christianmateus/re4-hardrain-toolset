@@ -33,7 +33,9 @@ body {
    ===================== */
 #campo-superior {
     display: flex;
-    margin-top: 25px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 25px;
     width: 100%;
     height: 65px;
     background-color: var(--purple);
@@ -41,7 +43,6 @@ body {
     font-size: 8pt;
     color: #fff;
     align-items: center;
-    position: fixed;
 }
 
 .inner-box {
@@ -243,7 +244,6 @@ main {
     background-color: var(--darkTheme-main-background);
     padding: 20px;
     width: 49.999%;
-    margin-top: 90px;
 }
 
 .container-main-config {

@@ -238,6 +238,12 @@ header p:nth-child(3) {
     background-repeat: no-repeat;
 }
 
+#smd-card {
+    background-image: url("../images/SMD_background.png");
+    background-size: 369px 105px;
+    background-repeat: no-repeat;
+}
+
 .coming-soon {
     background-image: url("../images/coming-soon.png");
     background-size: contain;

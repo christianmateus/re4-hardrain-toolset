@@ -378,11 +378,17 @@ main {
     color: var(--main-color);
 }
 
+small {
+    position: absolute;
+    left: 90px;
+    top: 370px;
+    color: #ccc;
+    font-style: italic;
+}
 
 /* ===================== 
     Models Container
    ===================== */
-
 
 .container-geral-extra {
     width: 28%;
@@ -398,6 +404,16 @@ main {
 .container-geral-extra>div input {
     width: 50px;
     padding: 6px;
+}
+
+#fieldset-bin-textures {
+    margin-top: 0;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.tooltip .tooltiptext {
+    z-index: 3;
 }
 
 /* ===================== 

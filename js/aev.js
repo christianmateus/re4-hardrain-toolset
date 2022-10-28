@@ -1088,7 +1088,13 @@ ipcRenderer.on("aevFileChannel", (e, filepath) => {
             buffer = BUFFER_temporary;
         }
         BUFFER_newEvent = buffer.subarray(buffer.length - 160);  // Copies last event
+
         BUFFER_final = Buffer.concat([buffer, BUFFER_newEvent]); // Merge copied event to main buffer
+        let iterator = 0;
+        for (let j = 0; j < 16; j++) { // Zeroes every byte in the event config
+            BUFFER_final.writeUint32LE(0, (BUFFER_final.length - 160) + 96 + iterator);
+            iterator += 4;
+        }
         buffer = BUFFER_final;
         countEl.value++; // Updates the total events (display only)
         total_event++; // Updates the total events (including event changer arrows)
