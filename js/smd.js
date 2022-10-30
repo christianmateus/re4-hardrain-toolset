@@ -311,9 +311,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         // Chunk is used for extracting one texture, allTextures is used for batch extraction
         if (chunk != texturesTotal.value) {
             header = buffer_textures.subarray((16 + allTextures + (48 * (chunk - 1))), (16 + allTextures + (48 * (chunk - 1))) + 48);
-
             indices = buffer_textures.subarray(header.readUint32LE(32), header.readUint32LE(36));
-            header.writeUint32LE(64, 32); // Writes 40 00 00 00 to the texture pointer
 
             // Check if user does not want mipmap header bytes
             if (!includeMipmapCheckboxEl.checked) {
@@ -332,6 +330,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             }
 
             bufferComplete = Buffer.concat([mainHeader, header, indices, pallete]);
+            bufferComplete.writeUint32LE(64, 48); // Writes 40 00 00 00 to the texture pointer
 
             // Update pallete pointers
             if (bufferComplete.readUint8(20) == 8) {
@@ -340,11 +339,54 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
                 bufferComplete.writeUint32LE((bufferComplete.length) - 394, 52)
             }
 
-            if (allTextures > 0) {
-                showTextBox("All textures exported successfully!", "green");
-            } else {
-                showTextBox("Texture exported successfully!", "green");
+            showTextBox("All textures exported successfully!", "green");
+            return bufferComplete;
+        } else {
+            console.log("Deu zero");
+            return;
+        }
+    }
+    function exportSingleTexture(Singlechunk) {
+        // Creates a Header for TPL count
+        let mainHeader = Buffer.alloc(16, "00100000010000001000000000000000", "hex");
+        let header;
+        let indices;
+        let pallete;
+        let bufferComplete;
+        // Chunk is used for extracting one texture,  is used for batch extraction
+
+        if (Singlechunk != texturesTotal.value) {
+            header = buffer_textures.subarray((16 + (48 * (Singlechunk - 1))), (16 + (48 * (Singlechunk - 1))) + 48);
+            indices = buffer_textures.subarray(header.readUint32LE(32), header.readUint32LE(36));
+
+            // Check if user does not want mipmap header bytes
+            if (!includeMipmapCheckboxEl.checked) {
+                header.writeUint8(0, 10);
+                header.writeUint32LE(0, 16);
+                header.writeUint32LE(0, 20);
+                header.writeUint32LE(0, 24);
+                header.writeUint32LE(0, 28);
             }
+
+            // Check bit-depth and gets pallete bytes
+            if (textureMode.value == 8) {
+                pallete = buffer_textures.subarray(buffer_textures.readUint32LE(52), buffer_textures.readUint32LE(52) + 128);
+            } else if (textureMode.value == 9) {
+                pallete = buffer_textures.subarray(buffer_textures.readUint32LE(52), buffer_textures.readUint32LE(52) + 394);
+            }
+
+            bufferComplete = Buffer.concat([mainHeader, header, indices, pallete]);
+            bufferComplete.writeUint32LE(64, 48); // Writes 40 00 00 00 to the texture pointer
+
+            // Update pallete pointers
+            if (bufferComplete.readUint8(20) == 8) {
+                bufferComplete.writeUint32LE((bufferComplete.length) - 128, 52)
+            } else if (bufferComplete.readUint8(20) == 9) {
+                bufferComplete.writeUint32LE((bufferComplete.length) - 394, 52)
+            }
+
+            showTextBox("Texture exported successfully!", "green");
+            Singlechunk = 0;
             return bufferComplete;
         } else {
             console.log("Deu zero");
@@ -394,7 +436,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     })
     exportOneModelBtn.addEventListener("click", function () {
         fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
-        fs.writeFileSync(`SMD/${folderName}/Models/${entryNumber.value}.bin`, readBinModel(entryNumber.value));
+        fs.writeFileSync(`SMD/${folderName}/Models/${modelNumber.value}.bin`, readBinModel(Number(modelNumber.value) + 1));
         showTextBox("Model exported successfully!", "green");
     })
     exportAllModelsBtn.addEventListener("click", function () {
@@ -427,15 +469,18 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     })
     exportOneTextureBtn.addEventListener("click", function () {
         fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
-        fs.writeFileSync(`SMD/${folderName}/Textures/${textureNumber.value - 1}.tpl`, exportTexture(textureNumber.value, 0));
+        fs.writeFileSync(`SMD/${folderName}/Textures/${textureNumber.value - 1}.tpl`, exportSingleTexture(textureNumber.value));
     })
     exportAllTexturesBtn.addEventListener("click", function () {
         fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
         let textureHeaderChunk = 0;
+        let tempChunk = 0;
+
         for (let i = 0; i < texturesTotal.value; i++) {
-            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(1, textureHeaderChunk));
+            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(i + 1, textureHeaderChunk));
             textureHeaderChunk += 48;
         }
+        textureHeaderChunk = 0;
     })
     importNewTextureBtn.addEventListener("click", function () {
         importNewTexture()
@@ -555,7 +600,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         complete_textureHeader = Buffer.concat([complete_textureHeader, textureHeader, complete_mipMapHeader]);
 
         buffer_textures = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
-        texturesTotal.value += 1;
+        texturesTotal.value = Number(texturesTotal.value) + 1;
         showTextBox("New texture added sucessfully!", "green");
         fs.closeSync(textureFD);
     });
@@ -600,7 +645,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             buffer_entries.writeFloatLE(scaleZ.value, 40 + (64 * (entryNumber.value - 1)) + 16);
         }
         if (target.id == "entry-number") {
-            if (entryNumber.value > 0 && entryNumber.value < entryTotal.value) {
+            if (entryNumber.value > 0 && entryNumber.value <= entryTotal.value) {
                 chunk = 0;
                 readEntry(64 * (entryNumber.value - 1));
                 checkBinTexturesCount();
@@ -674,7 +719,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             }
         }
         if (target.id == "texture-number") {
-            if (textureNumber.value > 0 && textureNumber.value < texturesTotal.value) {
+            if (textureNumber.value > 0 && textureNumber.value <= texturesTotal.value) {
                 chunk_texture = 0;
                 readTexture(48 * (textureNumber.value - 1));
             } else {
@@ -704,6 +749,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     // Save all modified buffer back to file
     saveBtn.addEventListener("click", () => {
         let COMPLETE_BUFFER = Buffer.concat([buffer_entries, buffer_models, buffer_padding, buffer_textures])
+        headerFileSize.value = COMPLETE_BUFFER.length + " bytes";
         fs.writeFileSync(filepath, COMPLETE_BUFFER);
         var saveMessage = document.querySelector(".hide");
         saveMessage.style.display = "block"
@@ -718,6 +764,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     })
 
     ipcRenderer.on("saveAsSMDfileContent", (e, arg) => {
-        fs.writeFileSync(arg, buffer);
+        let COMPLETE_BUFFER = Buffer.concat([buffer_entries, buffer_models, buffer_padding, buffer_textures]);
+        fs.writeFileSync(arg, COMPLETE_BUFFER);
     })
 })

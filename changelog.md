@@ -4,6 +4,12 @@ All changes that affects usability to this project will be documented here.
 - MDT tool under development
 - SND tool under development
 
+## 1.2.1 - *30, october 2022*
+`Fixed`
+- Fix Bin and TPLs generating wrong big files
+- Fix go-to last entry or texture number by typing
+- Fix save-as button not saving actual modifications
+
 ## 1.2.0 - *28, october 2022*
 `Added`
 - SMD tool v1 released
