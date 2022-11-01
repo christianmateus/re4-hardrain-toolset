@@ -10,6 +10,7 @@ git-passos.txt
 *.ITA
 *.AEV
 *.LIT
+*.tpl
 aev-mockup.jpg
 aa.js
 Bins/

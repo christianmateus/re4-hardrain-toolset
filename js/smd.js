@@ -746,6 +746,64 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         NEW FUNCIONALITY: 
        ========================================== */
 
+    // let image = fs.readFileSync("output.tpl");
+    let image = fs.readFileSync("t30.tpl");
+    let canvas = document.getElementById("canva");
+    canvas.width = image.readUint16LE(16);
+    canvas.height = image.readUint16LE(18);
+    let ctx = canvas.getContext('2d');
+
+    let imageData = ctx.createImageData(image.readUint16LE(16), image.readUint16LE(18))
+    let pointerPallete = image.readUint32LE(52);
+    let incremental = 0;
+    let padding = 0;
+    let indicesStart = 64;
+    console.log(imageData.data.length);
+
+    // Iterate through every pixel
+    // for (let i = 0; i < imageData.data.length; i += 4) {
+    //     // Modify pixel data 
+    //     imageData.data[i + 0] = image.readUint8(pointerPallete + (4 * image.readUint8(indicesStart))) // R value
+    //     imageData.data[i + 1] = image.readUint8(pointerPallete + (4 * image.readUint8(indicesStart) + 1)) // G value
+    //     imageData.data[i + 2] = image.readUint8(pointerPallete + (4 * image.readUint8(indicesStart) + 2)) // B value
+    //     imageData.data[i + 3] = 255 // image.readUint8(pointerPallete + (4 * image.readUint8(64 + incremental)) + 3) + 127
+    //     indicesStart++;
+    // }
+
+    // Loop for 4-bit images
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        let higherbyte = image.readUint8(indicesStart) & 0x0F;
+        let lowerbyte = image.readUint8(indicesStart) >> 4;
+
+        if (higherbyte > 8) {
+            padding = 32;
+        } else {
+            padding = 0
+        }
+        // console.log(higherbyte);
+        console.log("Higher byte: " + higherbyte);
+        imageData.data[i + 0] = image.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
+        imageData.data[i + 1] = image.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
+        imageData.data[i + 2] = image.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
+        imageData.data[i + 3] = 255 // image.readUint8(pointerPallete + padding + (4 * image.readUint8(64 + incremental)) + 3) + 127
+        // console.log(image.readUint8(pointerPallete + padding + (4 * image.readUint8(higherbyte))));
+
+        if (lowerbyte > 8) {
+            padding = 32;
+        } else {
+            padding = 0
+        }
+
+        imageData.data[i + 0] = image.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
+        imageData.data[i + 1] = image.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
+        imageData.data[i + 2] = image.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
+        imageData.data[i + 3] = 255 // image.readUint8(pointerPallete + (4 * image.readUint8(64 + incremental)) + 3) + 127
+        // higherbyte++;
+        // lowerbyte++;
+        indicesStart++;
+    }
+    ctx.putImageData(imageData, 0, 0);
+
     // Save all modified buffer back to file
     saveBtn.addEventListener("click", () => {
         let COMPLETE_BUFFER = Buffer.concat([buffer_entries, buffer_models, buffer_padding, buffer_textures])
