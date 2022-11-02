@@ -65,6 +65,7 @@ const textureUnk2 = document.getElementById("texture-unk2");
 const textureUnk3 = document.getElementById("texture-unk3");
 const prevTextureBtn = document.getElementById("prevTextureBtn");
 const nextTextureBtn = document.getElementById("nextTextureBtn");
+const canvas = document.getElementById("canva");
 
 // Const for getting Menu elements
 const openFile = document.getElementById("openSMDfile");
@@ -455,6 +456,11 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         if (textureNumber.value != texturesTotal.value) {
             textureNumber.value = Number(textureNumber.value) + 1;
             readTexture(48);
+            if (textureMode.value == 8) {
+                render4BitTpl();
+            } else {
+                render8BitTpl();
+            }
         } else {
             return;
         }
@@ -463,6 +469,11 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         if (textureNumber.value > 1) {
             textureNumber.value = Number(textureNumber.value) - 1;
             readTexture(-48);
+            if (textureMode.value == 8) {
+                render4BitTpl();
+            } else {
+                render8BitTpl();
+            }
         } else {
             return;
         }
@@ -743,66 +754,73 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     })
 
     /* ==========================================
-        NEW FUNCIONALITY: 
+        NEW FUNCIONALITY: RENDER TEXTURES
        ========================================== */
 
-    // let image = fs.readFileSync("output.tpl");
-    let image = fs.readFileSync("t30.tpl");
-    let canvas = document.getElementById("canva");
-    canvas.width = image.readUint16LE(16);
-    canvas.height = image.readUint16LE(18);
     let ctx = canvas.getContext('2d');
+    function render8BitTpl() {
+        let indicesStart64 = 64;
+        let imageData = ctx.createImageData(buffer_textures.readUint16LE(16 + (48 * (textureNumber.value - 1))),
+            buffer_textures.readUint16LE(18 + (48 * (textureNumber.value - 1))));
+        let pointerPallete = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
 
-    let imageData = ctx.createImageData(image.readUint16LE(16), image.readUint16LE(18))
-    let pointerPallete = image.readUint32LE(52);
-    let incremental = 0;
-    let padding = 0;
-    let indicesStart = 64;
-    console.log(imageData.data.length);
-
-    // Iterate through every pixel
-    // for (let i = 0; i < imageData.data.length; i += 4) {
-    //     // Modify pixel data 
-    //     imageData.data[i + 0] = image.readUint8(pointerPallete + (4 * image.readUint8(indicesStart))) // R value
-    //     imageData.data[i + 1] = image.readUint8(pointerPallete + (4 * image.readUint8(indicesStart) + 1)) // G value
-    //     imageData.data[i + 2] = image.readUint8(pointerPallete + (4 * image.readUint8(indicesStart) + 2)) // B value
-    //     imageData.data[i + 3] = 255 // image.readUint8(pointerPallete + (4 * image.readUint8(64 + incremental)) + 3) + 127
-    //     indicesStart++;
-    // }
-
-    // Loop for 4-bit images
-    for (let i = 0; i < imageData.data.length; i += 4) {
-        let higherbyte = image.readUint8(indicesStart) & 0x0F;
-        let lowerbyte = image.readUint8(indicesStart) >> 4;
-
-        if (higherbyte > 8) {
-            padding = 32;
-        } else {
-            padding = 0
+        // Loop for 8-bit images
+        for (let i = 0; i < imageData.data.length; i += 4) {
+            // Reads RGBA for every indice
+            imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + (4 * buffer_textures.readUint8(indicesStart64 + (48 * (textureNumber.value - 1))))) // R value
+            imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + (4 * buffer_textures.readUint8(indicesStart64 + (48 * (textureNumber.value - 1))) + 1)) // G value
+            imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + (4 * buffer_textures.readUint8(indicesStart64 + (48 * (textureNumber.value - 1))) + 2)) // B value
+            imageData.data[i + 3] = 255;
+            indicesStart64++; // Moves to next indice
         }
-        // console.log(higherbyte);
-        console.log("Higher byte: " + higherbyte);
-        imageData.data[i + 0] = image.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
-        imageData.data[i + 1] = image.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
-        imageData.data[i + 2] = image.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
-        imageData.data[i + 3] = 255 // image.readUint8(pointerPallete + padding + (4 * image.readUint8(64 + incremental)) + 3) + 127
-        // console.log(image.readUint8(pointerPallete + padding + (4 * image.readUint8(higherbyte))));
-
-        if (lowerbyte > 8) {
-            padding = 32;
-        } else {
-            padding = 0
-        }
-
-        imageData.data[i + 0] = image.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
-        imageData.data[i + 1] = image.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
-        imageData.data[i + 2] = image.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
-        imageData.data[i + 3] = 255 // image.readUint8(pointerPallete + (4 * image.readUint8(64 + incremental)) + 3) + 127
-        // higherbyte++;
-        // lowerbyte++;
-        indicesStart++;
+        ctx.putImageData(imageData, 0, 0);
     }
-    ctx.putImageData(imageData, 0, 0);
+
+    function render4BitTpl() {
+        let indicesStart128 = buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1)));
+        let padding = 0;
+        let imageData = ctx.createImageData(buffer_textures.readUint16LE(16 + (48 * (textureNumber.value - 1))),
+            buffer_textures.readUint16LE(18 + (48 * (textureNumber.value - 1))));
+        let pointerPallete = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
+
+        canvas.width = buffer_textures.readUint16LE(16 + (48 * (textureNumber.value - 1)));
+        canvas.height = buffer_textures.readUint16LE(18 + (48 * (textureNumber.value - 1)));
+
+        // Loop for 4-bit images
+        for (let i = 0; i < imageData.data.length; i += 4) {
+            let higherbyte = buffer_textures.readUint8(~~(indicesStart128 / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
+            let lowerbyte = buffer_textures.readUint8(~~(indicesStart128 / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
+
+            // Adds padding of 32 bytes if texture byte is higher than 8
+            if (higherbyte > 8) {
+                padding = 32;
+            } else {
+                padding = 0
+            }
+            // Creates pixels in the canvas
+            imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
+            imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
+            imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
+            imageData.data[i + 3] = 255; // Alpha value
+
+            // Adds padding of 32 bytes if texture byte is higher than 8
+            if (lowerbyte > 8) {
+                padding = 32;
+            } else {
+                padding = 0
+            }
+            // Creates pixels in the canvas
+            imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
+            imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
+            imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
+            imageData.data[i + 3] = 255; // Alpha value
+
+            indicesStart128++; // Moves to next indice
+        }
+        ctx.putImageData(imageData, 0, 0);
+    }
+
+    render4BitTpl();
 
     // Save all modified buffer back to file
     saveBtn.addEventListener("click", () => {
