@@ -52,6 +52,7 @@ const importNewModelBtn = document.getElementById("add-new-model");
 const exportOneTextureBtn = document.getElementById("export-texture");
 const exportAllTexturesBtn = document.getElementById("exportall-texture");
 const importNewTextureBtn = document.getElementById("add-new-texture");
+const convertTextureBtn = document.getElementById("convert-texture");
 
 // Getting textures elements
 const texturesTotal = document.getElementById("textures-total");
@@ -302,16 +303,16 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         textureUnk3.value = buffer_textures.readUint8(60 + chunk_texture);
 
     }
-    function exportTexture(chunk, allTextures) {
+    function exportTexture(chunk) {
         // Creates a Header for TPL count
         let mainHeader = Buffer.alloc(16, "00100000010000001000000000000000", "hex");
         let header;
         let indices;
         let pallete;
         let bufferComplete;
-        // Chunk is used for extracting one texture, allTextures is used for batch extraction
-        if (chunk != texturesTotal.value) {
-            header = buffer_textures.subarray((16 + allTextures + (48 * (chunk - 1))), (16 + allTextures + (48 * (chunk - 1))) + 48);
+        // Chunk is used for extracting one texture
+        if (chunk != texturesTotal.value + 1) {
+            header = buffer_textures.subarray((16 + (48 * (chunk - 1))), (16 + (48 * (chunk - 1))) + 48);
             indices = buffer_textures.subarray(header.readUint32LE(32), header.readUint32LE(36));
 
             // Check if user does not want mipmap header bytes
@@ -356,7 +357,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         let bufferComplete;
         // Chunk is used for extracting one texture,  is used for batch extraction
 
-        if (Singlechunk != texturesTotal.value) {
+        if (Singlechunk != texturesTotal.value + 1) {
             header = buffer_textures.subarray((16 + (48 * (Singlechunk - 1))), (16 + (48 * (Singlechunk - 1))) + 48);
             indices = buffer_textures.subarray(header.readUint32LE(32), header.readUint32LE(36));
 
@@ -390,7 +391,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             Singlechunk = 0;
             return bufferComplete;
         } else {
-            console.log("Deu zero");
+            console.log("Algo deu erro");
             return;
         }
     }
@@ -457,7 +458,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             textureNumber.value = Number(textureNumber.value) + 1;
             readTexture(48);
             if (textureMode.value == 8) {
-                render4BitTpl();
+                render4BitTpl(textureInterlace.value);
             } else {
                 render8BitTpl();
             }
@@ -470,7 +471,7 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             textureNumber.value = Number(textureNumber.value) - 1;
             readTexture(-48);
             if (textureMode.value == 8) {
-                render4BitTpl();
+                render4BitTpl(textureInterlace.value);
             } else {
                 render8BitTpl();
             }
@@ -484,14 +485,9 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
     })
     exportAllTexturesBtn.addEventListener("click", function () {
         fs.mkdirSync(`SMD/${folderName}/Textures`, { recursive: true });
-        let textureHeaderChunk = 0;
-        let tempChunk = 0;
-
         for (let i = 0; i < texturesTotal.value; i++) {
-            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(i + 1, textureHeaderChunk));
-            textureHeaderChunk += 48;
+            fs.writeFileSync(`SMD/${folderName}/Textures/${i}.tpl`, exportTexture(i + 1));
         }
-        textureHeaderChunk = 0;
     })
     importNewTextureBtn.addEventListener("click", function () {
         importNewTexture()
@@ -776,51 +772,169 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         ctx.putImageData(imageData, 0, 0);
     }
 
-    function render4BitTpl() {
-        let indicesStart128 = buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1)));
+    function render4BitTpl(interlace) {
+        let indicesOffset = buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1)));
+        let indicesIterator = 0;
         let padding = 0;
         let imageData = ctx.createImageData(buffer_textures.readUint16LE(16 + (48 * (textureNumber.value - 1))),
             buffer_textures.readUint16LE(18 + (48 * (textureNumber.value - 1))));
         let pointerPallete = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
-
         canvas.width = buffer_textures.readUint16LE(16 + (48 * (textureNumber.value - 1)));
         canvas.height = buffer_textures.readUint16LE(18 + (48 * (textureNumber.value - 1)));
 
-        // Loop for 4-bit images
-        for (let i = 0; i < imageData.data.length; i += 4) {
-            let higherbyte = buffer_textures.readUint8(~~(indicesStart128 / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
-            let lowerbyte = buffer_textures.readUint8(~~(indicesStart128 / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
+        if (interlace == 0 || interlace == 1) {
+            indicesIterator = 0
+            // Loop for 4-bit images
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                let higherbyte = buffer_textures.readUint8(indicesOffset + ~~(indicesIterator / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
+                let lowerbyte = buffer_textures.readUint8(indicesOffset + ~~(indicesIterator / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
 
-            // Adds padding of 32 bytes if texture byte is higher than 8
-            if (higherbyte > 8) {
-                padding = 32;
-            } else {
-                padding = 0
+                // Adds padding of 32 bytes if texture byte is higher than 8
+                if (higherbyte > 7) {
+                    padding = 32;
+                } else {
+                    padding = 0
+                }
+                // Creates pixels in the canvas
+                imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
+                imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
+                imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
+                imageData.data[i + 3] = 255; // Alpha value
+
+                // Adds padding of 32 bytes if texture byte is higher than 8
+                if (lowerbyte > 7) {
+                    padding = 32;
+                } else {
+                    padding = 0
+                }
+                // Creates pixels in the canvas
+                imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
+                imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
+                imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
+                imageData.data[i + 3] = 255; // Alpha value
+
+                indicesIterator++; // Moves to next indice
             }
-            // Creates pixels in the canvas
-            imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
-            imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
-            imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
-            imageData.data[i + 3] = 255; // Alpha value
+            ctx.putImageData(imageData, 0, 0);
+        } else if (interlace == 2) {
+            indicesIterator = 0
+            let lineSkip = 0;
+            let store16 = 0;
+            let indicesSize = buffer_textures.subarray(buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1))), buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1))));
+            // Loop for 4-bit images
+            for (let i = 0; i < imageData.data.length; i += 4) {
 
-            // Adds padding of 32 bytes if texture byte is higher than 8
-            if (lowerbyte > 8) {
-                padding = 32;
-            } else {
-                padding = 0
+                if (indicesIterator == indicesSize.length / 2) {
+                    indicesIterator = 0;
+                    lineSkip = 0;
+                    store16 = 0;
+                }
+
+                let higherbyte = buffer_textures.readUint8(indicesOffset + lineSkip + ~~(indicesIterator / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
+                let lowerbyte = buffer_textures.readUint8(indicesOffset + lineSkip + ~~(indicesIterator / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
+
+                // Adds padding of 32 bytes if texture byte is higher than 8
+                if (higherbyte > 7) {
+                    padding = 32;
+                } else {
+                    padding = 0
+                }
+                // Creates pixels in the canvas
+                imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
+                imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
+                imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
+                imageData.data[i + 3] = 255; // Alpha value
+
+                // Adds padding of 32 bytes if texture byte is higher than 8
+                if (lowerbyte > 7) {
+                    padding = 32;
+                } else {
+                    padding = 0
+                }
+                // Creates pixels in the canvas
+                imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
+                imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
+                imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
+                imageData.data[i + 3] = 255; // Alpha value
+
+                indicesIterator++; // Moves to next indice
+                store16++;
+                if (store16 == 32) {
+                    store16 = 0;
+                    lineSkip += 16;
+                }
             }
-            // Creates pixels in the canvas
-            imageData.data[i + 0] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
-            imageData.data[i + 1] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
-            imageData.data[i + 2] = buffer_textures.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
-            imageData.data[i + 3] = 255; // Alpha value
-
-            indicesStart128++; // Moves to next indice
+            ctx.putImageData(imageData, 0, 0);
         }
-        ctx.putImageData(imageData, 0, 0);
+    }
+    // Executing function to render first texture
+    render4BitTpl(textureInterlace.value);
+
+    /* ==============================================
+       NEW FUNCIONALITY: CONVERT TEXTURES TO .TGA
+      =============================================== */
+
+    function convertToTGA() {
+        let width = buffer_textures.subarray(16 + (48 * (textureNumber.value - 1)), 16 + (48 * (textureNumber.value - 1)) + 2);
+        let height = buffer_textures.subarray(18 + (48 * (textureNumber.value - 1)), 18 + (48 * (textureNumber.value - 1)) + 2);
+
+        // Create TGA Header and appends on file
+        let TGAheader = Buffer.alloc(18, `000002000000000000000000${width.toString("hex")}${height.toString("hex")}2000`, "hex");
+        fs.appendFileSync(`SMD/${folderName}/TGA/${textureNumber.value - 1}.tga`, TGAheader);
+
+        // Used for referencing values
+        let indicesSize = buffer_textures.subarray(buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1))), buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1))));
+        let indicesOffset = buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1)));
+        let alphaChannel = Buffer.alloc(1, 255, "hex");
+
+        for (let i = 0; i != indicesSize.length; i++) {
+            let highPixel = buffer_textures.readUint8(indicesOffset) & 0x0F;
+            let lowPixel = buffer_textures.readUint8(indicesOffset) >> 4;
+            let palleteOffset = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
+
+            if (highPixel > 7) {
+                padding = 32;
+            } else {
+                padding = 0
+            }
+            // Gets RGBA values for every pixel
+            let tempColorValueHigh;
+            for (let j = 0; j < 1; j++) {
+                let RED = buffer_textures.readUint8(palleteOffset + 2 + padding + (4 * highPixel));
+                let GREEN = buffer_textures.readUint8(palleteOffset + 1 + padding + (4 * highPixel));
+                let BLUE = buffer_textures.readUint8(palleteOffset + padding + (4 * highPixel));
+                let ALPHA = 255;
+                tempColorValueHigh = Buffer.alloc(4, `${RED.toString("16")}${GREEN.toString("16")}${BLUE.toString("16")}${ALPHA.toString("16")}`, "hex");
+            }
+            fs.appendFileSync(`SMD/${folderName}/TGA/${textureNumber.value - 1}.tga`, tempColorValueHigh);
+
+            // Resets pallete offset, after being incremented
+            palleteOffset = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
+
+            if (lowPixel > 7) {
+                padding = 32;
+            } else {
+                padding = 0
+            }
+            let tempColorValueLow;
+            // Gets RGBA values for every pixel
+            for (let j = 0; j < 1; j++) {
+                let RED = buffer_textures.readUint8(palleteOffset + 2 + padding + (4 * lowPixel));
+                let GREEN = buffer_textures.readUint8(palleteOffset + 1 + padding + (4 * lowPixel));
+                let BLUE = buffer_textures.readUint8(palleteOffset + padding + (4 * lowPixel));
+                let ALPHA = 255;
+                tempColorValueLow = Buffer.alloc(4, `${RED.toString("16")}${GREEN.toString("16")}${BLUE.toString("16")}${ALPHA.toString("16")}`, "hex");
+            }
+            fs.appendFileSync(`SMD/${folderName}/TGA/${textureNumber.value - 1}.tga`, tempColorValueLow);
+
+            indicesOffset++;
+        }
     }
 
-    render4BitTpl();
+    convertTextureBtn.addEventListener("click", function () {
+        fs.mkdirSync(`SMD/${folderName}/TGA`, { recursive: true });
+        convertToTGA();
+    });
 
     // Save all modified buffer back to file
     saveBtn.addEventListener("click", () => {
