@@ -816,23 +816,27 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
                 indicesIterator++; // Moves to next indice
             }
             ctx.putImageData(imageData, 0, 0);
-        } else if (interlace == 2) {
+        } else if (interlace == 2 || interlace == 3) {
             indicesIterator = 0
             let lineSkip = 0;
+            let frameSkip = 0;
             let store16 = 0;
             let indicesSize = buffer_textures.subarray(buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1))), buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1))));
+            console.log(indicesSize.length);
             // Loop for 4-bit images
             for (let i = 0; i < imageData.data.length; i += 4) {
 
-                if (indicesIterator == indicesSize.length / 2) {
-                    indicesIterator = 0;
+                if (indicesIterator == indicesSize.length) {
+                    indicesIterator = 16;
                     lineSkip = 0;
                     store16 = 0;
+                    // frameSkip += 16;
+                    console.log("============================================");
                 }
 
-                let higherbyte = buffer_textures.readUint8(indicesOffset + lineSkip + ~~(indicesIterator / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
-                let lowerbyte = buffer_textures.readUint8(indicesOffset + lineSkip + ~~(indicesIterator / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
-
+                let higherbyte = buffer_textures.readUint8(indicesOffset + frameSkip + lineSkip + ~~(indicesIterator / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
+                let lowerbyte = buffer_textures.readUint8(indicesOffset + frameSkip + lineSkip + ~~(indicesIterator / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
+                // console.log(higherbyte);
                 // Adds padding of 32 bytes if texture byte is higher than 8
                 if (higherbyte > 7) {
                     padding = 32;
@@ -859,24 +863,32 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
 
                 indicesIterator++; // Moves to next indice
                 store16++;
-                if (store16 == 32) {
+                if (store16 == 8) {
                     store16 = 0;
-                    lineSkip += 16;
+                    lineSkip += 4;
                 }
             }
             ctx.putImageData(imageData, 0, 0);
         }
     }
     // Executing function to render first texture
-    render4BitTpl(textureInterlace.value);
+    if (textureMode.value == 8) {
+        render4BitTpl(textureInterlace.value);
+
+    } else {
+        render8BitTpl();
+    }
 
     /* ==============================================
        NEW FUNCIONALITY: CONVERT TEXTURES TO .TGA
       =============================================== */
 
     function convertToTGA() {
+        let lineSkip = 0;
+        let byteCount = 0;
         let width = buffer_textures.subarray(16 + (48 * (textureNumber.value - 1)), 16 + (48 * (textureNumber.value - 1)) + 2);
         let height = buffer_textures.subarray(18 + (48 * (textureNumber.value - 1)), 18 + (48 * (textureNumber.value - 1)) + 2);
+        let complete_buffer = Buffer.alloc(0);
 
         // Create TGA Header and appends on file
         let TGAheader = Buffer.alloc(18, `000002000000000000000000${width.toString("hex")}${height.toString("hex")}2000`, "hex");
@@ -885,13 +897,26 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
         // Used for referencing values
         let indicesSize = buffer_textures.subarray(buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1))), buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1))));
         let indicesOffset = buffer_textures.readUint32LE(48 + (48 * (textureNumber.value - 1)));
-        let alphaChannel = Buffer.alloc(1, 255, "hex");
 
         for (let i = 0; i != indicesSize.length; i++) {
             let highPixel = buffer_textures.readUint8(indicesOffset) & 0x0F;
             let lowPixel = buffer_textures.readUint8(indicesOffset) >> 4;
             let palleteOffset = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
 
+            if (i == indicesSize.length / 2) {
+                byteCount = 0;
+                lineSkip = 0;
+            }
+
+            // ADICIONAR ABAIXO QUANDO TIVER INTERLACE PS2 PRONTO
+
+            // if (textureInterlace.value == 2) {
+            //     if (byteCount == 16) {
+            //         byteCount = 0;
+            //         lineSkip += 32;
+            //     }
+            // }
+            console.log("valor lineskip: " + lineSkip + "indice: " + i);
             if (highPixel > 7) {
                 padding = 32;
             } else {
@@ -900,16 +925,14 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             // Gets RGBA values for every pixel
             let tempColorValueHigh;
             for (let j = 0; j < 1; j++) {
-                let RED = buffer_textures.readUint8(palleteOffset + 2 + padding + (4 * highPixel));
-                let GREEN = buffer_textures.readUint8(palleteOffset + 1 + padding + (4 * highPixel));
-                let BLUE = buffer_textures.readUint8(palleteOffset + padding + (4 * highPixel));
+                let RED = buffer_textures.readUint8(palleteOffset + lineSkip + 2 + padding + (4 * highPixel));
+                let GREEN = buffer_textures.readUint8(palleteOffset + lineSkip + 1 + padding + (4 * highPixel));
+                let BLUE = buffer_textures.readUint8(palleteOffset + lineSkip + padding + (4 * highPixel));
                 let ALPHA = 255;
                 tempColorValueHigh = Buffer.alloc(4, `${RED.toString("16")}${GREEN.toString("16")}${BLUE.toString("16")}${ALPHA.toString("16")}`, "hex");
+                complete_buffer = Buffer.concat([complete_buffer, tempColorValueHigh]);
+                // console.log(highPixel);
             }
-            fs.appendFileSync(`SMD/${folderName}/TGA/${textureNumber.value - 1}.tga`, tempColorValueHigh);
-
-            // Resets pallete offset, after being incremented
-            palleteOffset = buffer_textures.readUint32LE(52 + (48 * (textureNumber.value - 1)));
 
             if (lowPixel > 7) {
                 padding = 32;
@@ -919,16 +942,17 @@ ipcRenderer.on("smdFileChannel", (e, filepath) => {
             let tempColorValueLow;
             // Gets RGBA values for every pixel
             for (let j = 0; j < 1; j++) {
-                let RED = buffer_textures.readUint8(palleteOffset + 2 + padding + (4 * lowPixel));
-                let GREEN = buffer_textures.readUint8(palleteOffset + 1 + padding + (4 * lowPixel));
-                let BLUE = buffer_textures.readUint8(palleteOffset + padding + (4 * lowPixel));
+                let RED = buffer_textures.readUint8(palleteOffset + lineSkip + 2 + padding + (4 * lowPixel));
+                let GREEN = buffer_textures.readUint8(palleteOffset + lineSkip + 1 + padding + (4 * lowPixel));
+                let BLUE = buffer_textures.readUint8(palleteOffset + lineSkip + padding + (4 * lowPixel));
                 let ALPHA = 255;
                 tempColorValueLow = Buffer.alloc(4, `${RED.toString("16")}${GREEN.toString("16")}${BLUE.toString("16")}${ALPHA.toString("16")}`, "hex");
+                complete_buffer = Buffer.concat([complete_buffer, tempColorValueLow]);
             }
-            fs.appendFileSync(`SMD/${folderName}/TGA/${textureNumber.value - 1}.tga`, tempColorValueLow);
-
             indicesOffset++;
+            byteCount++;
         }
+        fs.appendFileSync(`SMD/${folderName}/TGA/${textureNumber.value - 1}.tga`, complete_buffer);
     }
 
     convertTextureBtn.addEventListener("click", function () {

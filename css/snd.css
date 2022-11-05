@@ -169,6 +169,10 @@ body {
     margin: 20px auto;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 h5 {
     font-family: sans-serif;
     font-size: 12pt;
@@ -252,21 +256,26 @@ section {
 
 }
 
-.container-geral {
+.container-geral,
+#container-geral {
     width: 100%;
     height: 100%;
     padding: 5px 15px;
     box-shadow: 0px 2px 4px inset rgba(0, 0, 0, 0.1);
     background-color: var(--darkTheme-main-foreground);
+    overflow-y: scroll;
 }
 
 .container-geral h5 {
     margin: 10px 0px 20px 0px;
     padding: 8px;
+    z-index: 3;
     color: #eee;
     border-bottom: 1px solid rgba(0, 0, 0, 0.6);
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
     background-color: var(--main-color);
+    position: sticky;
+    top: -6px;
 }
 
 .container-audio-items {
@@ -275,10 +284,16 @@ section {
     border-radius: 6px;
     box-shadow: -1px -3px 4px inset rgba(0, 0, 0, 0.4);
     margin-bottom: 5px;
+    transition: .2s;
+}
+
+.container-audio-items:hover {
+    background-color: var(--main-color);
 }
 
 .container-audio-items span {
     color: #eee;
+    margin-right: 15px;
 }
 
 .container-audio-items button {
@@ -286,8 +301,8 @@ section {
     height: fit-content;
     padding: 4px;
     border-radius: 3px;
+    margin: 0 4px;
     text-align: right;
-    cursor: pointer;
 }
 
 /* ---------------- */

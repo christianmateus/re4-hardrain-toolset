@@ -7,6 +7,7 @@ const AEV = document.getElementById("aev-card");
 const MDT = document.getElementById("mdt-card");
 const BIN = document.getElementById("bin-card");
 const SMD = document.getElementById("smd-card");
+const SND = document.getElementById("snd-card");
 
 // Window menu buttons
 const minimizeBtn = document.getElementById("minimize")
@@ -36,6 +37,10 @@ BIN.addEventListener("click", function () {
 
 SMD.addEventListener("click", function () {
     ipcRenderer.send("openSMDtool")
+})
+
+SND.addEventListener("click", function () {
+    ipcRenderer.send("openSNDtool")
 })
 
 // Window menu actions

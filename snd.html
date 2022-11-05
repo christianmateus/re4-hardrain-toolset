@@ -65,6 +65,12 @@
             </div>
          </div>
       </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="edit">Advanced</button>
+         <div class="dropdown-content">
+            <button id="exportAllBtn" class="menu-buttons"><img src="images/export_all.png"> Export all audios</button>
+         </div>
+      </div>
       <div id="control-window">
          <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
                src="./images/main-menu.png"></button>
@@ -102,33 +108,18 @@
    <!-- PROGRAM DATA STARTS -->
    <main>
       <section>
-         <div class="container-geral">
+         <div class="container-geral" id="container-geral">
             <h5>Audio List</h5>
-            <div class="container-audio-items">
-               <span>Audio 001</span>
-               <button class="win7-btn">Importar</button>
-               <button class="win7-btn">Exportar</button>
-            </div>
-            <div class="container-audio-items">
-               <span>Audio 001</span>
-               <button class="win7-btn">Importar</button>
-               <button class="win7-btn">Exportar</button>
-            </div>
-            <div class="container-audio-items">
-               <span>Audio 001</span>
-               <button class="win7-btn">Importar</button>
-               <button class="win7-btn">Exportar</button>
-            </div>
          </div>
       </section>
       <section>
          <div class="container-geral">
-            <audio controls src=""></audio>
+            <!-- <audio controls src=""></audio> -->
          </div>
       </section>
    </main>
    <script>
-      require('./js/mdt.js'); // Used in electron
+      require('./js/snd.js'); // Used in electron
    </script>
 </body>
 

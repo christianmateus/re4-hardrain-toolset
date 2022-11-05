@@ -292,9 +292,43 @@ ipcMain.on("addNewTPLBtn", (e, arg) => {
   })
 })
 
-// Closing SMD file (workaround)
+// Closing SMD file
 ipcMain.on("closeSMDfile", (e, arg) => {
   mainWindow.loadFile("smd.html")
+})
+
+// SND -------------------------------------------
+// Function for sending SND file path
+ipcMain.on("openSNDfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "SND files", extensions: ["SND"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let SNDfile = um.filePaths.toString();
+      mainWindow.webContents.send("sndFileChannel", SNDfile);
+      console.log(SNDfile)
+    })
+})
+
+// Saving actual SND file
+ipcMain.on("saveAsSNDfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'SND Files', extensions: ['SND'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsSNDfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Closing SND file
+ipcMain.on("closeSNDfile", (e, arg) => {
+  mainWindow.loadFile("snd.html")
 })
 
 // Quiting application
@@ -342,4 +376,8 @@ ipcMain.on("openBINtool", () => {
 
 ipcMain.on("openSMDtool", () => {
   mainWindow.loadFile("smd.html")
+})
+
+ipcMain.on("openSNDtool", () => {
+  mainWindow.loadFile("snd.html")
 })
