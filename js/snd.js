@@ -1,5 +1,7 @@
 const fs = require('fs');
+const { exec } = require('node:child_process');
 const { ipcRenderer } = require('electron');
+const path = require('path');
 
 /* ===============
     CREATE
@@ -18,6 +20,8 @@ var countEl = document.getElementById("count");
 
 // Getting audio elements
 const exportAllBtn = document.getElementById("exportAllBtn");
+const exportAllWavBtn = document.getElementById("exportAllWavBtn");
+const playBtn = document.getElementById("playBtn");
 
 // Const for getting Menu elements
 const openFile = document.getElementById("openSNDfile");
@@ -99,7 +103,12 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    // Getting VAG values
    let audioStartOffset = buffer_VAG.readUint32LE(16);
    let audioLength = buffer_VAG.readUint32LE(20);
+   let frequencyBigEndian = Buffer.alloc(4);
+   let lengthBigEndian = Buffer.alloc(4);
    let audioFrequency = buffer_VAG.readUint32LE(28);
+
+   // Removing extension from folder name
+   var folderName = headerFileName.value.substring(0, headerFileName.value.length - 4);
 
    // Core functions
    function createAudioElement(audioNumber) {
@@ -107,15 +116,23 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
       let span = document.createElement("span");
       let importBtn = document.createElement("button");
       let exportBtn = document.createElement("button");
+      let playBtn = document.createElement("button");
 
       div.classList.add("container-audio-items");
       div.id = `${audioNumber + 1}`
+
       span.innerText = `Audio ${audioNumber + 1}`;
+
       importBtn.classList.add("win7-btn");
       importBtn.innerText = "Import";
+
       exportBtn.classList.add("win7-btn");
       exportBtn.id = `${audioNumber + 1}`;
       exportBtn.innerText = "Export";
+
+      playBtn.innerText = "Play";
+      playBtn.id = `${audioNumber + 1}`;
+
       div.appendChild(span);
       div.appendChild(importBtn);
       div.appendChild(exportBtn);
@@ -124,19 +141,53 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
 
    }
 
-   function audioOffsets() {
-      let audioOffsetIterator = 0;
-      let vagHeader = Buffer.alloc(0x40, "564147700000000600000000 00 00 08 B0 00 00 1F 40 000000000000000000000000000000000000000000000000000000000000000000000000 0000000000000000", "hex");
+   function exportAllAudios() {
+      let audioOffsetIterator = 0; // Iterates through each sound offset
 
       for (let j = 0; j != countEl.value; j++) {
+         let audioLength = buffer_VAG.readUint32LE(20 + audioOffsetIterator); // Gets audio length from VAG area (in .snd)
+         let audioFrequency = buffer_VAG.readUint32LE(28 + audioOffsetIterator); // Gets audio frequency from VAG area (in .snd)
+         lengthBigEndian.writeUint32BE(audioLength); // Converts length to Big Endian
+         frequencyBigEndian.writeUint32BE(audioFrequency); // Converts frequency to Big Endian
+
+         // Creates VAG Header
+         let vagHeader = Buffer.alloc(0x40, `564147700000000600000000${lengthBigEndian.toString("hex")}${frequencyBigEndian.toString("hex")}000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`, "hex");
+
+         // Gets a single complete audio
          let audioFile = buffer_audios.subarray(buffer_VAG.readUint32LE(16 + audioOffsetIterator),
             buffer_VAG.readUint32LE(16 + audioOffsetIterator) + buffer_VAG.readUint32LE(20 + audioOffsetIterator));
 
-         fs.mkdirSync(`SND/${headerFileName.value}`, { recursive: true });
-         fs.writeFileSync(`SND/${headerFileName.value}/audio_${j + 1}.vag`, audioFile);
+         // Insert the header at the start of the audio
+         audioFile = Buffer.concat([vagHeader, audioFile]);
+
+         fs.mkdirSync(`SND/${folderName}`, { recursive: true });
+         fs.writeFileSync(`SND/${folderName}/${folderName}_${j + 1}.vag`, audioFile);
          audioOffsetIterator += 16;
       }
    }
+
+   function convertToWav(inputFile, outputFile) {
+      // fs.mkdirSync(`SND/${folderName}/wav`);
+
+      // Change file extension
+      let outputFileWAV = outputFile.replace(/\.[^.]+$/, '.wav');
+
+      const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
+      const inputPath = `${path.join(__dirname, '..', 'SND', folderName, inputFile)}`;
+      const outputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', outputFileWAV)}`;
+
+      console.log(inputPath + inputFile);
+      exec(`${mfaudio} /OTWAVU "${inputPath}" "${outputPath}"`)
+   }
+
+   exportAllWavBtn.addEventListener("click", function () {
+      const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+      let audioFiles = fs.readdirSync(inputPath);
+      for (let i = 0; i != audioFiles.length - 1; i++) {
+         console.log(audioFiles[i + 1]);
+         convertToWav(audioFiles[i + 1], audioFiles[i + 1]);
+      }
+   });
 
    // Creates audios elements
    for (let i = 0; i != countEl.value; i++) {
@@ -144,7 +195,7 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    }
 
    exportAllBtn.addEventListener("click", function () {
-      audioOffsets();
+      exportAllAudios();
    })
 
 
