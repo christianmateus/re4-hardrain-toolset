@@ -10,7 +10,7 @@ let mainWindow;
 function createWindow() {
 
   mainWindow = new BrowserWindow({
-    width: 1000, height: 600, minWidth: 600, minHeight: 300, maxWidth: 1000,
+    width: 1000, height: 600, minWidth: 600, minHeight: 300, maxWidth: 1100,
     autoHideMenuBar: true,
     frame: false,
     icon: "./icons/icon.png",
@@ -329,6 +329,11 @@ ipcMain.on("saveAsSNDfile", (e, arg) => {
 // Closing SND file
 ipcMain.on("closeSNDfile", (e, arg) => {
   mainWindow.loadFile("snd.html")
+})
+
+// Show message error
+ipcMain.on("errorMessage", (e, arg) => {
+  dialog.showErrorBox("Error", "Cannot convert unexistent .vag file, please export .vag audio first.")
 })
 
 // Quiting application

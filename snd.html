@@ -17,12 +17,7 @@
          <i class="fa-regular fa-circle-check"></i>&nbsp;
          File saved successfully!</span>
    </div>
-   <div class="hide addedEntry container-hide" id="addedEntry">
-      <span class="successfully-added">
-         <i class="fa-solid fa-circle-exclamation"></i>&nbsp;
-         New event added!</span>
-   </div>
-   <div class="hide removedEntry container-hide" id="removedEntry">
+   <div class="hide infoBox container-hide" id="infoBox">
       <span class="successfully-removed">
          <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
    </div>
@@ -42,6 +37,9 @@
       <div class="dropdown">
          <button class="menu-buttons" id="edit">Edit</button>
          <div class="dropdown-content">
+            <button id="scanVagBtn" class="menu-buttons"><img src="images/search.png"> Scan VAG files</button>
+            <button id="scanBtn" class="menu-buttons"><img src="images/search.png"> Scan WAV files</button>
+            <hr>
             <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
             <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
             <hr>
@@ -52,24 +50,15 @@
       <div class="dropdown">
          <button class="menu-buttons" id="options">Options</button>
          <div class="dropdown-content">
-            <div class="show-theme">
-               <button class="menu-buttons"><img src="images/theme.png">&nbsp;&nbsp; Cards ></button>
-               <div class="submenu">
-                  <input id="oneRow" type="radio" name="theme" value="oneRow" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label" for="oneRow">1 per row</label>
-                  <input id="twoRows" type="radio" name="theme" value="twoRows" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label" for="twoRows">2 per row</label>
-                  <input id="threeRows" type="radio" name="theme" value="threeRows" class="theme-radio-btn">
-                  <label class="menu-buttons radio-label" for="threeRows">3 per row</label>
-               </div>
-            </div>
+            <label for="include-mipmap">Create backup</label>
+            <input id="include-mipmap" type="checkbox" checked class="menu-inputs">
          </div>
       </div>
       <div class="dropdown">
          <button class="menu-buttons" id="edit">Advanced</button>
          <div class="dropdown-content">
             <button id="exportAllBtn" class="menu-buttons"><img src="images/export_all.png"> Export all audios</button>
-            <button id="exportAllWavBtn" class="menu-buttons"><img src="images/export_all.png"> Export all as
+            <button id="exportAllWavBtn" class="menu-buttons"><img src="images/export_all.png"> Convert all to
                WAV</button>
          </div>
       </div>
@@ -112,12 +101,15 @@
       <section>
          <div class="container-geral" id="container-geral">
             <h5>Audio List</h5>
-            <button id="playBtn">PLAY</button>
          </div>
       </section>
       <section>
-         <div class="container-geral">
-            <!-- <audio controls src=""></audio> -->
+         <div class="container-geral" id="container-wav-converted">
+            <h5>WAV Converted Audios</h5>
+            <div id="no-sounds-div">
+               <h3>There are no WAV files to play</h3>
+               <p>Click on <b>convert to WAV</b> to be able to hear the sounds</p>
+            </div>
          </div>
       </section>
    </main>
