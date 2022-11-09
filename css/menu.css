@@ -170,8 +170,8 @@ header p:nth-child(3) {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    width: 37%;
-    max-width: 37%;
+    width: 375px;
+    max-width: 375px;
     height: 105px;
     max-height: 105px;
     padding: 10px;
@@ -240,6 +240,12 @@ header p:nth-child(3) {
 
 #smd-card {
     background-image: url("../images/SMD_background.png");
+    background-size: 369px 105px;
+    background-repeat: no-repeat;
+}
+
+#snd-card {
+    background-image: url("../images/SND_background.png");
     background-size: 369px 105px;
     background-repeat: no-repeat;
 }

@@ -1,8 +1,15 @@
 # Changelog
 All changes that affects usability to this project will be documented here.
-## 1.2.x - *WIP*
-- MDT tool under development
-- SND tool under development
+## 1.3.0 - *WIP*
+`Added`
+- SND tool released
+
+`Fixed`
+- Fix Bin and TPLs errors while extracting all files
+
+`Changed`
+- Increased toolset max width value
+- Repositioned some cards at main menu
 
 ## 1.2.1 - *30, october 2022*
 `Fixed`

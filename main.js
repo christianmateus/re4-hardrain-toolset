@@ -10,7 +10,7 @@ let mainWindow;
 function createWindow() {
 
   mainWindow = new BrowserWindow({
-    width: 1000, height: 600, minWidth: 600, minHeight: 300, maxWidth: 1100,
+    width: 1100, height: 600, minWidth: 600, minHeight: 300,
     autoHideMenuBar: true,
     frame: false,
     icon: "./icons/icon.png",
@@ -331,9 +331,19 @@ ipcMain.on("closeSNDfile", (e, arg) => {
   mainWindow.loadFile("snd.html")
 })
 
-// Show message error
+// Show message error VAG
 ipcMain.on("errorMessage", (e, arg) => {
   dialog.showErrorBox("Error", "Cannot convert unexistent .vag file, please export .vag audio first.")
+})
+
+// Show message error SND
+ipcMain.on("filenameError", (e, arg) => {
+  dialog.showErrorBox("Filename error", "Could not find index number in .vag filename. Please use the following syntax: 'vagName_00.vag'.")
+})
+
+// Show message error SND
+ipcMain.on("vagAbsent", (e, arg) => {
+  dialog.showErrorBox("Error", "Cannot import back unexistent .vag file, please export .vag audio or convert from a .wav sound.")
 })
 
 // Quiting application

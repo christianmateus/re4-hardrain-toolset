@@ -44,7 +44,7 @@ body {
     font-size: 8pt;
     color: #fff;
     align-items: center;
-    z-index: 2;
+    z-index: 4;
 }
 
 .inner-box {

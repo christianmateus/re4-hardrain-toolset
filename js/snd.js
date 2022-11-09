@@ -16,6 +16,7 @@ var copyBtnEl = document.getElementById("copyBtn");
 var pasteBtnEl = document.getElementById("pasteBtn");
 var undoBtnEl = document.getElementById("undoBtn");
 var redoBtnEl = document.getElementById("redoBtn");
+var includeBackupBtnEl = document.getElementById("include-backup");
 var containerAudiosEl = document.getElementById("container-geral");
 var containerWavAudiosEl = document.getElementById("container-wav-converted");
 var headerFileName = document.getElementById("header-filename");
@@ -99,8 +100,9 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    // Reading SND file header 
    const firstAudioOffset = buffer.readUint32LE(0x6C);
 
-   // Spliting the file in 2 parts
-   var buffer_VAG = buffer.subarray(buffer.indexOf("56616769", 0, "hex"), firstAudioOffset - 16);
+   // Splitting the file in 2 parts
+   var buffer_initial = buffer.subarray(0, buffer.indexOf("56616769", "hex"));
+   var buffer_VAG = buffer.subarray(buffer.indexOf("56616769", 0, "hex"), firstAudioOffset);
    var buffer_audios = buffer.subarray(firstAudioOffset);
    countEl.value = buffer_VAG.at(0x08);
 
@@ -121,6 +123,10 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
       let importBtn = document.createElement("button");
       let exportBtn = document.createElement("button");
       let wavImg = document.createElement("img");
+      let vagImg = document.createElement("img");
+      let sndImg = document.createElement("img");
+      let playImg = document.createElement("img");
+      let exportVagImg = document.createElement("img");
       let convertBtn = document.createElement("button");
       let convertToVagBtn = document.createElement("button");
       let playBtn = document.createElement("button");
@@ -130,7 +136,8 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          div.id = `${audioNumber + 1}`
 
          if (fs.existsSync(`SND/${folderName}`)) {
-            const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+            // const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+            const inputPath = `${path.join('SND', folderName)}`;
             let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
 
             // Filters the audio files to ignore all subfolders, this leaves the array with only .wav files
@@ -139,12 +146,25 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
                .map(dirent => dirent.name);
 
             span.innerText = `VAG: ${filesNames[audioNumber]}`;
-         } else {
-            span.innerText = `VAG: Not exported`;
+
+            if (span.innerText == "undefined") {
+               span.innerText = `VAG: Not exported`;
+            }
          }
 
          span.id = `span-${audioNumber + 1}`
-         wavImg.src = `${path.join(__dirname, "..", "images", "wav-64.png")}`;
+         // wavImg.src = `${path.join(__dirname, "..", "images", "wav-64.png")}`;
+         sndImg.src = `${path.join("images", "import-snd.png")}`;
+         sndImg.style.float = "left";
+         sndImg.width = 16;
+         sndImg.style.marginRight = "4px";
+
+         exportVagImg.src = `${path.join("images", "export-vag.png")}`;
+         exportVagImg.style.float = "left";
+         exportVagImg.width = 16;
+         exportVagImg.style.marginRight = "4px";
+
+         wavImg.src = `${path.join("images", "wav-64.png")}`;
          wavImg.style.float = "left";
          wavImg.width = 16;
          wavImg.style.marginRight = "4px";
@@ -165,7 +185,8 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          div.classList.add("container-audio-items");
          div.id = `${audioNumber + 1}`
 
-         const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav')}`;
+         // const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav')}`;
+         const inputPath = `${path.join('SND', folderName, 'wav')}`;
          let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
 
          // Filters the audio files to ignore all subfolders, this leaves the array with only .wav files
@@ -175,26 +196,40 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
 
          span.innerText = `${filesNames[audioNumber]}`;
 
+         playImg.src = `${path.join("images", "play.png")}`;
+         playImg.style.float = "left";
+         playImg.width = 16;
+         playImg.style.marginRight = "4px";
+
+         vagImg.src = `${path.join("images", "vag.png")}`;
+         vagImg.style.float = "left";
+         vagImg.width = 16;
+         vagImg.style.marginRight = "4px";
+
          playBtn.classList.add("win7-btn");
-         playBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i>  Play audio';
+         playBtn.innerHTML = 'Play audio';
          playBtn.id = `play-${audioNumber + 1}`;
 
          convertToVagBtn.classList.add("win7-btn");
-         convertToVagBtn.innerHTML = '<i class="fa-solid fa-file-export"></i>  Convert to .vag';
+         convertToVagBtn.innerHTML = 'Convert to .vag';
          convertToVagBtn.id = `convertToVag-${audioNumber + 1}`;
       }
 
       if (isWAV) {
          div.appendChild(span);
          div.appendChild(playBtn);
+         playBtn.appendChild(playImg);
          div.appendChild(convertToVagBtn);
+         convertToVagBtn.appendChild(vagImg);
          containerWavAudiosEl.appendChild(div);
       } else {
          div.appendChild(span);
          div.appendChild(importBtn);
+         importBtn.appendChild(sndImg);
          div.appendChild(exportBtn);
-         convertBtn.appendChild(wavImg);
+         exportBtn.appendChild(exportVagImg);
          div.appendChild(convertBtn);
+         convertBtn.appendChild(wavImg);
          containerAudiosEl.appendChild(div);
       }
 
@@ -234,14 +269,23 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          audioFile = Buffer.concat([vagHeader, audioFile]);
 
          fs.mkdirSync(`SND/${folderName}`, { recursive: true });
-         fs.mkdirSync(`SND/${folderName}/backup`, { recursive: true });
 
+         // Check if the user wants backup
+         if (includeBackupBtnEl.checked) {
+            fs.mkdirSync(`SND/${folderName}/backup`, { recursive: true });
+         }
+
+         // Writes the .vag files
          if (j < 9) {
             fs.writeFileSync(`SND/${folderName}/${folderName}_0${j + 1}.vag`, audioFile);
-            fs.writeFileSync(`SND/${folderName}/backup/${folderName}_0${j + 1}.vag`, audioFile);
+            if (includeBackupBtnEl.checked) {
+               fs.writeFileSync(`SND/${folderName}/backup/${folderName}_0${j + 1}.vag`, audioFile);
+            }
          } else {
             fs.writeFileSync(`SND/${folderName}/${folderName}_${j + 1}.vag`, audioFile);
-            fs.writeFileSync(`SND/${folderName}/backup/${folderName}_${j + 1}.vag`, audioFile);
+            if (includeBackupBtnEl.checked) {
+               fs.writeFileSync(`SND/${folderName}/backup/${folderName}_${j + 1}.vag`, audioFile);
+            }
          }
          audioOffsetIterator += 16;
       }
@@ -251,40 +295,85 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
 
    function convertToWav(inputFile, outputFile) {
       if (!fs.existsSync(`SND/${folderName}/wav`)) {
-         fs.mkdirSync(`SND/${folderName}/wav`);
+         fs.mkdirSync(`SND/${folderName}/wav`, { recursive: true });
       }
 
       // Change file extension
       let outputFileWAV = outputFile.replace(/\.[^.]+$/, '.wav');
 
-      const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
-      const inputPath = `${path.join(__dirname, '..', 'SND', folderName, inputFile)}`;
-      const outputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', outputFileWAV)}`;
+      // USED IN DEVELOPING STAGE ======================================
+      // const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
+      // const inputPath = `${path.join(__dirname, '..', 'SND', folderName, inputFile)}`;
+      // const outputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', outputFileWAV)}`;
 
-      console.log(inputPath + inputFile);
-      exec(`${mfaudio} /OTWAVU "${inputPath}" "${outputPath}"`)
+      // USED IN FINAL PRODUCT ======================================
+      const mfaudio = `${path.join('resources', 'mfaudio.exe')}`;
+      const inputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, inputFile)}"`;
+      const outputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, 'wav', outputFileWAV)}"`;
+
+      // USED IN DEVELOPING STAGE ======================================
+      // console.log(inputPath);
+      // console.log(mfaudio);
+      // exec(`${mfaudio} /OTWAVU "${inputPath}" "${outputPath}"`, function (e) {
+      //    console.log(e);
+      //    console.log("Entrou no callback");
+      // });
+
+      // USED IN FINAL PRODUCT ======================================
+      var child = require('child_process').execFile;
+      var executablePath = `${path.join('resources', 'mfaudio.exe')}`;
+      var parameters = ['/OTWAVU', inputPath, outputPath];
+      child(executablePath, parameters, { shell: true }, function (err, data) {
+         console.log(err)
+         console.log(data.toString());
+      });
+
+      setTimeout(() => {
+         textBox.module("Audio converted to .wav!", "blue");
+      }, 600);
    }
 
    function convertToVag(inputFile, outputFile) {
       // Only converts if directory exists
-      if (fs.existsSync(`${path.join(__dirname, '..', 'SND', folderName, 'wav')}`)) {
+      // if (fs.existsSync(`${path.join(__dirname, '..', 'SND', folderName, 'wav')}`)) {
+      if (fs.existsSync(`${path.join('SND', folderName, 'wav')}`)) {
 
          // Change file extension
          let outputFileVAG = outputFile.replace(/\.[^.]+$/, '.vag');
 
-         const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
-         const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', inputFile)}`;
-         const outputPath = `${path.join(__dirname, '..', 'SND', folderName, outputFileVAG)}`;
+         // USED IN DEVELOPING STAGE ======================================
+         // const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
+         // const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', inputFile)}`;
+         // const outputPath = `${path.join(__dirname, '..', 'SND', folderName, outputFileVAG)}`;
 
-         console.log(inputPath + inputFile);
-         exec(`${mfaudio} /OTVAGC "${inputPath}" "${outputPath}"`)
+         // exec(`${mfaudio} /OTVAGC "${inputPath}" "${outputPath}"`)
+
+         // USED IN FINAL PRODUCT ======================================
+         const mfaudio = `${path.join('resources', 'mfaudio.exe')}`;
+         const inputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, 'wav', inputFile)}"`;
+         const outputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, outputFileVAG)}"`;
+
+         // USED IN FINAL PRODUCT ======================================
+         var child = require('child_process').execFile;
+         var executablePath = `${path.join('resources', 'mfaudio.exe')}`;
+         var parameters = ['/OTVAGC', inputPath, outputPath];
+         child(executablePath, parameters, { shell: true }, function (err, data) {
+            console.log(err)
+            console.log(data.toString());
+         });
+
+         setTimeout(() => {
+            textBox.module("Audio converted to .vag!", "green");
+         }, 600);
       } else {
+         textBox.module("Default directory does not exists!", "red");
          console.log("Directory does not exists");
       }
    }
 
    convertAllWavBtn.addEventListener("click", function () {
-      const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+      // const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+      const inputPath = `${path.join('SND', folderName)}`;
       let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
 
       // Filters the audio files to ignore all subfolders, this leaves the array with only .wav files
@@ -307,12 +396,13 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             checkWavFolder();
          }, 5000);
       }
+      textBox.module("All audios converted to .wav!", "blue");
    });
 
    function checkVagFolder() {
       // Verifies if directory exists
       if (!fs.existsSync(`SND/${folderName}`)) {
-         fs.mkdirSync(`SND/${folderName}`);
+         fs.mkdirSync(`SND/${folderName}`, { recursive: true });
       }
 
       containerAudiosEl.innerHTML = `<h5>Audio List</h5>`
@@ -328,7 +418,7 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    // Check if there are any WAV files on page load, and then create elements
    checkWavFolder();
 
-   // Export or convert a single audio
+   // Export or convert a single .vag audio, and also reimport back to .snd
    containerAudiosEl.addEventListener("click", function ({ target }) {
 
       // Exports a single .vag audio
@@ -358,13 +448,15 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
                fs.writeFileSync(`SND/${folderName}/${folderName}_${i}.vag`, audioFile);
                document.getElementById(`span-${i}`).innerText = `VAG: ${folderName}_${i}.vag`;
             }
+            textBox.module("Audio exported as .vag", "green");
          }
       }
 
       // Convert a single .vag to .wav
       for (let i = 1; i != countEl.value + 1; i++) {
          if (target.id == `convert-${i}`) {
-            const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+            // const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+            const inputPath = `${path.join('SND', folderName)}`;
             let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
             let audioNumber;
 
@@ -381,7 +473,8 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             }
 
             // Checks if .vag file exists, then tell in which position it is on the filesNames array
-            if (fs.existsSync(`${path.join(__dirname, '..', 'SND', folderName, audioNumber)}`)) {
+            // if (fs.existsSync(`${path.join(__dirname, '..', 'SND', folderName, audioNumber)}`)) {
+            if (fs.existsSync(`${path.join('SND', folderName, audioNumber)}`)) {
                for (let x = 0; x != filesNames.length; x++) {
                   if (filesNames[x] == audioNumber) {
 
@@ -401,11 +494,95 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          }
       }
 
+      // Reimport .vag to .snd
+      for (let i = 1; i != countEl.value + 1; i++) {
+         if (target.id == `import-${i}`) {
+            const spanParent = target.parentNode; // Gets import button parent
+            const spanText = spanParent.children[0].innerText; // Access parent's first child, and gets text inside span
+            const filename = spanText.substring(5); // Access parent's first child, and gets text inside 
+            const filepath = path.join("SND", folderName, filename);
+            let audioOffsetInSND;
+            let audioLengthInSND;
+            let audioIndex = spanText.slice(-7, -4); // Gets number from filename
+            let audioBuffer;
+
+            // Checks filename index
+            if (Number(audioIndex.substring(1)) < 10) {
+               audioOffsetInSND = buffer_VAG.readUint32LE(16 + (16 * (audioIndex.substring(1) - 1)));
+               audioLengthInSND = buffer_VAG.readUint32LE(20 + (16 * (audioIndex.substring(1) - 1)));
+            } else if (Number(audioIndex.substring(1)) < 100) {
+               audioOffsetInSND = buffer_VAG.readUint32LE(16 + (16 * (audioIndex.substring(1) - 1)));
+               audioLengthInSND = buffer_VAG.readUint32LE(20 + (16 * (audioIndex.substring(1) - 1)));
+            } else {
+               audioOffsetInSND = buffer_VAG.readUint32LE(16 + (16 * (audioIndex - 1)));
+               audioLengthInSND = buffer_VAG.readUint32LE(20 + (16 * (audioIndex - 1)));
+            }
+
+            if (fs.existsSync(filepath)) {
+               audioBuffer = fs.readFileSync(filepath);
+               let audioBufferNoHeader = audioBuffer.subarray(0x40, audioBuffer.length - 0x30);
+               let superior_snd;
+               let inferior_snd;
+               let complete_snd;
+
+               if (Number(audioIndex.substring(1)) == 1) {
+                  superior_snd = buffer_audios.subarray(audioOffsetInSND, audioOffsetInSND);
+               } else {
+                  superior_snd = buffer_audios.subarray(0, (audioOffsetInSND));
+               }
+
+               // Checks filename index for snd bottom part
+               if (Number(audioIndex.substring(1)) < 10) {
+                  audioOffsetInSND = buffer_VAG.readUint32LE(16 + (16 * (audioIndex.substring(1))));
+                  audioLengthInSND = buffer_VAG.readUint32LE(20 + (16 * (audioIndex.substring(1))));
+                  audioLengthInSND = buffer_VAG.writeUint32LE(audioBufferNoHeader.length + 0x30, 20 + (16 * (audioIndex.substring(1) - 1)));
+               } else if (Number(audioIndex.substring(1)) < 100) {
+                  audioOffsetInSND = buffer_VAG.readUint32LE(16 + (16 * (audioIndex.substring(1))));
+                  audioLengthInSND = buffer_VAG.readUint32LE(20 + (16 * (audioIndex.substring(1))));
+                  audioLengthInSND = buffer_VAG.writeUint32LE(audioBufferNoHeader.length + 0x30, 20 + (16 * (audioIndex.substring(1) - 1)));
+               } else {
+                  audioOffsetInSND = buffer_VAG.readUint32LE(16 + (16 * (audioIndex)));
+                  audioLengthInSND = buffer_VAG.readUint32LE(20 + (16 * (audioIndex)));
+                  audioLengthInSND = buffer_VAG.writeUint32LE(audioBufferNoHeader.length + 0x30, 20 + (16 * (audioIndex - 1)));
+               }
+
+               inferior_snd = buffer_audios.subarray(audioOffsetInSND - 0x30);
+               complete_snd = Buffer.concat([superior_snd, audioBufferNoHeader, inferior_snd]);
+               buffer_audios = complete_snd;
+
+               let acumulator = 0;
+               let offsetIterator = 0;
+               for (let k = 0; k < countEl.value; k++) {
+                  acumulator += buffer_VAG.readUint32LE(20 + offsetIterator);
+                  console.log(acumulator);
+                  buffer_VAG.writeUInt32LE(acumulator, 32 + offsetIterator);
+                  offsetIterator += 16;
+               }
+
+               // Writes the .vag inside .snd container and compiles it
+               if (!fs.existsSync(`SND/${folderName}/compiled`)) {
+                  fs.mkdirSync(`SND/${folderName}/compiled`, { recursive: true });
+               }
+               let COMPLETE_BUFFER = Buffer.concat([buffer_initial, buffer_VAG, buffer_audios]);
+               fs.writeFileSync(`SND/${folderName}/compiled/${folderName}.snd`, COMPLETE_BUFFER);
+
+               textBox.module("Audio imported and compiled to SND!", "green");
+
+            } else {
+               if (!filename.includes(audioIndex)) {
+                  ipcRenderer.send("filenameError");
+               } else
+                  ipcRenderer.send("vagAbsent");
+            }
+         }
+      }
+
    })
 
-   // Play converted .wav sounds
+   // Play or convert .wav sounds
    containerWavAudiosEl.addEventListener("click", function (e) {
-      const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav')}`;
+      // const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav')}`;
+      const inputPath = `${path.join('SND', folderName, 'wav')}`;
       let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
 
       // Filters the audio files to ignore all subfolders, this leaves the array with only .wav files
@@ -419,7 +596,9 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             const spanParent = e.target.parentNode; // Gets play button parent
             const spanText = spanParent.children[0].innerText; // Access parent first child, and gets text inside span
 
-            const sound = new URL(`${path.join(__dirname, '..', 'SND', folderName, 'wav', spanText)}`)
+            // const sound = new URL(`${path.join(__dirname, '..', 'SND', folderName, 'wav', spanText)}`)
+            const sound = new URL(`${path.join('SND', folderName, 'wav', spanText)}`)
+            console.log(`${path.join('SND', folderName, 'wav', spanText)}`);
             new Audio(sound.href).play();
          }
       }
@@ -427,7 +606,7 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
       // Convert a single .wav to .vag
       for (let i = 1; i != countEl.value + 1; i++) {
          if (e.target.id == `convertToVag-${i}`) {
-            const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav')}`;
+            // const inputPath = `${path.join('SND', folderName, 'wav')}`;
             let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
             let audioNumber;
 
@@ -435,7 +614,6 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             let filesNames = audioFiles
                .filter(dirent => dirent.isFile())
                .map(dirent => dirent.name);
-            console.log(filesNames);
             // Creates a variable string to compare on next step
             if (i < 10) {
                audioNumber = `${folderName}_0${i}.wav`
@@ -444,11 +622,11 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             }
 
             // Checks if .vag file exists, then tell in which position it is on the filesNames array
-            if (fs.existsSync(`${path.join(__dirname, '..', 'SND', folderName, 'wav', audioNumber)}`)) {
-               console.log("Audio existe: " + audioNumber);
+            // if (fs.existsSync(`${path.join(__dirname, '..', 'SND', folderName, 'wav', audioNumber)}`)) {
+            if (fs.existsSync(`${path.join('SND', folderName, 'wav', audioNumber)}`)) {
+
                for (let x = 0; x != filesNames.length; x++) {
                   if (filesNames[x] == audioNumber) {
-                     console.log("Está no indice: " + x);
 
                      // Converts to .vag
                      convertToVag(filesNames[x], filesNames[x]);
@@ -466,6 +644,7 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             }, 1400);
          }
       }
+
    })
 
    // Export all audios as .vag
@@ -496,7 +675,7 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
 
    // Save all modified buffer back to file
    saveBtn.addEventListener("click", () => {
-      let COMPLETE_BUFFER = Buffer.concat([buffer_entries, buffer_models, buffer_padding, buffer_textures])
+      let COMPLETE_BUFFER = Buffer.concat([buffer_initial, buffer_VAG, buffer_audios])
       headerFileSize.value = COMPLETE_BUFFER.length + " bytes";
       fs.writeFileSync(filepath, COMPLETE_BUFFER);
       var saveMessage = document.querySelector(".hide");
