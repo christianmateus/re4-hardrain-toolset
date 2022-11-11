@@ -27,7 +27,7 @@ function createWindow() {
   mainWindow.loadFile('menu.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -331,7 +331,34 @@ ipcMain.on("closeSNDfile", (e, arg) => {
   mainWindow.loadFile("snd.html")
 })
 
+// Show HELP message
+ipcMain.on("showHelp", (e, arg) => {
+  dialog.showMessageBox(mainWindow, {
+    type: "question",
+    title: "Guide for SND Tool",
+    message: `Step 1: Export .vag audio from the .snd
+Step 2: Convert the .vag audio to .wav
+Step 3: Listen the .wav audio, go to the extracted folder and edit it as you like. Remember that it has to remain in the same frequency
+Step 4: Convert your edited .wav to .vag
+Step 5: Import back to the .snd\n
+EXTRA INFO:
+- Audios are imported based on filename index, so it must contain the index number at the end;
+- There is no support for adding or removing audios, but you can edit every existent audios;
+- Remember to save after every single import, because the file gets overwritten on memory;
+- Audios must remain in same frequency as exported;
+- The limit for audio length is unknown, you can increase it or decrease it as you like;
+---------------------------------------
+- You can use Audacity to easily edit your sounds;
+- If facing problems while doing "batch converting", kindly move or delete all .vag sounds inside the folder and try again;
+- A backup is created by default, you can deactivate it by options menu.`})
+})
+
 // Show message error VAG
+ipcMain.on("wavConvertError", (e, arg) => {
+  dialog.showErrorBox("Error while converting", "Cannot convert unexistent .wav file, please convert from .vag to .wav first.")
+})
+
+// Show message error WAV
 ipcMain.on("errorMessage", (e, arg) => {
   dialog.showErrorBox("Error", "Cannot convert unexistent .vag file, please export .vag audio first.")
 })
