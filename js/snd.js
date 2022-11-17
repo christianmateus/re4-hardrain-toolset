@@ -72,6 +72,9 @@ closeWindowBtn.addEventListener("click", () => {
 
 // Basic funcionalities
 
+helpBtn.addEventListener("click", function () {
+   ipcRenderer.send("showHelp");
+})
 
 /* ===============
     READ
@@ -101,11 +104,35 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    // Reading SND file header 
    const firstAudioOffset = buffer.readUint32LE(0x6C);
 
-   // Splitting the file in 2 parts
+   // Splitting the file in parts
    var buffer_initial = buffer.subarray(0, buffer.indexOf("56616769", "hex"));
    var buffer_VAG = buffer.subarray(buffer.indexOf("56616769", 0, "hex"), firstAudioOffset);
-   var buffer_audios = buffer.subarray(firstAudioOffset);
-   countEl.value = buffer_VAG.at(0x08);
+   var buffer_audios = Buffer.alloc(0);
+   var buffer_second_block = Buffer.alloc(0);
+   var buffer_VAG_second_block = Buffer.alloc(0);
+   var buffer_audios_second_block = Buffer.alloc(0);
+
+   const secondBlockStart = buffer.readUint32LE(0x8C);
+   const secondBlockFirstAudioOffset = buffer.readUint32LE(0xCC);
+
+   // Verifies if values are not null to find another sound block
+   if (buffer_initial.at(0x80) < 254 && buffer_initial.at(0xA0) < 254 && buffer_initial.at(0xC0) < 254) {
+      // Verifies if pointers are valid
+      if (secondBlockStart != 0 && secondBlockFirstAudioOffset > secondBlockStart) {
+
+         // Defines first block audios length
+         buffer_audios = buffer.subarray(firstAudioOffset, secondBlockStart);
+
+         // Second block for scenarios (rXXX) .snd files
+         buffer_second_block = buffer.subarray(secondBlockStart, buffer.indexOf("56616769", secondBlockStart, "hex"));
+         buffer_VAG_second_block = buffer.subarray(buffer.indexOf("56616769", secondBlockStart, "hex"), secondBlockFirstAudioOffset);
+         buffer_audios_second_block = buffer.subarray(secondBlockFirstAudioOffset);
+         countEl.value = buffer_VAG.at(0x08) + buffer_VAG_second_block.at(0x08);
+      }
+   } else {
+      buffer_audios = buffer.subarray(firstAudioOffset); // Sets that .snd file has only 1 audio block
+      countEl.value = buffer_VAG.at(0x08);
+   }
 
    // Getting VAG values
    let audioStartOffset = buffer_VAG.readUint32LE(16);
@@ -127,10 +154,12 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
       let vagImg = document.createElement("img");
       let sndImg = document.createElement("img");
       let playImg = document.createElement("img");
+      let pauseImg = document.createElement("img");
       let exportVagImg = document.createElement("img");
       let convertBtn = document.createElement("button");
       let convertToVagBtn = document.createElement("button");
       let playBtn = document.createElement("button");
+      let pauseBtn = document.createElement("button");
 
       if (isWAV == false) {
          div.classList.add("container-audio-items");
@@ -203,14 +232,23 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          playImg.width = 16;
          playImg.style.marginRight = "4px";
 
+         pauseImg.src = `${path.join("images", "pause.png")}`;
+         pauseImg.style.float = "left";
+         pauseImg.width = 16;
+         pauseImg.style.marginRight = "4px";
+
          vagImg.src = `${path.join("images", "vag.png")}`;
          vagImg.style.float = "left";
          vagImg.width = 16;
          vagImg.style.marginRight = "4px";
 
          playBtn.classList.add("win7-btn");
-         playBtn.innerHTML = 'Play audio';
+         playBtn.innerHTML = 'Play';
          playBtn.id = `play-${audioNumber + 1}`;
+
+         pauseBtn.classList.add("win7-btn");
+         pauseBtn.innerHTML = 'Pause';
+         pauseBtn.id = `pause-${audioNumber + 1}`;
 
          convertToVagBtn.classList.add("win7-btn");
          convertToVagBtn.innerHTML = 'Convert to .vag';
@@ -221,6 +259,8 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          div.appendChild(span);
          div.appendChild(playBtn);
          playBtn.appendChild(playImg);
+         div.appendChild(pauseBtn);
+         pauseBtn.appendChild(pauseImg);
          div.appendChild(convertToVagBtn);
          convertToVagBtn.appendChild(vagImg);
          containerWavAudiosEl.appendChild(div);
@@ -304,31 +344,31 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
       let outputFileWAV = outputFile.replace(/\.[^.]+$/, '.wav');
 
       // USED IN DEVELOPING STAGE ======================================
-      // const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
-      // const inputPath = `${path.join(__dirname, '..', 'SND', folderName, inputFile)}`;
-      // const outputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', outputFileWAV)}`;
+      const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
+      const inputPath = `${path.join(__dirname, '..', 'SND', folderName, inputFile)}`;
+      const outputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', outputFileWAV)}`;
 
       // USED IN FINAL PRODUCT ======================================
-      const mfaudio = `${path.join('resources', 'mfaudio.exe')}`;
-      const inputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, inputFile)}"`;
-      const outputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, 'wav', outputFileWAV)}"`;
+      // const mfaudio = `${path.join('resources', 'mfaudio.exe')}`;
+      // const inputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, inputFile)}"`;
+      // const outputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, 'wav', outputFileWAV)}"`;
 
       // USED IN DEVELOPING STAGE ======================================
-      // console.log(inputPath);
-      // console.log(mfaudio);
-      // exec(`${mfaudio} /OTWAVU "${inputPath}" "${outputPath}"`, function (e) {
-      //    console.log(e);
-      //    console.log("Entrou no callback");
-      // });
+      console.log(inputPath);
+      console.log(mfaudio);
+      exec(`${mfaudio} /OTWAVU "${inputPath}" "${outputPath}"`, function (e) {
+         console.log(e);
+         console.log("Entrou no callback");
+      });
 
       // USED IN FINAL PRODUCT ======================================
-      var child = require('child_process').execFile;
-      var executablePath = `${path.join('resources', 'mfaudio.exe')}`;
-      var parameters = ['/OTWAVU', inputPath, outputPath];
-      child(executablePath, parameters, { shell: true }, function (err, data) {
-         console.log(err)
-         console.log(data.toString());
-      });
+      // var child = require('child_process').execFile;
+      // var executablePath = `${path.join('resources', 'mfaudio.exe')}`;
+      // var parameters = ['/OTWAVU', inputPath, outputPath];
+      // child(executablePath, parameters, { shell: true }, function (err, data) {
+      //    console.log(err)
+      //    console.log(data.toString());
+      // });
 
    }
 
@@ -341,25 +381,25 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
          let outputFileVAG = outputFile.replace(/\.[^.]+$/, '.vag');
 
          // USED IN DEVELOPING STAGE ======================================
-         // const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
-         // const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', inputFile)}`;
-         // const outputPath = `${path.join(__dirname, '..', 'SND', folderName, outputFileVAG)}`;
+         const mfaudio = `${path.join(__dirname, '..', 'resources', 'mfaudio.exe')}`;
+         const inputPath = `${path.join(__dirname, '..', 'SND', folderName, 'wav', inputFile)}`;
+         const outputPath = `${path.join(__dirname, '..', 'SND', folderName, outputFileVAG)}`;
 
-         // exec(`${mfaudio} /OTVAGC "${inputPath}" "${outputPath}"`)
-
-         // USED IN FINAL PRODUCT ======================================
-         const mfaudio = `${path.join('resources', 'mfaudio.exe')}`;
-         const inputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, 'wav', inputFile)}"`;
-         const outputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, outputFileVAG)}"`;
+         exec(`${mfaudio} /OTVAGC "${inputPath}" "${outputPath}"`)
 
          // USED IN FINAL PRODUCT ======================================
-         var child = require('child_process').execFile;
-         var executablePath = `${path.join('resources', 'mfaudio.exe')}`;
-         var parameters = ['/OTVAGC', inputPath, outputPath];
-         child(executablePath, parameters, { shell: true }, function (err, data) {
-            console.log(err)
-            console.log(data.toString());
-         });
+         // const mfaudio = `${path.join('resources', 'mfaudio.exe')}`;
+         // const inputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, 'wav', inputFile)}"`;
+         // const outputPath = `"${path.join(__dirname, '..', '..', '..', 'SND', folderName, outputFileVAG)}"`;
+
+         // USED IN FINAL PRODUCT ======================================
+         // var child = require('child_process').execFile;
+         // var executablePath = `${path.join('resources', 'mfaudio.exe')}`;
+         // var parameters = ['/OTVAGC', inputPath, outputPath];
+         // child(executablePath, parameters, { shell: true }, function (err, data) {
+         //    console.log(err)
+         //    console.log(data.toString());
+         // });
 
          setTimeout(() => {
             textBox.module("Audio converted to .vag!", "green");
@@ -371,8 +411,11 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    }
 
    convertAllWavBtn.addEventListener("click", function () {
-      // const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
-      const inputPath = `${path.join('SND', folderName)}`;
+      // USED IN DEVELOPING STAGE ======================================
+      const inputPath = `${path.join(__dirname, '..', 'SND', folderName)}`;
+
+      // USED IN FINAL PRODUCT ======================================
+      // const inputPath = `${path.join('SND', folderName)}`;
       let audioFiles = fs.readdirSync(inputPath, { withFileTypes: true });
 
       // Filters the audio files to ignore all subfolders, this leaves the array with only .wav files
@@ -613,10 +656,24 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
             const spanText = spanParent.children[0].innerText; // Access parent first child, and gets text inside span
 
             // USED IN DEVELOPMENT STAGE
-            // new Audio(`${path.join('SND', folderName, 'wav', spanText)}`).play();
+            new Audio(`${path.join('SND', folderName, 'wav', spanText)}`).play();
 
             // USED IN BUILD
-            new Audio(`${path.join('..', '..', 'SND', folderName, 'wav', spanText)}`).play();
+            // new Audio(`${path.join('..', '..', 'SND', folderName, 'wav', spanText)}`).play();
+         }
+      }
+
+      // Pauses a .wav sound
+      for (let i = 1; i != filesNames.length + 1; i++) {
+         if (e.target.id == `pause-${i}`) {
+            const spanParent = e.target.parentNode; // Gets pause button parent
+            const spanText = spanParent.children[0].innerText; // Access parent first child, and gets text inside span
+
+            // USED IN DEVELOPMENT STAGE
+            new Audio(`${path.join('SND', folderName, 'wav', spanText)}`).pause();
+
+            // USED IN BUILD
+            // new Audio(`${path.join('..', '..', 'SND', folderName, 'wav', spanText)}`).pause();
          }
       }
 
@@ -673,10 +730,6 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
       checkVagFolder();
    })
 
-   helpBtn.addEventListener("click", function () {
-      ipcRenderer.send("showHelp");
-   })
-
    /* ==========================================
        NEW FUNCIONALITY: 
       ========================================== */
@@ -701,7 +754,7 @@ ipcRenderer.on("sndFileChannel", (e, filepath) => {
    })
 
    ipcRenderer.on("saveAsSNDfileContent", (e, arg) => {
-      let COMPLETE_BUFFER = Buffer.concat([buffer_entries, buffer_models, buffer_padding, buffer_textures]);
+      let COMPLETE_BUFFER = Buffer.concat([buffer_initial, buffer_VAG, buffer_audios]);
       fs.writeFileSync(arg, COMPLETE_BUFFER);
    })
 })

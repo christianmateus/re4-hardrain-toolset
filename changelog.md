@@ -1,6 +1,17 @@
 # Changelog
 All changes that affects usability to this project will be documented here.
-## 1.3.0 - *WIP*
+
+## 1.3.1 - *WIP*
+`Added`
+
+`Fixed`
+- Fix HELP button not working before opening file
+- Fix save-as option not working
+
+`Changed`
+- SND tool name now is explicit that it will only work on PS2 version
+
+## 1.3.0 - *11, november 2022*
 `Added`
 - SND tool released
 

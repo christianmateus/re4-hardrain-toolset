@@ -65,8 +65,9 @@ closeWindowBtn.addEventListener("click", () => {
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
 var submeshSize = 0;
+var submeshSizeTotal = 0;
 var padding = 0;
-var binHeaderSize = 112;
+var binHeaderSize = 0;
 
 // Getting file path
 ipcRenderer.on("binFileChannel", (e, filepath) => {
@@ -78,48 +79,110 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
     headerFileSize.value = buffer.length + " bytes";
     headerFileName.value = conv;
 
+    let boneCount = buffer.readUint8(0x09);
+    let textureCount = buffer.readUint8(0x0A);
+    let binType = buffer.readUint8(0x1A); // 1 == SMD, 3 == ITM
     let materialStartOffset = buffer.readUint32LE(12); // Very first line, reads pointer to the material list
     let binFirstSubmeshOffset = buffer.readUint32LE(materialStartOffset + 12); // Reads pointer from first material
-    submeshSize = buffer.readUint8(binFirstSubmeshOffset + binHeaderSize);
 
     function covertBinToObj() {
         padding = 0;
+        let submeshCount = 0; // Gets count of submeshes for each texture
+        let submeshIterator = 0; // Iterates to another submesh by doing sum of submesh block * 16
+        let submeshHeaderIterator = 0; // Simply sums + 0x30 which is a submesh header length
+        let textureIterator = 0;
+        let buffer_vertices = '';
+        let buffer_normals = '';
+        let buffer_textures = '';
+        let buffer_complete = '';
         let objMaker = "";
         let objComplete = `# Resident evil 4 - BIN Tool 2022` +
             `\n` + `\n` + `# By HardRain` + `\n` + `\n`;
-        for (let i = 0; i < 24; i++) {
-            // Reading vertices XYZ
-            let vert_X = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + padding) / 1.6 / 1000;
-            let vert_Y = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 2 + padding) / 1.6 / 1000;
-            let vert_Z = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 4 + padding) / 1.6 / 1000;
 
-            padding = padding + 24; // padding between each set of data 
-            objMaker = "v " + String(vert_X.toFixed(4)) + " " + String(vert_Y.toFixed(4)) + " " + String(vert_Z.toFixed(4)) + `\n`
-            objComplete = objComplete + objMaker;
+        if (binType == 1) {
+            binHeaderSize = 64;
+        } else if (binType == 3) {
+            binHeaderSize = 96;
         }
-        padding = 0;
 
-        // For used to read normals XYZ
-        for (let i = 0; i < 24; i++) {
-            let normal_X = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + padding) / 2.56 / 1000;
-            let normal_Y = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + 2 + padding) / 2.56 / 1000;
-            let normal_Z = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + 4 + padding) / 2.56 / 1000;
+        // Iterates through each texture
+        for (let textureIndex = 0; textureIndex != textureCount; textureIndex++) {
+            submeshCount = buffer.readUint8(binFirstSubmeshOffset + 2 + submeshIterator + submeshHeaderIterator + textureIterator);
+            // console.log("Submeshes number == " + submeshCount + ", texture " + textureIndex);
 
-            padding = padding + 24; // padding between each set of data 
-            objMaker = "vn " + String(normal_X.toFixed(4)) + " " + String(normal_Y.toFixed(4)) + " " + String(normal_Z.toFixed(4)) + `\n`
-            objComplete = objComplete + objMaker;
+            // Iterates through each submesh of each texture
+            for (let submeshIndex = 0; submeshIndex != submeshCount - 1; submeshIndex++) {
+                console.log('Submesh ' + submeshIndex);
+                console.log("---------------------");
+
+                submeshSize = buffer.readUint8(binFirstSubmeshOffset + 48 + submeshIterator + submeshHeaderIterator + textureIterator);
+                objComplete = '';
+                // buffer_vertices = 0;
+
+                for (let i = 0; i != submeshSize; i++) {
+                    // Reading vertices XYZ
+                    let vert_X = buffer.readInt16LE(binFirstSubmeshOffset + submeshIterator + binHeaderSize + submeshHeaderIterator + padding) / 1.6 / 1000;
+                    let vert_Y = buffer.readInt16LE(binFirstSubmeshOffset + submeshIterator + binHeaderSize + submeshHeaderIterator + 2 + padding) / 1.6 / 1000;
+                    let vert_Z = buffer.readInt16LE(binFirstSubmeshOffset + submeshIterator + binHeaderSize + submeshHeaderIterator + 4 + padding) / 1.6 / 1000;
+
+                    padding = padding + 24; // padding between each set of data 
+                    objMaker = "v " + String(vert_X.toFixed(4)) + " " + String(vert_Y.toFixed(4)) + " " + String(vert_Z.toFixed(4)) + `\n`
+                    objComplete = objComplete + objMaker;
+                    // buffer_vertices = Buffer.from(objComplete);
+                    // buffer_vertices = Buffer.concat([buffer_vertices, buffer_vertices_temp]);
+                }
+                buffer_vertices = buffer_vertices + objComplete;
+                padding = 0;
+                objComplete = '';
+                // console.log(binHeaderSize);
+                // console.log(buffer_vertices.toString());
+
+                // For used to read normals XYZ
+                for (let i = 0; i != submeshSize; i++) {
+                    let normal_X = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + padding) / 2.56 / 1000;
+                    let normal_Y = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + 2 + padding) / 2.56 / 1000;
+                    let normal_Z = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 8 + 4 + padding) / 2.56 / 1000;
+
+                    padding = padding + 24; // padding between each set of data 
+                    objMaker = "vn " + String(normal_X.toFixed(4)) + " " + String(normal_Y.toFixed(4)) + " " + String(normal_Z.toFixed(4)) + `\n`
+                    objComplete = objComplete + objMaker;
+                    // let buffer_normals_temp = Buffer.from(objComplete);
+                    // buffer_normals = Buffer.concat([buffer_normals, buffer_normals_temp]);
+                }
+                buffer_normals = buffer_normals + objComplete;
+                padding = 0;
+                objComplete = '';
+
+                // For used to read Textures UV
+                for (let i = 0; i != submeshSize; i++) {
+                    let texture_U = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 16 + padding) / 2.55 / 100;
+                    let texture_V = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 16 + 2 + padding) / 2.55 / 100;
+
+                    padding = padding + 24; // padding between each set of data 
+                    objMaker = "vt " + String(texture_U.toFixed(4)) + " " + String(texture_V.toFixed(4)) + `\n`;
+                    objComplete = objComplete + objMaker;
+                    // let buffer_textures_temp = Buffer.from(objComplete);
+                    // buffer_textures = Buffer.concat([buffer_textures, buffer_textures_temp]);
+                }
+                buffer_textures = buffer_textures + objComplete;
+                padding = 0;
+                submeshIterator = submeshIterator + (submeshSize * 16);
+
+                // The second (and so on) submesh headers have an extra length of 0x10, so this sums up
+                if (submeshIndex > 0) {
+                    submeshHeaderIterator = submeshHeaderIterator + 48 + 16;
+                } else {
+                    submeshHeaderIterator = submeshHeaderIterator + 48;
+                }
+
+                // Acumulates the total to be used for faces generation
+                submeshSizeTotal = submeshSizeTotal + submeshSize;
+                console.log(submeshSizeTotal);
+            }
+            textureIterator = textureIterator + 16;
         }
-        padding = 0;
-
-        // For used to read Textures UV
-        for (let i = 0; i < 24; i++) {
-            let texture_U = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 16 + padding) / 2.55 / 100;
-            let texture_V = buffer.readInt16LE(binFirstSubmeshOffset + binHeaderSize + 16 + 2 + padding) / 2.55 / 100;
-
-            padding = padding + 24; // padding between each set of data 
-            objMaker = "vt " + String(texture_U.toFixed(4)) + " " + String(texture_V.toFixed(4)) + `\n`;
-            objComplete = objComplete + objMaker;
-        }
+        objComplete = buffer_vertices + buffer_textures + buffer_normals;
+        // console.log(objComplete);
         return objComplete;
     }
 
@@ -187,7 +250,7 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
     function generateFaces() {
         let faces_complete = `o  BIN Model` + `\n`;
         sum = 0;
-        for (i = 1; i < 7; i++) {
+        for (i = 1; i < (submeshSizeTotal / 4); i++) {
             let faces = "f " + (i + sum) + "/" + (i + sum) + "/" + (i + sum) + " " +
                 " " + (i + 2 + sum) + "/" + (i + 2 + sum) + "/" + (i + 2 + sum) + " " +
                 (i + 1 + sum) + "/" + (i + 1 + sum) + "/" + (i + 1 + sum) +
@@ -200,6 +263,24 @@ ipcRenderer.on("binFileChannel", (e, filepath) => {
             sum = sum + 3;
         } return faces_complete;
     }
+
+    // Function for generating faces SMD
+    // function generateFaces() {
+    //     let faces_complete = `o  BIN Model` + `\n`;
+    //     sum = 0;
+    //     for (i = 1; i < (submeshSizeTotal / 4); i++) {
+    //         let faces = "f " + (i + sum) + "/" + (i + sum) + "/" + (i + sum) + " " +
+    //             " " + (i + 1 + sum) + "/" + (i + 1 + sum) + "/" + (i + 1 + sum) + " " +
+    //             (i + 2 + sum) + "/" + (i + 2 + sum) + "/" + (i + 2 + sum) +
+    //             `\n` +
+    //             "f " + (i + 3 + sum) + "/" + (i + 3 + sum) + "/" + (i + 3 + sum) + " " +
+    //             (i + 2 + sum) + "/" + (i + 2 + sum) + "/" + (i + 2 + sum) + " " +
+    //             (i + 1 + sum) + "/" + (i + 1 + sum) + "/" + (i + 1 + sum) +
+    //             `\n`
+    //         faces_complete = faces_complete + faces;
+    //         sum = sum + 3;
+    //     } return faces_complete;
+    // }
 
     // Function for getting coordinate values
     function exportEvents_vertices(quantity) {
