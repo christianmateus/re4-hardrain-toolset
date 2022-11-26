@@ -8,6 +8,7 @@ const MDT = document.getElementById("mdt-card");
 const BIN = document.getElementById("bin-card");
 const SMD = document.getElementById("smd-card");
 const SND = document.getElementById("snd-card");
+const ETM = document.getElementById("etm-card");
 
 // Window menu buttons
 const minimizeBtn = document.getElementById("minimize")
@@ -41,6 +42,10 @@ SMD.addEventListener("click", function () {
 
 SND.addEventListener("click", function () {
     ipcRenderer.send("openSNDtool")
+})
+
+ETM.addEventListener("click", function () {
+    ipcRenderer.send("openETMtool")
 })
 
 // Window menu actions

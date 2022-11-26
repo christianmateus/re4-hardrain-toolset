@@ -205,6 +205,7 @@ ipcMain.on("closeMDTfile", (e, arg) => {
   mainWindow.loadFile("mdt.html")
 })
 
+// BIN -------------------------------------------
 // Function for sending BIN file path
 ipcMain.on("openBINfile", () => {
   dialog.showOpenDialog(mainWindow, {
@@ -373,6 +374,67 @@ ipcMain.on("vagAbsent", (e, arg) => {
   dialog.showErrorBox("Error", "Cannot import back unexistent .vag file, please export .vag audio or convert from a .wav sound.")
 })
 
+// ETM -------------------------------------------
+// Function for sending ETM file path
+ipcMain.on("openETMfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "ETM files", extensions: ["ETM"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let ETMfile = um.filePaths.toString();
+      mainWindow.webContents.send("etmFileChannel", ETMfile);
+      console.log(ETMfile);
+    })
+})
+
+// Saving actual ETM file
+ipcMain.on("saveAsETMfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'ETM Files', extensions: ['ETM'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsETMfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Adding new object to ETM file
+ipcMain.on("importETM", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'ETM Models', extensions: ['bin', 'eff', 'fcv', 'seq', 'tpl'] }
+    ]
+  }).then((dados) => {
+    let importBinPath = dados.filePaths.toString();
+    mainWindow.webContents.send("ETMobject", importBinPath);
+    console.log("Object imported: " + importBinPath);
+  })
+})
+
+// Adding new TPL texture to SMD file
+ipcMain.on("addNewTPLBtn", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'TPL Texture', extensions: ['tpl'] }
+    ]
+  }).then((dados) => {
+    let addedNewTexture = dados.filePaths.toString();
+    mainWindow.webContents.send("addTPLtexture", addedNewTexture);
+    console.log("TPL imported: " + addedNewTexture);
+  })
+})
+
+// Closing ETM file
+ipcMain.on("closeETMfile", (e, arg) => {
+  mainWindow.loadFile("etm.html")
+})
+
+
 // Quiting application
 ipcMain.on("quitApp", (e, arg) => {
   mainWindow.close();
@@ -422,4 +484,8 @@ ipcMain.on("openSMDtool", () => {
 
 ipcMain.on("openSNDtool", () => {
   mainWindow.loadFile("snd.html")
+})
+
+ipcMain.on("openETMtool", () => {
+  mainWindow.loadFile("etm.html")
 })

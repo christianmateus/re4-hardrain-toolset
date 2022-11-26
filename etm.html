@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/etm.css">
+   <link rel="stylesheet" href="css/navbar.css">
+   <link rel="stylesheet" href="css/tooltip.css">
+   <!-- FONT AWESOME -->
+   <link rel="stylesheet" href="./css/all.min.css">
+   <title>ETM Tool</title>
+</head>
+
+<body>
+   <div class="hide container-hide" id="fileSaved">
+      <span class="successfully-saved">
+         <i class="fa-regular fa-circle-check"></i>&nbsp;
+         File saved successfully!</span>
+   </div>
+   <div class="hide infoBox container-hide" id="infoBox">
+      <span class="successfully-removed">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   </div>
+   <nav id="menu-container">
+      <div class="dropdown">
+         <button class="menu-buttons" id="file">File</button>
+         <div class="dropdown-content">
+            <button id="openETMfile" class="menu-buttons"><img src="images/open.png"> Open ETM file</button>
+            <button id="closeETMfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <hr>
+            <button id="saveETMfile" class="menu-buttons"><img src="images/save.png"> Save ETM file</button>
+            <button id="saveETMas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <hr>
+            <button id="quitApp" class="menu-buttons">Quit</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="edit">Edit</button>
+         <div class="dropdown-content">
+            <button id="addEntry" class="menu-buttons"><img src="images/add.png"> Add new entry</button>
+            <button id="removeEntry" class="menu-buttons"><img src="images/remove.png"> Remove entry</button>
+            <hr>
+            <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
+            <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
+            <hr>
+            <button id="undoBtn" class="menu-buttons"><img src="images/undo.png"> Undo</button>
+            <button id="redoBtn" class="menu-buttons"><img src="images/redo.png"> Redo</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="options">Options</button>
+         <div class="dropdown-content">
+            <label for="include-mipmap">Mipmap bytes</label>
+            <input id="include-mipmap" type="checkbox" checked class="menu-inputs">
+         </div>
+      </div>
+      <div id="control-window">
+         <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+               src="./images/main-menu.png"></button>
+         <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+               src="./images/minimize.png"></button>
+         <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+               src="./images/expand-window.png"></button>
+         <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+               src="./images/close-window.png"></button>
+      </div>
+   </nav>
+   <div id="campo-superior">
+      <!-- BOX 1 -->
+      <div class="inner-box file-info">
+         <div>
+            <label for="header-filename">File name:</label>
+            <label for="header-filesize">File size:</label>
+         </div>
+         <div>
+            <input id="header-filename" type="text" readonly value="">
+            <input id="header-filesize" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 2 -->
+      <div class="inner-box total-events">
+         <div>
+            <label for="count">Total Files:</label>
+            <input id="count" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 3 -->
+      <div class="inner-box">
+      </div>
+   </div>
+   <!-- PROGRAM DATA STARTS -->
+   <main id="main">
+      <header>
+         <h5>ETM Objects</h5>
+      </header>
+      <section>
+         <table>
+            <thead>
+               <tr>
+                  <th id="object-number">N°</th>
+                  <th id="raw-name">Raw Name</th>
+                  <th id="object-size">Size</th>
+                  <th id="object-type">Type</th>
+                  <th id="object-available">Available</th>
+                  <th colspan="4">Options</th>
+                  <th>Notes</th>
+               </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+         </table>
+      </section>
+   </main>
+   <script>
+      require('./js/etm.js'); // Used in electron
+   </script>
+</body>
+
+</html>
