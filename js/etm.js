@@ -2,6 +2,7 @@ const fs = require('fs');
 const { ipcRenderer } = require('electron');
 const path = require('path');
 const textBox = require('../shared/textBox').module;
+const ETM = require('../resources/etm-objects').ETMobject;
 
 // Const for testing text output (DEBUG)
 
@@ -13,6 +14,9 @@ const textBox = require('../shared/textBox').module;
 var rootEl = document.querySelector("html");
 var addEntryEl = document.getElementById("addEntry");
 var removeEntryEl = document.getElementById("removeEntry");
+var exportAllBtn = document.getElementById("export-all");
+var exportAllSubfoldersBtn = document.getElementById("export-all-subfolders");
+
 var copyBtnEl = document.getElementById("copyBtn");
 var pasteBtnEl = document.getElementById("pasteBtn");
 var undoBtnEl = document.getElementById("undoBtn");
@@ -44,8 +48,14 @@ const minimizeBtn = document.getElementById("minimize");
 const maximizeBtn = document.getElementById("maximize");
 const closeWindowBtn = document.getElementById("closeWindow");
 
-const importImage = document.getElementById("import");
-const imageContainer = document.getElementById("texture-image");
+const addNewButtons = document.getElementsByClassName("add-new-buttons");
+const modal = document.querySelector(".modal");
+const closeButton = document.querySelector(".close-button");
+const fieldsetFiles = document.getElementById("fieldset-files");
+const optionSelect = document.getElementById("download-select");
+const objectList = document.getElementsByClassName("object-list");
+const fileList = document.getElementsByClassName("file-list");
+const downloadFileList = document.getElementsByClassName("download-file-btn");
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -79,7 +89,60 @@ closeWindowBtn.addEventListener("click", () => {
 })
 
 // Basic funcionalities
+function toggleModal() {
+   modal.classList.toggle("show-modal");
+}
 
+function windowOnClick(event) {
+   if (event.target === modal) {
+      toggleModal();
+   }
+}
+
+optionSelect.addEventListener("change", function (e) {
+   let opt_selected = e.target.selectedIndex;
+   let obj_ID = objectList[opt_selected].innerText.slice(0, 4);
+
+   for (let x = 0; x != fileList.length; x++) {
+      fileList[x].style.display = "none"
+   }
+
+   for (let i = 0; i != optionSelect.length; i++) {
+      if (fileList[i].classList.contains(obj_ID)) {
+         fileList[i].style.display = "block";
+         break;
+      }
+   }
+})
+
+fieldsetFiles.addEventListener("click", function (e) {
+   if (e.target.classList.contains("download-file-btn")) {
+
+      let parent = e.target.closest(".file-list");
+      let array = parent.children;
+      let iterator = 0;
+
+      for (let x = 0; x != array.length; x++) {
+         if (array[x].nodeName == "BUTTON") {
+            array[x].id = 0 + iterator;
+            iterator++;
+         }
+      }
+
+      let obj_ID = parent.classList[0];
+      console.log(e.target.parentNode.id);
+
+      ipcRenderer.send("download", { url: ETM.et00[e.target.parentNode.id], objectID: '' });
+   }
+})
+
+// Download new object
+addNewButtons[1].addEventListener("click", async function () {
+   toggleModal();
+});
+
+closeButton.addEventListener("click", toggleModal);
+window.addEventListener("click", windowOnClick);
 
 /* ===============
     READ
@@ -181,6 +244,10 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
       tbody.appendChild(tr);
    }
 
+   // Activates buttons
+   addNewButtons[0].removeAttribute("disabled");
+   addNewButtons[1].removeAttribute("disabled");
+
    // Create initial table rows
    for (let x = 0; x != countEl.value; x++) {
       createTableRow(x);
@@ -190,10 +257,11 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
    function showData() {
       let fileSizeAcumulator = 0;
       for (let i = 0; i != countEl.value; i++) {
-         let entryName = buffer.subarray(0x40 + fileSizeAcumulator, 0x40 + fileSizeAcumulator + 16);
+         let entryName = buffer_entries.subarray(0x20 + fileSizeAcumulator, 0x20 + fileSizeAcumulator + 16);
          let firstZeroedByte = entryName.indexOf(0x00);
          let entryTrimmed = entryName.subarray(0, firstZeroedByte).toString();
-         let entrySize = buffer.readUInt32LE(0x20 + fileSizeAcumulator);
+         let entrySize = buffer_entries.readUInt32LE(0x00 + fileSizeAcumulator);
+
          if (entrySize > 999) {
             entrySize = entrySize / 1000;
             entrySizeCell[i].innerText = entrySize.toFixed(0) + " KB";
@@ -202,9 +270,9 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
          }
 
          entryRawNameCell[i].innerText = entryTrimmed;
-         entryTypeCell[i].innerText = buffer.readUInt32LE(0x24 + fileSizeAcumulator);
+         entryTypeCell[i].innerText = buffer_entries.readUInt32LE(0x04 + fileSizeAcumulator);
 
-         fileSizeAcumulator += buffer.readUInt32LE(0x20 + fileSizeAcumulator);
+         fileSizeAcumulator += buffer_entries.readUInt32LE(0x00 + fileSizeAcumulator);
       }
    }
    showData();
@@ -245,13 +313,13 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
 
             // Shows open Dialog, and then imports to the ETM file
             ipcRenderer.send("importETM");
-            ipcRenderer.on("ETMobject", function (e, filepath) {
+            ipcRenderer.once("ETMobject", function (e, filepath) {
                let buffer_newFile = fs.readFileSync(filepath);
                let file_header = Buffer.alloc(0x40);
                let buffer_top = Buffer.alloc(0);
                let buffer_bottom = Buffer.alloc(0);
-               let newFileName = path.basename(filepath);
-               let fileExtension = path.extname(newFileName);
+               let newFileName = path.basename(filepath).toLowerCase();
+               let fileExtension = path.extname(newFileName).toLowerCase();
 
                file_header.writeUint32LE(buffer_newFile.length + 0x40, 0x00);
                switch (fileExtension) {
@@ -264,102 +332,98 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
                   default: break;
                }
 
+               let buffer_newFileName = Buffer.from(newFileName);
+               for (let index = 0; index != buffer_newFileName.length; index++) {
+                  file_header.writeUint8(buffer_newFileName[index], 32 + index)
+               }
+
                if (x == 0) {
                   buffer_top = buffer_entries.subarray(0x00, 0x00);
-                  buffer_bottom = buffer_entries.subarray(buffer_entries.readUint32LE(0x00 + iterator));
+                  buffer_bottom = buffer_entries.subarray(buffer_entries.readUint32LE(0x00));
                } else {
-                  buffer_top = buffer_entries.subarray(0x00 + iterator, 0x00 + iterator + buffer_entries.readUint32LE(0x00 + iterator));
+                  buffer_top = buffer_entries.subarray(0x00, 0x00 + iterator);
+                  buffer_bottom = buffer_entries.subarray(0x00 + iterator + buffer_entries.readUint32LE(0x00 + iterator));
                }
                buffer_entries = Buffer.concat([buffer_top, file_header, buffer_newFile, buffer_bottom]);
+               showData();
             });
-
+            break;
          } else { iterator += buffer_entries.readUint32LE(0 + iterator); }
       }
    })
 
-   // exportAllModelsBtn.addEventListener("click", function () {
-   //     fs.mkdirSync(`SMD/${folderName}/Models`, { recursive: true });
-   //     for (let i = 0; i < entryTotal.value; i++) {
-   //         fs.writeFileSync(`SMD/${folderName}/Models/${i}.bin`, readBinModel(i + 1));
-   //     }
-   //     showTextBox("All models exported successfully!", "green");
-   // })
-   // importNewModelBtn.addEventListener("click", function () {
-   //     importNewModel()
-   // })
-   // ===============================================================
+   // Export all objects creating subfolders with object name
+   exportAllSubfoldersBtn.addEventListener("click", function () {
+      if (!fs.existsSync(`ETM/${folderName}`)) {
+         fs.mkdirSync(`ETM/${folderName}`, { recursive: true });
+      }
+      let iterator = 0;
+
+      for (let x = 0; x != countEl.value; x++) {
+         let entryHeader = buffer_entries.subarray(0x00 + iterator, 0x40 + iterator);
+         let obj = buffer_entries.subarray(0x40 + iterator, 0x40 + iterator + entryHeader.readUint32LE(0));
+         let objectName;
+
+         if (entryRawNameCell[x].textContent.includes("obm")) {
+            objectName = entryRawNameCell[x].textContent.slice(0, 5);
+         } else {
+            objectName = entryRawNameCell[x].textContent.slice(0, 4);
+         }
+
+         if (!fs.existsSync(`ETM/${folderName}/${objectName}`)) {
+            fs.mkdirSync(`ETM/${folderName}/${objectName}`, { recursive: true });
+         }
+
+         fs.writeFile(`ETM/${folderName}/${objectName}/${entryRawNameCell[x].textContent}`, obj, function (err) {
+            if (err) {
+               console.log(err);
+            }
+         })
+         iterator += buffer_entries.readUint32LE(0 + iterator);
+      }
+      textBox("All objects exported successfully!", "green");
+   });
 
    /* ===============
        UPDATE
       =============== */
 
-   // ADD NEW TEXTURE
-   function importNewTexture() {
-      ipcRenderer.send("addNewTPLBtn");
-   };
-   ipcRenderer.on("addTPLtexture", function (e, filepath) {
-      let addNewTextureBuffer = Buffer.alloc(0);
-      let iterator = 0;
-      let mipMapCount = 0;
-      let textureFD = fs.openSync(filepath);
-      addNewTextureBuffer = fs.readFileSync(textureFD);
 
-      let fileHeader = addNewTextureBuffer.subarray(0, 16);
-      let textureHeader = addNewTextureBuffer.subarray(16, 64);
-      let indices = addNewTextureBuffer.subarray(64, addNewTextureBuffer.readUint32LE(52));
-      let pallete = addNewTextureBuffer.subarray(addNewTextureBuffer.readUint32LE(52));
+   // ADD NEW OBJECT
+   addNewButtons[0].addEventListener("click", async function () {
+      ipcRenderer.send("importETM");
+      ipcRenderer.once("ETMobject", (e, filepath) => {
+         let newETM = fs.readFileSync(filepath);
+         let file_header = Buffer.alloc(0x40);
+         let newFileName = path.basename(filepath).toLowerCase();
+         let fileExtension = path.extname(newFileName).toLowerCase();
 
-      let complete_mainHeader = buffer_textures.subarray(0, 16);
-      let complete_textureHeader = buffer_textures.subarray(16, (48 * complete_mainHeader.readUint8(4)) + 16);
-      let complete_mipMapHeader = buffer_textures.subarray((48 * complete_mainHeader.readUint8(4)) + 16, buffer_textures.readUint32LE(48))
-      let complete_indicesAndPallete = buffer_textures.subarray(buffer_textures.readUint32LE(48));
-
-      // Updates new texture header pointers before inserting
-      textureHeader.writeUint32LE(buffer_textures.length + 48, 32);
-
-      // Removing MipMaps
-      textureHeader.writeUint8(0, 10);
-
-      // Check bit depth
-      if (textureHeader.readUint8(4) == 8) {
-         console.log("4-bit texture");
-         textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48), 36);
-      } else {
-         console.log("8-bit texture");
-         textureHeader.writeUint32LE((buffer_textures.length + indices.length + 48), 36);
-      }
-
-      // Add new texture header to the end of headers area and updates every pointer by +48
-      complete_indicesAndPallete = Buffer.concat([complete_indicesAndPallete, indices, pallete]);
-
-      // Updates every pointer by +48
-      for (let i = 0; i != complete_mainHeader.readUint8(4); i++) {
-         complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(32 + iterator) + 48, 32 + iterator)
-         complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(36 + iterator) + 48, 36 + iterator)
-         if (complete_textureHeader.readUint32LE(16 + iterator) > 0) {
-            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(16 + iterator) + 48, 16 + iterator)
-            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(20 + iterator) + 48, 20 + iterator)
+         file_header.writeUint32LE(newETM.length + 0x40, 0x00);
+         switch (fileExtension) {
+            case ".eff": if (!newFileName.includes("obm")) { file_header.writeUint8(0x09, 0x04); break; }
+            case ".eff": if (newFileName.includes("obm")) { file_header.writeUint8(0x0A, 0x04); break; }
+            case ".bin": file_header.writeUint8(0x0B, 0x04); break;
+            case ".tpl": file_header.writeUint8(0x0B, 0x04); break;
+            case ".fcv": file_header.writeUint8(0x0C, 0x04); break;
+            case ".seq": file_header.writeUint8(0x0D, 0x04); break;
+            default: break;
          }
-         iterator += 48;
-      }
 
-      // Gets mipmap quantity
-      mipMapCount = complete_mipMapHeader.length / 48;
-      iterator = 0;
-      for (let j = 0; j != (complete_mipMapHeader.length / 48); j++) {
-         complete_mipMapHeader.writeUint32LE(complete_mipMapHeader.readUint32LE(32 + iterator) + 48, 32 + iterator);
-         iterator += 48;
-      }
+         let buffer_newFileName = Buffer.from(newFileName);
+         for (let index = 0; index != buffer_newFileName.length; index++) {
+            file_header.writeUint8(buffer_newFileName[index], 32 + index)
+         }
+         buffer_entries = Buffer.concat([buffer_entries, file_header, newETM]);
 
-      // Updates main header count by +1
-      complete_mainHeader.writeUint8(complete_mainHeader.readUint8(4) + 1, 4);
-      complete_textureHeader = Buffer.concat([complete_textureHeader, textureHeader, complete_mipMapHeader]);
-
-      buffer_textures = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
-      texturesTotal.value = Number(texturesTotal.value) + 1;
-      showTextBox("New texture added sucessfully!", "green");
-      fs.closeSync(textureFD);
+         createTableRow((buffer.at(0) - 1) + 1);
+         buffer.writeUint8(buffer.readUInt8(0) + 1, 0);
+         countEl.value = buffer.at(0);
+         // fs.writeFileSync(filepath, buffer_entries);
+         showData();
+      })
    });
+
+
 
    // Save all modified buffer back to file
    saveBtn.addEventListener("click", () => {

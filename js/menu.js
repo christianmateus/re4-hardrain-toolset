@@ -9,6 +9,7 @@ const BIN = document.getElementById("bin-card");
 const SMD = document.getElementById("smd-card");
 const SND = document.getElementById("snd-card");
 const ETM = document.getElementById("etm-card");
+const SPECIALS = document.getElementById("specials-card");
 
 // Window menu buttons
 const minimizeBtn = document.getElementById("minimize")
@@ -46,6 +47,10 @@ SND.addEventListener("click", function () {
 
 ETM.addEventListener("click", function () {
     ipcRenderer.send("openETMtool")
+})
+
+SPECIALS.addEventListener("click", function () {
+    ipcRenderer.send("openSPECIALStool")
 })
 
 // Window menu actions

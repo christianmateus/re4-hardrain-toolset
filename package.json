@@ -26,6 +26,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "asar": "^3.2.0",
+    "electron-dl": "^3.5.0",
     "jbinary": "^2.1.5",
     "jimp": "^0.16.2",
     "raw-image": "^1.1.1",

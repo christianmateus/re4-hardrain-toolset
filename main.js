@@ -1,6 +1,8 @@
 // Modules
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
+const { download } = require('electron-dl');
 const fs = require('fs');
+const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -416,24 +418,49 @@ ipcMain.on("importETM", (e, arg) => {
   })
 })
 
-// Adding new TPL texture to SMD file
-ipcMain.on("addNewTPLBtn", (e, arg) => {
-  dialog.showOpenDialog(mainWindow, {
-    filters: [
-      { name: 'TPL Texture', extensions: ['tpl'] }
-    ]
-  }).then((dados) => {
-    let addedNewTexture = dados.filePaths.toString();
-    mainWindow.webContents.send("addTPLtexture", addedNewTexture);
-    console.log("TPL imported: " + addedNewTexture);
-  })
-})
+// Downloading new object
+ipcMain.on('download', async (event, info) => {
+  await download(mainWindow, info.url, { directory: path.join(__dirname, "..", "..", "ETM", "Downloads") });
+});
 
 // Closing ETM file
 ipcMain.on("closeETMfile", (e, arg) => {
   mainWindow.loadFile("etm.html")
 })
 
+// SPECIALS -------------------------------------------
+// Function for sending SPECIALS file path
+ipcMain.on("openSPECIALSfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "TPL files", extensions: ["TPL"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let SPECIALSfile = um.filePaths.toString();
+      mainWindow.webContents.send("specialsFileChannel", SPECIALSfile);
+      console.log(SPECIALSfile)
+    })
+})
+
+// Saving actual SPECIALS file
+ipcMain.on("saveAsSPECIALSfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'TPL Files', extensions: ['TPL'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsSpecialsfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Closing SPECIALS file
+ipcMain.on("closeSPECIALSfile", (e, arg) => {
+  mainWindow.loadFile("specials.html")
+})
 
 // Quiting application
 ipcMain.on("quitApp", (e, arg) => {
@@ -488,4 +515,8 @@ ipcMain.on("openSNDtool", () => {
 
 ipcMain.on("openETMtool", () => {
   mainWindow.loadFile("etm.html")
+})
+
+ipcMain.on("openSPECIALStool", () => {
+  mainWindow.loadFile("specials.html")
 })
