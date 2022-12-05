@@ -16,7 +16,7 @@ var addEntryEl = document.getElementById("addEntry");
 var removeEntryEl = document.getElementById("removeEntry");
 var exportAllBtn = document.getElementById("export-all");
 var exportAllSubfoldersBtn = document.getElementById("export-all-subfolders");
-
+var searchBtnEl = document.getElementById("searchBtn");
 var copyBtnEl = document.getElementById("copyBtn");
 var pasteBtnEl = document.getElementById("pasteBtn");
 var undoBtnEl = document.getElementById("undoBtn");
@@ -31,6 +31,7 @@ const tbody = document.getElementsByTagName("tbody")[0];
 const entrySizeCell = document.getElementsByClassName("entrySize");
 const entryRawNameCell = document.getElementsByClassName("entryRawName");
 const entryTypeCell = document.getElementsByClassName("entryType");
+const entryAvailableCell = document.getElementsByClassName("entryAvailable");
 
 // Getting entries buttons
 const importBtn = document.getElementsByClassName("importBtn");
@@ -56,6 +57,7 @@ const optionSelect = document.getElementById("download-select");
 const objectList = document.getElementsByClassName("object-list");
 const fileList = document.getElementsByClassName("file-list");
 const downloadFileList = document.getElementsByClassName("download-file-btn");
+const downloadSuccessfulMsg = document.getElementsByClassName("download-success")[0];
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -99,6 +101,8 @@ function windowOnClick(event) {
    }
 }
 
+// Shows available file list for downloading, based on selected option
+fileList[0].style.display = "block"
 optionSelect.addEventListener("change", function (e) {
    let opt_selected = e.target.selectedIndex;
    let obj_ID = objectList[opt_selected].innerText.slice(0, 4);
@@ -115,6 +119,7 @@ optionSelect.addEventListener("change", function (e) {
    }
 })
 
+// Sets links for download buttons 
 fieldsetFiles.addEventListener("click", function (e) {
    if (e.target.classList.contains("download-file-btn")) {
 
@@ -130,10 +135,23 @@ fieldsetFiles.addEventListener("click", function (e) {
       }
 
       let obj_ID = parent.classList[0];
-      console.log(e.target.parentNode.id);
+      for (let y = 0; y < Object.keys(ETM).length; y++) {
+         if (Object.keys(ETM)[y] == obj_ID) {
 
-      ipcRenderer.send("download", { url: ETM.et00[e.target.parentNode.id], objectID: '' });
+            // Gets the object clicked, gets the values (links) and get the link based on button ID
+            ipcRenderer.send("download", { url: Object.entries(ETM)[y][1][e.target.parentNode.id] });
+         }
+      }
    }
+})
+
+// Handles object from a successfull download
+ipcRenderer.on("download-success", (e, arg) => {
+   downloadSuccessfulMsg.style.opacity = 100;
+   downloadSuccessfulMsg.children[0].textContent = `File ${arg.filename} downloaded successfully!`;
+   setTimeout(() => {
+      downloadSuccessfulMsg.style.opacity = 0;
+   }, 2000);
 })
 
 // Download new object
@@ -211,6 +229,9 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
       td_type.id = `td_type-${index + 1}`
       td_type.classList.add("entryType");
 
+      td_available.id = `td_available-${index + 1}`
+      td_available.classList.add("entryAvailable");
+
       import_btn.id = `importBtn-${index}`
       export_btn.id = `exportBtn-${index}`
       download_btn.id = `downloadBtn-${index}`
@@ -238,9 +259,9 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
       td_export.appendChild(export_btn);
       td_download.appendChild(download_btn);
       td_remove.appendChild(remove_btn);
-      td_notes.appendChild(notes);
+      // td_notes.appendChild(notes);
 
-      tr.append(td_number, td_raw, td_size, td_type, td_available, td_import, td_export, td_download, td_remove, td_notes);
+      tr.append(td_number, td_raw, td_size, td_type, td_available, td_import, td_export, td_download, td_remove);
       tbody.appendChild(tr);
    }
 
@@ -388,7 +409,6 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
        UPDATE
       =============== */
 
-
    // ADD NEW OBJECT
    addNewButtons[0].addEventListener("click", async function () {
       ipcRenderer.send("importETM");
@@ -423,7 +443,45 @@ ipcRenderer.on("etmFileChannel", (e, filepath) => {
       })
    });
 
+   // Updates the file avaiability icon
+   searchBtnEl.addEventListener("click", function () {
+      showAvailability();
+   })
 
+   // Updates the file avaiability icon
+   function showAvailability() {
+      if (fs.existsSync("ETM/Downloads")) {
+         let downloadedFiles = fs.readdirSync("ETM/Downloads");
+         if (downloadedFiles.length == 0) {
+            for (let x = 0; x != entryAvailableCell.length; x++) {
+               entryAvailableCell[x].innerHTML = "<i class='fa-solid fa-circle-xmark'></i>"
+               entryAvailableCell[x].style.color = "#733"
+               entryAvailableCell[x].setAttribute("title", "Not available in Downloads folder");
+            }
+            return;
+         };
+
+         // Verifies if file exists on Downloads folder, then assigns text to the Available Cell
+         for (let i = 0; i != entryAvailableCell.length; i++) {
+            for (let x = 0; x != downloadedFiles.length; x++) {
+               if (entryRawNameCell[i].textContent == downloadedFiles[x]) {
+                  entryAvailableCell[i].innerHTML = "<i class='fa-solid fa-circle-check'></i>";
+                  entryAvailableCell[i].style.color = "#473";
+                  entryAvailableCell[i].setAttribute("title", "Available in Downloads folder");
+                  break;
+               } else {
+                  entryAvailableCell[i].innerHTML = "<i class='fa-solid fa-circle-xmark'></i>"
+                  entryAvailableCell[i].style.color = "#733"
+                  entryAvailableCell[i].setAttribute("title", "Not available in Downloads folder");
+               }
+            }
+         }
+      } else {
+         console.log("Download folder does not exists");
+         fs.mkdirSync("ETM/Downloads", { recursive: true });
+      }
+   }
+   showAvailability();
 
    // Save all modified buffer back to file
    saveBtn.addEventListener("click", () => {

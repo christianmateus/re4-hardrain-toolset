@@ -18,9 +18,8 @@
          <i class="fa-regular fa-circle-check"></i>&nbsp;
          File saved successfully!</span>
    </div>
-   <div class="hide infoBox container-hide" id="infoBox">
-      <span class="successfully-removed">
-         <i class="download-file-btn fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   <div class="download-success">
+      <p></p>
    </div>
    <nav id="menu-container">
       <div class="dropdown">
@@ -38,8 +37,7 @@
       <div class="dropdown">
          <button class="menu-buttons" id="edit">Edit</button>
          <div class="dropdown-content">
-            <button id="addEntry" class="menu-buttons"><img src="images/add.png"> Add new object</button>
-            <button id="removeEntry" class="menu-buttons"><img src="images/remove.png"> Remove entry</button>
+            <button id="searchBtn" class="menu-buttons"><img src="images/search.png"> Scan Available</button>
             <hr>
             <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
             <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
@@ -50,16 +48,18 @@
       </div>
       <div class="dropdown">
          <button class="menu-buttons" id="options">Options</button>
-         <div class="dropdown-content">
-            <label for="include-mipmap">Mipmap bytes</label>
-            <input id="include-mipmap" type="checkbox" checked class="menu-inputs">
+         <div class="dropdown-content" style="width: fit-content; padding: 2px;">
+            <label for="auto-import">Import on Download</label>
+            <input id="auto-import" type="checkbox" checked class="menu-inputs">
          </div>
       </div>
       <div class="dropdown">
          <button class="menu-buttons" id="advanced">Advanced</button>
          <div class="dropdown-content">
-            <button id="export-all" class="menu-buttons"><img src="images/export_all.png"> Export all</button>
-            <button id="export-all-subfolders" class="menu-buttons"><img src="images/export_all.png"> Export all with
+            <button id="export-all" class="menu-buttons"><img src="images/export_all.png"> Export
+               all</button>
+            <button id="export-all-subfolders" class="menu-buttons"><img src="images/export_all.png"> Export
+               all with
                subfolders</button>
          </div>
       </div>
@@ -107,12 +107,12 @@
             <thead>
                <tr>
                   <th id="object-number">N°</th>
-                  <th id="raw-name">Raw Name</th>
+                  <th id="raw-name">Object Name</th>
                   <th id="object-size">Size</th>
                   <th id="object-type">Type</th>
                   <th id="object-available">Available</th>
                   <th colspan="4">Options</th>
-                  <th>Notes</th>
+                  <!-- <th>Notes</th> -->
                </tr>
             </thead>
             <tbody>
@@ -237,11 +237,11 @@
                   <div class="et00 file-list">
                      <span class="span-file-names">et0000.bin</span><button title="Download"><i
                            class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
-                     <span class="span-file-names">et0001.bin</span><button title="Download"><i
-                           class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
-                     <span class="span-file-names">et0000.eff</span><button title="Download"><i
+                     <span class="span-file-names">et00.eff</span><button title="Download"><i
                            class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
                      <span class="span-file-names">et0000.tpl</span><button title="Download"><i
+                           class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
+                     <span class="span-file-names">et0001.bin</span><button title="Download"><i
                            class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
                   </div>
                   <div class="et01 file-list">

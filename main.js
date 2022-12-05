@@ -420,7 +420,10 @@ ipcMain.on("importETM", (e, arg) => {
 
 // Downloading new object
 ipcMain.on('download', async (event, info) => {
-  await download(mainWindow, info.url, { directory: path.join(__dirname, "..", "..", "ETM", "Downloads") });
+  await download(mainWindow, info.url, {
+    directory: path.join(__dirname, "..", "..", "ETM", "Downloads"),
+    onCompleted: (object) => { mainWindow.webContents.send("download-success", object) }
+  });
 });
 
 // Closing ETM file
