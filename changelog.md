@@ -1,12 +1,16 @@
 # Changelog
 All changes that affects usability to this project will be documented here.
 
-## 1.3.1 - *WIP*
+## 1.4.0 - *WIP*
 `Added`
+- ETM tool released
+- Added new cards at main menu
+- Added detailed info when passing the cursor by the cards
+- Added top label at main menu
 
 `Fixed`
-- Fix HELP button not working before opening file
-- Fix save-as option not working
+- Fix SND HELP button not working before opening file
+- Fix SND save-as option not working
 
 `Changed`
 - SND tool name now is explicit that it will only work on PS2 version

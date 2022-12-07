@@ -231,7 +231,7 @@ ipcRenderer.on("etsFileChannel", (e, filepath) => {
             // Using the same class name for every image and using the *option* selected value as the index
             var imageChanger = document.getElementsByClassName("imageEl")[parseInt(select_number) - 1];
             buffer.writeUint8(select_opt, 64 + chunk_save); // Writes data on buffer on every hange
-            imageChanger.setAttribute("src", `./images/obj/${select_opt}.png`);
+            imageChanger.setAttribute("src", `images/obj/${select_opt}.png`);
         }
         if (e.target.className == "index") {
             // Gets value from index input and sets to buffer

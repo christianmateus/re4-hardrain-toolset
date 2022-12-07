@@ -18,8 +18,15 @@
          <i class="fa-regular fa-circle-check"></i>&nbsp;
          File saved successfully!</span>
    </div>
+   <div class="hide infoBox container-hide" id="infoBox">
+      <span class="successfully-removed">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   </div>
    <div class="download-success">
       <p></p>
+   </div>
+   <div class="obj-image">
+      <img src="" alt="Image not present, to be updated yet.">
    </div>
    <nav id="menu-container">
       <div class="dropdown">
@@ -37,7 +44,8 @@
       <div class="dropdown">
          <button class="menu-buttons" id="edit">Edit</button>
          <div class="dropdown-content">
-            <button id="searchBtn" class="menu-buttons"><img src="images/search.png"> Scan Available</button>
+            <button id="searchBtn" class="menu-buttons"><img src="images/search.png"> Scan
+               Available</button>
             <hr>
             <button id="copyBtn" class="menu-buttons"><img src="images/copy.png"> Copy</button>
             <button id="pasteBtn" class="menu-buttons"><img src="images/paste.png"> Paste</button>
@@ -47,20 +55,16 @@
          </div>
       </div>
       <div class="dropdown">
-         <button class="menu-buttons" id="options">Options</button>
-         <div class="dropdown-content" style="width: fit-content; padding: 2px;">
-            <label for="auto-import">Import on Download</label>
-            <input id="auto-import" type="checkbox" checked class="menu-inputs">
-         </div>
-      </div>
-      <div class="dropdown">
          <button class="menu-buttons" id="advanced">Advanced</button>
-         <div class="dropdown-content">
+         <div class="dropdown-content" style="width: 190px;">
             <button id="export-all" class="menu-buttons"><img src="images/export_all.png"> Export
                all</button>
             <button id="export-all-subfolders" class="menu-buttons"><img src="images/export_all.png"> Export
                all with
                subfolders</button>
+            <hr>
+            <button id="downloadBtn" class="menu-buttons"><img src="images/download.png"> Download
+               objects</button>
          </div>
       </div>
       <div id="control-window">
@@ -124,6 +128,9 @@
                <span class="close-button">×</span>
                <h4>Download object</h4>
                <hr>
+               <small style="color:#fff; font-size: 12px;">Note: you must import all files for the
+                  object to
+                  appear</small><br>
                <select id="download-select">
                   <option class="object-list" value="0">et00 - Window</option>
                   <option class="object-list" value="1">et01 - Small Box</option>
@@ -727,6 +734,8 @@
                            class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
                      <span class="span-file-names">et4200.bin</span><button title="Download"><i
                            class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
+                     <span class="span-file-names">pl00591.fcv</span><button title="Download"><i
+                           class="download-file-btn fa-solid fa-circle-arrow-down"></i></button><br>
                   </div>
                   <div class="et43 file-list">
                      <span class="span-file-names">et43.eff</span><button title="Download"><i
@@ -1038,8 +1047,10 @@
             </div>
          </div>
          <div class="container-add-buttons">
-            <button disabled class="win7-btn add-new-buttons">Add new with <strong>Import</strong></button>
-            <button class="win7-btn add-new-buttons">Add new with <strong>Download</strong></button>
+            <button disabled class="win7-btn add-new-buttons"><img src="./images/import.png" id="download-btn"
+                  class="icons-inside-button">Add new with <strong>Import</strong></button>
+            <button disabled class="win7-btn add-new-buttons"><img src="./images/download.png" id="download-btn"
+                  class="icons-inside-button"><strong>Download</strong> new objects</button>
          </div>
       </section>
    </main>

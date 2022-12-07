@@ -29,7 +29,7 @@ function createWindow() {
   mainWindow.loadFile('menu.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -409,7 +409,8 @@ ipcMain.on("saveAsETMfile", (e, arg) => {
 ipcMain.on("importETM", (e, arg) => {
   dialog.showOpenDialog(mainWindow, {
     filters: [
-      { name: 'ETM Models', extensions: ['bin', 'eff', 'fcv', 'seq', 'tpl'] }
+      { name: 'ETM Models', extensions: ['bin', 'eff', 'fcv', 'seq', 'tpl'] },
+      { name: 'ETB Crzosk', extensions: ['etb'] }
     ]
   }).then((dados) => {
     let importBinPath = dados.filePaths.toString();
@@ -418,11 +419,27 @@ ipcMain.on("importETM", (e, arg) => {
   })
 })
 
+// Adding new object to ETM file
+ipcMain.on("swapETM", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'ETM Models', extensions: ['bin', 'eff', 'fcv', 'seq', 'tpl'] },
+      { name: 'ETB Crzosk', extensions: ['etb'] }
+    ]
+  }).then((dados) => {
+    let swapBinPath = dados.filePaths.toString();
+    mainWindow.webContents.send("swappedETMobject", swapBinPath);
+    console.log("Object swapped: " + swapBinPath);
+  })
+});
+
 // Downloading new object
 ipcMain.on('download', async (event, info) => {
   await download(mainWindow, info.url, {
     directory: path.join(__dirname, "..", "..", "ETM", "Downloads"),
-    onCompleted: (object) => { mainWindow.webContents.send("download-success", object) }
+    onStarted: () => { mainWindow.webContents.send("download-started") },
+    onCompleted: (object) => { mainWindow.webContents.send("download-success", object) },
+    saveAs: false
   });
 });
 

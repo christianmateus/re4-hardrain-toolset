@@ -12,9 +12,10 @@ const ETM = document.getElementById("etm-card");
 const SPECIALS = document.getElementById("specials-card");
 
 // Window menu buttons
-const minimizeBtn = document.getElementById("minimize")
-const maximizeBtn = document.getElementById("maximize")
-const closeWindowBtn = document.getElementById("closeWindow")
+const minimizeBtn = document.getElementById("minimize");
+const maximizeBtn = document.getElementById("maximize");
+const closeWindowBtn = document.getElementById("closeWindow");
+const logo = document.getElementById("logo");
 
 // Eventos
 ETS.addEventListener("click", function () {
@@ -33,9 +34,9 @@ AEV.addEventListener("click", function () {
 //     ipcRenderer.send("openMDTtool")
 // })
 
-BIN.addEventListener("click", function () {
-    ipcRenderer.send("openBINtool")
-})
+// BIN.addEventListener("click", function () {
+//     ipcRenderer.send("openBINtool")
+// })
 
 SMD.addEventListener("click", function () {
     ipcRenderer.send("openSMDtool")
@@ -49,9 +50,9 @@ ETM.addEventListener("click", function () {
     ipcRenderer.send("openETMtool")
 })
 
-SPECIALS.addEventListener("click", function () {
-    ipcRenderer.send("openSPECIALStool")
-})
+// SPECIALS.addEventListener("click", function () {
+//     ipcRenderer.send("openSPECIALStool")
+// })
 
 // Window menu actions
 minimizeBtn.addEventListener("click", () => {
@@ -64,4 +65,8 @@ maximizeBtn.addEventListener("click", () => {
 
 closeWindowBtn.addEventListener("click", () => {
     ipcRenderer.send("closeWindow")
+})
+
+logo.addEventListener("click", function () {
+    require('electron').shell.openExternal("https://www.youtube.com/@hardrainmodder");
 })

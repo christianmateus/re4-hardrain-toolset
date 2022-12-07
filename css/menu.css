@@ -41,8 +41,9 @@ body {
     display: flex;
     background-color: #fff;
     height: 25px;
+    width: 100%;
     top: 0;
-    position: sticky;
+    position: fixed;
     z-index: 3;
     -webkit-app-region: drag;
 }
@@ -102,10 +103,15 @@ nav hr {
     justify-content: right;
 }
 
+#control-window div {
+    margin-right: auto;
+}
+
 .control-buttons {
     width: 30px;
     background-color: #fff;
     transition: .15s;
+    cursor: pointer;
     -webkit-app-region: no-drag;
 }
 
@@ -139,6 +145,7 @@ h2 {
     font-size: 36pt;
     font-family: "RE4";
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+    margin-top: 40px;
 }
 
 header>p {
@@ -150,6 +157,24 @@ header>p {
 header p:nth-child(3) {
     font-size: .6rem;
     color: #aaa;
+}
+
+#logo-container {
+    display: flex;
+    z-index: 4;
+    -webkit-app-region: no-drag;
+}
+
+#credits {
+    font-size: 10pt;
+    display: inline-block;
+    line-height: 22px;
+    margin: 0 4px;
+    width: 110px;
+}
+
+#logo-container img {
+    cursor: pointer;
 }
 
 /* ===================== 
@@ -251,6 +276,12 @@ header p:nth-child(3) {
     background-repeat: no-repeat;
 }
 
+#etm-card {
+    background-image: url("../images/ETM_background.png");
+    background-size: 369px 105px;
+    background-repeat: no-repeat;
+}
+
 .coming-soon {
     background-image: url("../images/coming-soon.png");
     background-size: contain;
@@ -259,5 +290,9 @@ header p:nth-child(3) {
 }
 
 /* =================== 
-    Depois da tabela
+    Depois dos cards
    =================== */
+
+footer {
+    padding: 30px 0;
+}

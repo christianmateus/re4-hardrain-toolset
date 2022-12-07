@@ -304,7 +304,8 @@ exports.ETMobject = {
     ],
     'et42': [
         "https://drive.google.com/uc?id=1ULBT1inbzCRYBmNWtlXKdKW3IYb3TQ4Z&export=download",
-        "https://drive.google.com/uc?id=1pZOJmxlX3aJ3SC1gsIEL4wE6d_xzJwrj&export=download"
+        "https://drive.google.com/uc?id=1pZOJmxlX3aJ3SC1gsIEL4wE6d_xzJwrj&export=download",
+        "https://drive.google.com/uc?id=1hLn49AxCH0whZrLRrlpKpvVFCiURBxzw&export=download"
     ],
     'et43': [
         "https://drive.google.com/uc?id=1S6k71osZPc56US0LqqmemjgEfIlpTuhN&export=download",
