@@ -65,16 +65,27 @@
   </nav>
   <header>
     <div id="campo-superior">
-      <div class="inner-box">
-        <label for="count">Total Items:</label>
-        <input id="count" type="text" readonly value="">
+      <!-- BOX 1 -->
+      <div class="inner-box file-info">
+        <div>
+          <label for="header-filename">File name:</label>
+          <label for="header-filesize">File size:</label>
+        </div>
+        <div>
+          <input id="header-filename" type="text" readonly value="">
+          <input id="header-filesize" type="text" readonly value="">
+        </div>
       </div>
-      <!-- <div class="inner-box">
-        <input id="guide" type="button" value="Guide">
+      <!-- BOX 2 -->
+      <div class="inner-box total-events">
+        <div>
+          <label for="count">Total Files:</label>
+          <input id="count" type="number" readonly value="">
+        </div>
       </div>
+      <!-- BOX 3 -->
       <div class="inner-box">
-        <input id="item-list" type="button" value="Item List">
-      </div> -->
+      </div>
     </div>
   </header>
   <table>

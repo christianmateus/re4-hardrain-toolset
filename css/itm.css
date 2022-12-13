@@ -28,6 +28,10 @@ body {
     background-color: var(--darkTheme-main-background);
 }
 
+body:not(input) {
+    user-select: none;
+}
+
 /* ===================== 
     Conteúdo superior
    ===================== */
@@ -177,6 +181,11 @@ h5 {
     text-align: center;
 }
 
+b {
+    font-weight: 200;
+    color: #eee;
+}
+
 hr {
     height: 1px;
     background-color: rgba(0, 0, 0, 0.4);
@@ -190,6 +199,10 @@ select:hover {
 option:checked {
     background-color: #ECB365;
     color: #fff
+}
+
+button {
+    cursor: pointer;
 }
 
 fieldset {
@@ -234,24 +247,265 @@ fieldset input:focus {
 }
 
 main {
+    /* display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: center; */
     height: 100%;
-    padding: 30px;
+    /* padding: 30px; */
 }
 
 /* ===================== 
-    Languages Container
+    Entries Container
    ===================== */
 
-.fieldset-main {
-    margin: auto;
+header {
+    background-color: #1c4e51;
+    padding: 5px 0;
+    margin: 6px 0;
+}
+
+table {
+    gap: 0;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: var(--lightpurple);
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+
+}
+
+table th {
+    background-color: var(--lightpurple);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    height: 30px;
+    width: 95px;
+    font-size: 9pt;
+    color: #ECF0F1;
+}
+
+table tbody {
+    background-color: var(--main-background);
+}
+
+table td {
+    background-color: var(--main-background);
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    height: 30px;
+    font-size: 8pt;
+    text-align: center;
+    outline: none;
+}
+
+table td:focus,
+td:hover {
+    background-color: #6cbec1;
+}
+
+tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.cell-buttons {
+    width: 99px;
+    padding: 4px;
+}
+
+.cell-buttons:hover {
+    background-color: var(--main-background);
+}
+
+.table-buttons {
+    border-radius: 4px;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    font-size: 12px;
+}
+
+#object-type,
+#object-number {
+    width: 55px;
+}
+
+.fa-circle-xmark {
+    font-size: 17pt;
+}
+
+.cell-comment {
+    min-width: 150px;
     width: 60%;
+}
+
+.comment-box {
+    width: 100%;
+    height: 100%;
+    padding: 0 5px;
+}
+
+.container-add-buttons {
+    width: 350px;
+    height: 60px;
+    margin-top: 15px;
+    margin-left: 16%;
+}
+
+.add-new-buttons {
+    border-radius: 4px;
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.add-new-buttons:disabled {
+    cursor: not-allowed;
+}
+
+/* ===================== 
+    Modal for download
+   ===================== */
+
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.1);
+    transition: visibility 0s linear 0.10s, opacity 0.10s 0s, transform 0.10s;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--lightpurple);
+    padding: 1rem 1.5rem;
+    width: 24rem;
+    border-radius: 0.5rem;
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.close-button {
+    float: right;
+    width: 1.5rem;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+}
+
+.close-button:hover {
+    background-color: darkgray;
+}
+
+.show-modal {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1.0);
+    transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.download-success {
+    background-color: #473;
+    position: fixed;
+    top: 160px;
+    right: 70px;
+    z-index: 3;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    opacity: 0;
+}
+
+.download-success p {
+    color: #fff;
+    font-size: 14px;
+}
+
+.modal-content h4 {
+    text-align: center;
+    color: #FFF;
+}
+
+.modal-content hr {
+    margin: 15px 0;
+}
+
+.modal-content select {
+    width: 100%;
+    height: 25px;
+    margin-bottom: 10px;
+}
+
+.modal-content fieldset {
     background-color: var(--main-color);
 }
 
-.panel-btn {
+.modal-content .span-file-names {
+    display: inline-block;
+    font-size: 14px;
+    color: #EEE;
+    text-align: left;
+    width: 80%;
+}
+
+.modal-content i {
+    color: #77f;
+    font-size: 25px;
+}
+
+.modal-content button {
+    border-radius: 50%;
+    margin-bottom: 5px;
+    border: 1px solid #99f;
+}
+
+.modal-content i:hover {
+    color: #99f;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.modal-content i:active {
+    color: #44f;
+}
+
+.file-list {
+    display: none;
+}
+
+#download-btn {
+    float: left;
+    width: 15px;
+    margin-right: 3px;
+    pointer-events: none;
+}
+
+/* ======================
+    Image container
+   ====================== */
+
+.obj-image {
+    position: fixed;
+    width: 205px;
+    height: 205px;
+    top: 200px;
+    right: 70px;
+    z-index: 3;
     border-radius: 4px;
-    width: 170px;
-    margin: 20px 0;
+    border: 2px solid #473;
+    box-shadow: 0px 0px 2px rgba(68, 119, 54, 0.4);
+    opacity: 0;
 }
 
 /* ---------------- */

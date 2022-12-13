@@ -448,6 +448,76 @@ ipcMain.on("closeETMfile", (e, arg) => {
   mainWindow.loadFile("etm.html")
 })
 
+// ITM -------------------------------------------
+// Function for sending ITM file path
+ipcMain.on("openITMfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "ITM files", extensions: ["ITM"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let ITMfile = um.filePaths.toString();
+      mainWindow.webContents.send("itmFileChannel", ITMfile);
+      console.log(ITMfile);
+    })
+})
+
+// Saving actual ITM file
+ipcMain.on("saveAsITMfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'ITM Files', extensions: ['ITM'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsITMfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Adding new object to ITM file
+ipcMain.on("importITM", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'ITM Models', extensions: ['bin', 'tpl'] },
+    ]
+  }).then((dados) => {
+    let importBinPath = dados.filePaths.toString();
+    mainWindow.webContents.send("ITMobject", importBinPath);
+    console.log("Object imported: " + importBinPath);
+  })
+})
+
+// Adding new object to ITM file
+ipcMain.on("swapITM", (e, arg) => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [
+      { name: 'ITM Models', extensions: ['bin', 'tpl'] }
+    ]
+  }).then((dados) => {
+    let swapBinPath = dados.filePaths.toString();
+    mainWindow.webContents.send("swappedITMobject", swapBinPath);
+    console.log("Object swapped: " + swapBinPath);
+  })
+});
+
+// Downloading new object
+ipcMain.on('download', async (event, info) => {
+  await download(mainWindow, info.url, {
+    directory: path.join(__dirname, "..", "..", "ITM", "Downloads"),
+    onStarted: () => { mainWindow.webContents.send("download-started") },
+    onCompleted: (object) => { mainWindow.webContents.send("download-success", object) },
+    saveAs: false
+  });
+});
+
+// Closing ITM file
+ipcMain.on("closeITMfile", (e, arg) => {
+  mainWindow.loadFile("itm.html")
+})
+
 // SPECIALS -------------------------------------------
 // Function for sending SPECIALS file path
 ipcMain.on("openSPECIALSfile", () => {
@@ -535,6 +605,10 @@ ipcMain.on("openSNDtool", () => {
 
 ipcMain.on("openETMtool", () => {
   mainWindow.loadFile("etm.html")
+})
+
+ipcMain.on("openITMtool", () => {
+  mainWindow.loadFile("itm.html")
 })
 
 ipcMain.on("openSPECIALStool", () => {

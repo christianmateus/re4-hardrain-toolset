@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { ipcRenderer } = require('electron');
-
-// Const for testing text output (DEBUG)
+let Dropbox = require('dropbox').Dropbox;
+let dbx = new Dropbox({ accessToken: 'sl.BUkN930Qgv0eW8plGbrzfXyUgF2xN4HQP7ktwvaOVYD56V8gjmX1C70QQps3Yuuy9Ch4CJvVJX9LNhcyIdbNr-aSdhWavTQvnJwtTjtqfbo6-Ll4TqJt8DeljeLmj5ldH7-qfUM' });
 
 /* ===============
     CREATE
@@ -13,26 +13,25 @@ var headerFileName = document.getElementById("header-filename");
 var headerFileSize = document.getElementById("header-filesize");
 
 // Const for getting Menu elements
-const openFile = document.getElementById("openBINfile");
-const closeBtn = document.getElementById("closeBINfile");
-const saveBtn = document.getElementById("saveBINfile");
-const saveAsBtn = document.getElementById("saveBINas");
+const openFile = document.getElementById("openITMfile");
+const closeBtn = document.getElementById("closeITMfile");
+const saveBtn = document.getElementById("saveITMfile");
+const saveAsBtn = document.getElementById("saveITMas");
 const quitApp = document.getElementById("quitApp");
 const minimizeBtn = document.getElementById("minimize");
 const maximizeBtn = document.getElementById("maximize");
 const closeWindowBtn = document.getElementById("closeWindow");
 
-var toggleWhiteTheme = document.querySelector(".white-theme-btn");
-var toggleDarkTheme = document.querySelector(".dark-theme-btn");
+const fieldsetMain = document.getElementsByClassName("fieldset-main")[0];
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
-   ipcRenderer.send("openBINfile")
-   ipcRenderer.send("closeBINfile")
+   ipcRenderer.send("openITMfile")
+   ipcRenderer.send("closeITMfile")
 })
 
 saveAsBtn.addEventListener("click", () => {
-   ipcRenderer.send("saveAsBINfile")
+   ipcRenderer.send("saveAsITMfile")
 })
 
 quitApp.addEventListener("click", () => {
@@ -57,6 +56,13 @@ closeWindowBtn.addEventListener("click", () => {
 })
 
 // 
+dbx.filesListFolder({ path: '' })
+   .then(function (response) {
+      console.log(response);
+   })
+   .catch(function (error) {
+      console.log(error);
+   });
 
 /* ===============
     READ
@@ -64,13 +70,9 @@ closeWindowBtn.addEventListener("click", () => {
 
 // Global variables
 var chunk = 0; // Will be incremented in each chunk
-var submeshSize = 0;
-var submeshSizeTotal = 0;
-var padding = 0;
-var binHeaderSize = 0;
 
 // Getting file path
-ipcRenderer.on("binFileChannel", (e, filepath) => {
+ipcRenderer.on("itmFileChannel", (e, filepath) => {
 
    var fd = fs.openSync(filepath); // Opening the file in memory
    var buffer = fs.readFileSync(fd); // Converting file string to buffer (hex)

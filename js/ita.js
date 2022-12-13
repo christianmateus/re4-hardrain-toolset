@@ -46,8 +46,9 @@ const minimizeBtn = document.getElementById("minimize")
 const maximizeBtn = document.getElementById("maximize")
 const closeWindowBtn = document.getElementById("closeWindow")
 
-var toggleWhiteTheme = document.querySelector(".white-theme-btn");
-var toggleDarkTheme = document.querySelector(".dark-theme-btn");
+var headerFileName = document.getElementById("header-filename");
+var headerFileSize = document.getElementById("header-filesize");
+
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -111,6 +112,12 @@ redoBtnEl.addEventListener("click", () => document.execCommand("redo")); // Redo
 ipcRenderer.on("dialog", (e, arg) => {
     let fd = fs.openSync(arg); // fd means file descriptor
     var buffer = fs.readFileSync(fd);
+
+    // Defining headers
+    var ITAFileName = String(arg);
+    var ITAFileName_converted = ITAFileName.replace(/^[^.]*\\/gm, '');
+    headerFileSize.value = buffer.length + " bytes"; // Outputing file size to the header
+    headerFileName.value = ITAFileName_converted; // Outputing file name to the header
 
     let total_item = buffer.readUInt8(6);
     countEl.setAttribute("value", total_item);

@@ -4,7 +4,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="css/bin.css">
+   <link rel="stylesheet" href="css/itm.css">
    <link rel="stylesheet" href="css/navbar.css">
    <!-- FONT AWESOME -->
    <link rel="stylesheet" href="./css/all.min.css">
@@ -30,11 +30,11 @@
       <div class="dropdown">
          <button class="menu-buttons" id="file">File</button>
          <div class="dropdown-content">
-            <button id="openTPLfile" class="menu-buttons"><img src="images/open.png"> Open TPL file</button>
-            <button id="closeTPLfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <button id="openITMfile" class="menu-buttons"><img src="images/open.png"> Open ITM file</button>
+            <button id="closeITMfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
             <hr>
-            <button id="saveTPLfile" class="menu-buttons"><img src="images/save.png"> Save TPL file</button>
-            <button id="saveTPLas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <button id="saveITMfile" class="menu-buttons"><img src="images/save.png"> Save ITM file</button>
+            <button id="saveITMas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
             <hr>
             <button id="quitApp" class="menu-buttons">Quit</button>
          </div>
@@ -90,26 +90,46 @@
          </div>
       </div>
       <!-- BOX 2 -->
-      <!-- <div class="inner-box total-events">
+      <div class="inner-box total-events">
          <div>
-            <label for="count">Total Languages:</label>
-            <input id="count" type="text" readonly value="">
+            <label for="count">Total Files:</label>
+            <input id="count" type="number" readonly value="">
          </div>
-      </div> -->
+      </div>
       <!-- BOX 3 -->
       <div class="inner-box">
       </div>
    </div>
    <!-- PROGRAM DATA STARTS -->
    <main>
-      <fieldset class="fieldset-main">
-         <legend>BIN command panel</legend>
-         <button id="export-bin" class="win7-btn panel-btn">Convert bin to obj</button><br>
-         <button id="import-bin" class="win7-btn panel-btn">Convert obj to bin</button>
-      </fieldset>
+      <header>
+         <h5>ITM Items</h5>
+      </header>
+      <section>
+         <table>
+            <thead>
+               <tr>
+                  <th id="item-number">N°</th>
+                  <th id="raw-name">Item ID</th>
+                  <th id="item-size">Size</th>
+                  <th id="item-available">Available</th>
+                  <th colspan="4">Options</th>
+               </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+         </table>
+         <div class="container-add-buttons">
+            <button disabled class="win7-btn add-new-buttons"><img src="./images/import.png" id="download-btn"
+                  class="icons-inside-button">Add new with <strong>Import</strong></button>
+            <button disabled class="win7-btn add-new-buttons"><img src="./images/download.png" id="download-btn"
+                  class="icons-inside-button"><strong>Download</strong> new items</button>
+         </div>
+      </section>
    </main>
    <script>
-      require('./js/tpl.js'); // Used in electron
+      require('./js/itm.js'); // Used in electron
    </script>
 </body>
 

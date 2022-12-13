@@ -78,36 +78,49 @@ ipcRenderer.on("specialsFileChannel", (e, filepath) => {
    let tpl_offsets;
 
    export_tpl.addEventListener("click", function () {
-      for (let i = 0; i != buffer.at(0) - 1; i++) {
+      for (let i = 0; i != buffer.at(0); i++) {
          if (!fs.existsSync("Specials")) {
             fs.mkdirSync("Specials", { recursive: true })
          }
-         let tpl = buffer.subarray(buffer.readUint32LE(4 + iterator), buffer.readUint32LE(8 + iterator));
-
-         fs.writeFileSync(`Specials/${i}.tpl`, tpl);
+         if (!(i == buffer.at(0) - 1)) {
+            let tpl = buffer.subarray(buffer.readUint32LE(4 + iterator), buffer.readUint32LE(8 + iterator));
+            fs.writeFileSync(`Specials/${i}.tpl`, tpl);
+         } else {
+            console.log("Entrou no offset " + i);
+            let tpl = buffer.subarray(buffer.readUint32LE(4 + iterator));
+            fs.writeFileSync(`Specials/${i}.tpl`, tpl);
+         }
          iterator += 4;
       }
    })
 
    import_tpl.addEventListener("click", function () {
       let buffer_header = Buffer.alloc(0x80)
-      let buffer_textures = '';
+      let fileLengthIterator = 0;
       let buffer_complete = Buffer.alloc(0);
       let file_count = 0;
+      iterator = 0;
 
-      for (let i = 0; i != buffer.at(0) - 1; i++) {
+      buffer_header.writeUint8(buffer.at(0), 0);
+      buffer_header.writeUint8(128, 4);
+
+      for (let j = 0; j != buffer.at(0) - 1; j++) {
+         let file = fs.readFileSync(`Specials/${j}.tpl`);
+         fileLengthIterator = fileLengthIterator + file.length;
+
+         buffer_header.writeUint32LE(fileLengthIterator + 128, 8 + iterator)
+         iterator += 4;
+      }
+
+      for (let i = 0; i != buffer.at(0); i++) {
          if (!fs.existsSync("Specials")) {
             fs.mkdirSync("Specials", { recursive: true })
          }
-         buffer_header.writeUint8(buffer.at(0), 0);
          let file = fs.readFileSync(`Specials/${i}.tpl`);
-         buffer_textures += file;
-
+         fs.appendFileSync("Specials/data.tpl", file);
       }
-      buffer_complete = Buffer.from(buffer_textures);
-      console.log(buffer_complete);
 
-      fs.writeFileSync("Specials/data.tpl", buffer_header + buffer_complete)
+      fs.writeFileSync("Specials/data_complete.tpl", Buffer.concat([buffer_header, fs.readFileSync("Specials/data.tpl")]));
    })
 
    // Main Functions

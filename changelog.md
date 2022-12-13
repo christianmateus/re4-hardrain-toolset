@@ -1,7 +1,8 @@
 # Changelog
 All changes that affects usability to this project will be documented here.
+## 1.4.x - *WIP*
 
-## 1.4.0 - *WIP*
+## 1.4.0 - *07, december 2022*
 `Added`
 - ETM tool released
 - Added new cards at main menu
