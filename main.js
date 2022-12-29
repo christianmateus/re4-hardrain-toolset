@@ -29,7 +29,7 @@ function createWindow() {
   mainWindow.loadFile('menu.html');
 
   // Open DevTools - Remove for PRODUCTION!
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Listen for window being closed
   mainWindow.on('closed', () => {
@@ -168,6 +168,7 @@ ipcMain.on("AEVimportBtn", (e, arg) => {
     console.log(importObjPath)
   })
 })
+
 
 // Closing AEV file (workaround)
 ipcMain.on("closeAEVfile", (e, arg) => {
@@ -518,6 +519,40 @@ ipcMain.on("closeITMfile", (e, arg) => {
   mainWindow.loadFile("itm.html")
 })
 
+// TPL -------------------------------------------
+// Function for sending TPL file path
+ipcMain.on("openTPLfile", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "TPL files", extensions: ["TPL"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let TPLfile = um.filePaths.toString();
+      mainWindow.webContents.send("tplFileChannel", TPLfile);
+      console.log(TPLfile);
+    })
+})
+
+// Saving actual SPECIALS file
+ipcMain.on("saveAsSPECIALSfile", (e, arg) => {
+  dialog.showSaveDialog(mainWindow,
+    {
+      filters: [
+        { name: 'TPL Files', extensions: ['TPL'] }
+      ]
+    }).then((dados) => {
+      let salvar = dados.filePath.toString();
+      mainWindow.webContents.send("saveAsSpecialsfileContent", salvar);
+      console.log(salvar)
+    })
+})
+
+// Closing TPL file
+ipcMain.on("closeTPLfile", (e, arg) => {
+  mainWindow.loadFile("tpl.html")
+})
+
 // SPECIALS -------------------------------------------
 // Function for sending SPECIALS file path
 ipcMain.on("openSPECIALSfile", () => {
@@ -609,6 +644,10 @@ ipcMain.on("openETMtool", () => {
 
 ipcMain.on("openITMtool", () => {
   mainWindow.loadFile("itm.html")
+})
+
+ipcMain.on("openTPLtool", () => {
+  mainWindow.loadFile("tpl.html")
 })
 
 ipcMain.on("openSPECIALStool", () => {

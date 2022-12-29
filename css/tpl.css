@@ -1,0 +1,241 @@
+@import url("fieldset.css");
+
+* {
+  font-family: "Segoe UI";
+  margin: 0;
+  border: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* Cores da ferramenta */
+html {
+  --main-color: #1c4e51;
+  --purple: #1c4e51;
+  --lightpurple: #3c6e71;
+  --main-background: #fff;
+  --main-foreground: #ddd;
+  --darken: #444;
+  --dark-yellow: #ecb365;
+
+  /* Dark theme */
+  --darkTheme-main-background: #041c32;
+  --darkTheme-main-foreground: #04293a;
+  --darkTheme-dark-blue: #064663;
+  --darkTheme-dark-yellow: #ecb365;
+}
+
+body {
+  background-color: var(--darkTheme-main-background);
+}
+
+/* ===================== 
+    Conteúdo superior
+   ===================== */
+
+#campo-superior {
+  display: flex;
+  position: -webkit-sticky;
+  position: sticky;
+  width: 100%;
+  height: 65px;
+  top: 25px;
+  background-color: var(--purple);
+  box-shadow: 0px 3px 6px 2px rgba(0, 0, 0, 0.4);
+  font-size: 8pt;
+  color: #fff;
+  align-items: center;
+  z-index: 4;
+}
+
+.inner-box {
+  flex: 1;
+  height: 100%;
+  margin: 5px;
+}
+
+.inner-box label {
+  margin-right: 10px;
+}
+
+.inner-box.file-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.inner-box.file-info div {
+  display: flex;
+  width: 49.99%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.inner-box.file-info div:nth-child(1) {
+  align-items: flex-end;
+}
+
+.inner-box.file-info div input {
+  width: 150px;
+  margin: 5px 5px;
+}
+
+.inner-box.file-info div label {
+  margin: 5px 5px;
+}
+
+.inner-box.total-events div {
+  text-align: center;
+  width: 80%;
+  margin: 23px 0;
+}
+
+#count {
+  width: 40px;
+  text-align: center;
+  margin-right: 30px;
+  outline: none;
+}
+
+/* ===================== 
+    Definições gerais
+   ===================== */
+
+button:hover {
+  cursor: pointer;
+}
+
+h5 {
+  font-family: sans-serif;
+  font-size: 12pt;
+  color: #eee;
+  font-weight: bold;
+  text-align: center;
+}
+
+hr {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.4);
+  margin: 4px 2px;
+}
+
+select:hover {
+  background-color: #eee;
+}
+
+option:checked {
+  background-color: #ecb365;
+  color: #fff;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  padding: 15px;
+}
+
+/* =========================== 
+    Textures List Container
+   =========================== */
+
+.container-texture-list {
+  width: 60%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+table {
+  color: #fff;
+  background-color: #212529;
+  text-align: center;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table thead th {
+  font-size: 0.7rem;
+  color: #fff;
+  padding: 0 3px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+table tbody td {
+  font-size: 0.7rem;
+  text-align: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+table tbody td:nth-child(1) {
+  padding: 0 5px;
+}
+
+table tbody td span {
+  line-height: 32px;
+}
+
+table tr {
+  height: 40px;
+  max-height: 40px;
+}
+
+table tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+table tfoot td {
+  font-size: 0.7rem;
+  color: #bbb;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.texture-miniature {
+  display: inline;
+  width: 32px;
+}
+
+.select-interlace,
+.select-colors {
+  width: 100%;
+  height: 40px;
+  text-align: center;
+  background-color: transparent;
+  color: #fff;
+}
+
+.select-interlace:hover,
+.select-colors:hover {
+  background-color: transparent;
+}
+
+.select-interlace option,
+.select-colors option {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.advanced-parameters {
+  background-color: rgba(200, 110, 110, 0.11);
+}
+
+/* Table :hover effects */
+table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.11);
+  cursor: pointer;
+}
+
+/* =============================== 
+    Textures Preview Container
+   =============================== */
+
+.container-texture-preview {
+  width: 39.99%;
+  background-color: floralwhite;
+}
+
+/* ---------------- */
+.hide {
+  display: none;
+  transition: 0.5s;
+}

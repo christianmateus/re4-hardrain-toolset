@@ -10,6 +10,7 @@ const SMD = document.getElementById("smd-card");
 const SND = document.getElementById("snd-card");
 const ETM = document.getElementById("etm-card");
 const ITM = document.getElementById("itm-card");
+const TPL = document.getElementById("tpl-card");
 const SPECIALS = document.getElementById("specials-card");
 
 // Window menu buttons
@@ -53,6 +54,10 @@ ETM.addEventListener("click", function () {
 
 ITM.addEventListener("click", function () {
     ipcRenderer.send("openITMtool")
+})
+
+TPL.addEventListener("click", function () {
+    ipcRenderer.send("openTPLtool")
 })
 
 SPECIALS.addEventListener("click", function () {

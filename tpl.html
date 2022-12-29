@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/tpl.css">
+   <link rel="stylesheet" href="css/navbar.css">
+   <!-- FONT AWESOME -->
+   <link rel="stylesheet" href="./css/all.min.css">
+   <title>MDT Tool</title>
+</head>
+
+<body>
+   <div class="hide container-hide" id="fileSaved">
+      <span class="successfully-saved">
+         <i class="fa-regular fa-circle-check"></i>&nbsp;
+         File saved successfully!</span>
+   </div>
+   <div class="hide infoBox container-hide" id="infoBox">
+      <span class="successfully-removed">
+         <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
+   </div>
+   <nav id="menu-container">
+      <div class="dropdown">
+         <button class="menu-buttons" id="file">File</button>
+         <div class="dropdown-content">
+            <button id="openTPLfile" class="menu-buttons"><img src="images/open.png"> Open TPL file</button>
+            <button id="closeTPLfile" class="menu-buttons"><img src="images/close.png"> Close file</button>
+            <hr>
+            <button id="saveTPLfile" class="menu-buttons"><img src="images/save.png"> Save TPL file</button>
+            <button id="saveTPLas" class="menu-buttons"><img src="images/save-as.png"> Save as...</button>
+            <hr>
+            <button id="quitApp" class="menu-buttons">Quit</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="edit">Texture</button>
+         <div class="dropdown-content" style="width: fit-content;">
+            <button id="refresh-btn" class="menu-buttons"><img src="images/search.png"> Refresh</button>
+            <hr>
+            <button id="replace-btn" class="menu-buttons"><img src="images/copy.png"> Replace</button>
+            <button id="rename-btn" class="menu-buttons"><img src="images/copy.png"> Rename</button>
+            <button id="duplicate-btn" class="menu-buttons"><img src="images/copy.png"> Duplicate</button>
+            <button id="delete-btn" class="menu-buttons"><img src="images/trash.png"> Delete</button>
+            <hr>
+            <button id="invert-btn" class="menu-buttons"><img src="images/copy.png"> Invert vertically</button>
+            <button id="transparent-btn" class="menu-buttons"><img src="images/copy.png"> Make Transparent</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="options">Options</button>
+         <div class="dropdown-content">
+            <label for="show-mipmaps-btn">Show Mipmaps</label>
+            <input id="show-mipmaps-btn" type="checkbox" checked class="menu-inputs">
+            <label for="show-advanced-btn">Show Advanced</label>
+            <input id="show-advanced-btn" type="checkbox" class="menu-inputs">
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="advanced">Advanced</button>
+         <div class="dropdown-content" style="width: fit-content;">
+            <button id="exportAllBtn" class="menu-buttons"><img src="images/export_all.png"> Export all
+               textures</button>
+         </div>
+      </div>
+      <div class="dropdown">
+         <button class="menu-buttons" id="help">Help</button>
+      </div>
+      <div id="control-window">
+         <button title="Main menu" id="menuWindow" class="control-buttons menuWindow"><img
+               src="./images/main-menu.png"></button>
+         <button title="Minimize" id="minimize" class="control-buttons minimize"><img
+               src="./images/minimize.png"></button>
+         <button title="Maximize" id="maximize" class="control-buttons maximize"><img
+               src="./images/expand-window.png"></button>
+         <button title="Quit" id="closeWindow" class="control-buttons closeWindow"><img
+               src="./images/close-window.png"></button>
+      </div>
+   </nav>
+   <div id="campo-superior">
+      <!-- BOX 1 -->
+      <div class="inner-box file-info">
+         <div>
+            <label for="header-filename">File name:</label>
+            <label for="header-filesize">Total size:</label>
+         </div>
+         <div>
+            <input id="header-filename" type="text" readonly value="">
+            <input id="header-filesize" type="text" readonly value="">
+         </div>
+      </div>
+      <!-- BOX 2 -->
+      <div class="inner-box total-events">
+         <!-- <div>
+            <label for="count">Total Audios:</label>
+            <input id="count" type="text" readonly value="">
+         </div> -->
+      </div>
+      <!-- BOX 3 -->
+      <div class="inner-box">
+      </div>
+   </div>
+   <!-- PROGRAM DATA STARTS -->
+   <main>
+      <section class="container-texture-list">
+         <table>
+            <thead>
+               <th></th>
+               <th colspan="2">Texture</th>
+               <th>Width</th>
+               <th>Height</th>
+               <th>Colors</th>
+               <th>Interlace</th>
+               <th class="advanced-parameters hide">Render</th>
+               <th class="advanced-parameters hide">Mipmaps</th>
+               <th class="advanced-parameters hide">Resolution</th>
+               <th class="advanced-parameters hide">Unk 01</th>
+               <th class="advanced-parameters hide">Unk 02</th>
+               <th class="advanced-parameters hide">Unk 03</th>
+               <th class="advanced-parameters hide">Unk 04</th>
+            </thead>
+            <tbody>
+               <!-- <tr id="tr-0">
+                  <td><input id="checkbox-0" type="checkbox"></td>
+                  <td><img id="miniature-0"></td>
+                  <td id="name-0">0.tpl</td>
+                  <td id="width-0" class="texture-width">256</td>
+                  <td id="height-0" class="texture-height">256</td>
+                  <td id="colors-0" class="texture-colors">8</td>
+                  <td id="interlace-0" class="texture-interlace">
+                     <select class="select-interlace">
+                        <option value="0">BGR</option>
+                        <option value="1">BGR+i</option>
+                        <option value="2">PS2</option>
+                        <option value="3">Stretched</option>
+                     </select>
+                  </td>
+                  <td id="render-0" class="texture-render advanced-parameters hide">128</td>
+                  <td id="mipmaps-0" class="texture-mipmaps advanced-parameters hide">0</td>
+                  <td id="resolution-0" class="texture-resolution advanced-parameters hide">0</td>
+                  <td id="unk1-0" class="texture-unk1 advanced-parameters hide">0</td>
+                  <td id="unk2-0" class="texture-unk2 advanced-parameters hide">65</td>
+                  <td id="unk3-0" class="texture-unk3 advanced-parameters hide">33</td>
+                  <td id="unk4-0" class="texture-unk4 advanced-parameters hide">6</td>
+               </tr> -->
+            </tbody>
+            <tfoot>
+               <td colspan="14">Total of 7 textures</td>
+            </tfoot>
+         </table>
+      </section>
+      <section class="container-texture-preview">
+         <img style="max-width: 100%;" src="images/t2.png">
+      </section>
+   </main>
+   <script>
+      require('./js/tpl.js'); // Used in electron
+   </script>
+</body>
+
+</html>
