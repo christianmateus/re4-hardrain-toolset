@@ -449,6 +449,7 @@ ipcMain.on("closeETMfile", (e, arg) => {
   mainWindow.loadFile("etm.html")
 })
 
+
 // ITM -------------------------------------------
 // Function for sending ITM file path
 ipcMain.on("openITMfile", () => {
@@ -519,6 +520,7 @@ ipcMain.on("closeITMfile", (e, arg) => {
   mainWindow.loadFile("itm.html")
 })
 
+
 // TPL -------------------------------------------
 // Function for sending TPL file path
 ipcMain.on("openTPLfile", () => {
@@ -530,6 +532,20 @@ ipcMain.on("openTPLfile", () => {
     .then((um) => {
       let TPLfile = um.filePaths.toString();
       mainWindow.webContents.send("tplFileChannel", TPLfile);
+      console.log(TPLfile);
+    })
+})
+
+// Function for replacing TPL file
+ipcMain.on("replace-texture-open", () => {
+  dialog.showOpenDialog(mainWindow, {
+    filters: [{
+      name: "TPL files", extensions: ["TPL"]
+    }], properties: ["openFile"]
+  })
+    .then((um) => {
+      let TPLfile = um.filePaths.toString();
+      mainWindow.webContents.send("replace-texture-file", TPLfile);
       console.log(TPLfile);
     })
 })
@@ -548,10 +564,26 @@ ipcMain.on("saveAsSPECIALSfile", (e, arg) => {
     })
 })
 
+// Error message: replacing texture with more than 1 texture
+ipcMain.on("error-multiple-textures", (e, arg) => {
+  dialog.showErrorBox("Error", "Cannot replace a single texture with multiple textures, please select another TPL file with 1 single texture.")
+})
+
+// Error message: no texture selected
+ipcMain.on("error-no-texture-selected", (e, arg) => {
+  dialog.showErrorBox("No texture selected", "Cannot replace unspecified texture, please click on any texture to activate this option.")
+})
+
+// Error message: no texture selected
+ipcMain.on("texture-different-resolution", (e, arg) => {
+  dialog.showMessageBox("Imported texture has a different resolution from original, be aware that PS2 version is very limited and can crash.")
+})
+
 // Closing TPL file
 ipcMain.on("closeTPLfile", (e, arg) => {
   mainWindow.loadFile("tpl.html")
 })
+
 
 // SPECIALS -------------------------------------------
 // Function for sending SPECIALS file path
@@ -591,6 +623,7 @@ ipcMain.on("closeSPECIALSfile", (e, arg) => {
 ipcMain.on("quitApp", (e, arg) => {
   mainWindow.close();
 })
+
 
 // ====================
 // Window menu buttons

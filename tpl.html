@@ -21,6 +21,19 @@
       <span class="successfully-removed">
          <i class="fa-solid fa-circle-exclamation"></i>&nbsp; Event deleted!</span>
    </div>
+   <!-- Context menu (right button click) -->
+   <div class="context-menu">
+      <ul class="menu-options">
+         <li class="menu-option"><i class="fa-file-export fa-solid"></i> Extract</li>
+         <li class="menu-option"><i class="fa-file-import fa-solid"></i> Replace</li>
+         <li class="menu-option"><i class="fa-copy fa-solid"></i> Duplicate</li>
+         <li class="menu-option"><i class="fa-trash-alt fa-solid"></i> Delete</li>
+         <hr>
+         <li class="menu-option"><i class="fa-camera-rotate fa-solid"></i> Invert vertically</li>
+         <li class="menu-option"><i class="fa-eye-slash fa-solid"></i> Make Transparent</li>
+      </ul>
+   </div>
+   <!-- Top Main menu -->
    <nav id="menu-container">
       <div class="dropdown">
          <button class="menu-buttons" id="file">File</button>
@@ -37,15 +50,18 @@
       <div class="dropdown">
          <button class="menu-buttons" id="edit">Texture</button>
          <div class="dropdown-content" style="width: fit-content;">
-            <button id="refresh-btn" class="menu-buttons"><img src="images/search.png"> Refresh</button>
+            <button id="refresh-btn" class="menu-buttons"><img src="images/refresh.png"> Refresh</button>
             <hr>
-            <button id="replace-btn" class="menu-buttons"><img src="images/copy.png"> Replace</button>
-            <button id="rename-btn" class="menu-buttons"><img src="images/copy.png"> Rename</button>
-            <button id="duplicate-btn" class="menu-buttons"><img src="images/copy.png"> Duplicate</button>
-            <button id="delete-btn" class="menu-buttons"><img src="images/trash.png"> Delete</button>
+            <button id="add-texture-btn" class="menu-buttons"><img src="images/add.png"> Add new texture</button>
+            <button id="extract-btn" class="menu-buttons"><img width="16px" src="images/export.png"> Extract
+               texture</button>
+            <button id="replace-btn" class="menu-buttons"><img src="images/import-new.png"> Replace</button>
+            <button id="duplicate-btn" class="menu-buttons"><img src="images/duplicate.png"> Duplicate</button>
+            <button id="delete-btn" class="menu-buttons"><img src="images/delete.png"> Delete</button>
             <hr>
-            <button id="invert-btn" class="menu-buttons"><img src="images/copy.png"> Invert vertically</button>
-            <button id="transparent-btn" class="menu-buttons"><img src="images/copy.png"> Make Transparent</button>
+            <button id="invert-btn" class="menu-buttons"><img src="images/vertical-flip.png"> Invert vertically</button>
+            <button id="transparent-btn" class="menu-buttons"><img src="images/transparency.png"> Make
+               Transparent</button>
          </div>
       </div>
       <div class="dropdown">
@@ -110,7 +126,7 @@
                <th colspan="2">Texture</th>
                <th>Width</th>
                <th>Height</th>
-               <th>Colors</th>
+               <th>Bit Depth</th>
                <th>Interlace</th>
                <th class="advanced-parameters hide">Render</th>
                <th class="advanced-parameters hide">Mipmaps</th>
