@@ -38,7 +38,6 @@ const showmipmapsCheck = document.getElementById("show-mipmaps-btn");
 const showadvancedCheck = document.getElementById("show-advanced-btn");
 
 // Const for getting other Menu elements
-const exportBtn = document.getElementById("exportBtn");
 const exportAllBtn = document.getElementById("exportAllBtn");
 const helpBtn = document.getElementById("help");
 const minimizeBtn = document.getElementById("minimize");
@@ -57,6 +56,12 @@ let unk1El = document.getElementsByClassName("texture-unk1");
 let unk2El = document.getElementsByClassName("texture-unk2");
 let unk3El = document.getElementsByClassName("texture-unk3");
 let unk4El = document.getElementsByClassName("texture-unk4");
+let count = document.getElementById("total-textures");
+
+// Const for Texture Area elements
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const downloadBtn = document.getElementById("download");
 
 // Menu actions (open/save/quit)
 openFile.addEventListener("click", () => {
@@ -117,6 +122,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
    headerFileName.value = path.basename(filepath); // Outputing file name to the header
    let folderName = path.parse(filepath).name;
    let totalTextures = buffer.at(4);
+   count.innerText = totalTextures;
 
    // Functions
    function createTableCells(index) {
@@ -124,7 +130,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       const td_checkbox = document.createElement("td");
       const input_checkbox = document.createElement("input");
       const td_img = document.createElement("td");
-      const img = document.createElement("img");
+      const canvas = document.createElement("canvas");
       const td_name = document.createElement("td");
       const td_width = document.createElement("td");
       const td_height = document.createElement("td");
@@ -152,7 +158,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       tr.id = `tr-${index}`;
       input_checkbox.id = `checkbox-${index}`;
       input_checkbox.setAttribute("type", "checkbox");
-      img.id = `miniature-${index}`;
+      canvas.id = `canvas`;
       td_name.id = `name-${index}`;
       td_width.id = `width-${index}`;
       td_height.id = `height-${index}`;
@@ -209,7 +215,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       td_interlace.appendChild(select_interlace);
 
       td_checkbox.appendChild(input_checkbox);
-      td_img.appendChild(img);
+      // td_img.appendChild(canvas);
 
       tr.append(
          td_checkbox,
@@ -228,15 +234,6 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
          td_unk4
       );
       tbody.appendChild(tr);
-   }
-
-   for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
-      createTableCells(row);
-   }
-
-   for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
-      readTexture(textureIterator, row);
-      textureIterator += 0x30;
    }
 
    function readTexture(textureChunk, index) {
@@ -363,7 +360,104 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       }
    }
 
-   // Event Listeners
+   function importNewTexture() {
+      ipcRenderer.send("addNewTPLBtn");
+   };
+
+   function duplicateTexture() {
+      let iterator = 0;
+      let chunk = 0x30 * Number(selectedRow.substring(3));
+      let temp_header = buffer.subarray(0x10 + chunk, (0x10 + chunk) + 0x30); // Creates a temporary header for copying (avoids both buffers being edited)
+      let header = Buffer.from(temp_header);
+      let paletteSize = 0;
+      if (header.at(4) == 8) { paletteSize = 128; } else { paletteSize = 1024; } // 128 for 4-bit, 1024 for 8-bit
+      let pixels = buffer.subarray(buffer.readUint32LE(0x30 + chunk), buffer.readUint32LE(0x34 + chunk));
+      let palette = buffer.subarray(buffer.readUint32LE(0x34 + chunk), buffer.readUint32LE(0x34 + chunk) + paletteSize);
+
+      let complete_mainHeader = buffer.subarray(0, 0x10);
+      let complete_textureHeader = buffer.subarray(0x10, (0x30 * complete_mainHeader.readUint8(4)) + 0x10);
+      let complete_mipMapHeader = buffer.subarray((0x30 * complete_mainHeader.readUint8(4)) + 16, buffer.readUint32LE(0x30))
+      let complete_indicesAndPallete = buffer.subarray(buffer.readUint32LE(0x30));
+
+      // Updates new texture header pointers before inserting
+      header.writeUint32LE(buffer.length + 48, 0x20);
+
+      // Check bit depth and updates palette pointer
+      if (header.readUint8(4) == 8) {
+         console.log("4-bit texture");
+         header.writeUint32LE((buffer.length + pixels.length + 0x30), 0x24);
+      } else {
+         console.log("8-bit texture");
+         header.writeUint32LE((buffer.length + pixels.length + 0x30), 0x24);
+      }
+
+      // Add new texture header to the end of headers area and updates every pointer by +48
+      complete_indicesAndPallete = Buffer.concat([complete_indicesAndPallete, pixels, palette]);
+
+      // Updates every pointer by +48
+      for (let i = 0; i != complete_mainHeader.readUint8(4); i++) {
+         complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(0x20 + iterator) + 0x30, 0x20 + iterator)
+         complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(0x24 + iterator) + 0x30, 0x24 + iterator)
+         if (complete_textureHeader.readUint32LE(16 + iterator) > 0) {
+            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(0x10 + iterator) + 0x30, 0x10 + iterator)
+            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(0x14 + iterator) + 0x30, 0x14 + iterator)
+         }
+         iterator += 0x30;
+      }
+
+      // Gets mipmap quantity
+      mipMapCount = complete_mipMapHeader.length / 48;
+      iterator = 0;
+      for (let j = 0; j != (complete_mipMapHeader.length / 48); j++) {
+         complete_mipMapHeader.writeUint32LE(complete_mipMapHeader.readUint32LE(32 + iterator) + 48, 32 + iterator);
+         iterator += 48;
+      }
+
+      // Updates main header count by +1
+      complete_mainHeader.writeUint8(complete_mainHeader.readUint8(4) + 1, 4);
+      complete_textureHeader = Buffer.concat([complete_textureHeader, header, complete_mipMapHeader]);
+      buffer = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
+
+      textBox("Texture duplicated at the end of the file!", "green");
+      count.innerText = Number(count.innerText) + 1;
+
+      // Rebuilds the table to update values
+      tbody.innerHTML = "";
+      for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
+         createTableCells(row);
+      }
+      textureIterator = 0;
+      for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
+         readTexture(textureIterator, row);
+         textureIterator += 0x30;
+      }
+      // fs.closeSync(textureFD);
+      // fs.writeFileSync(`TPL/duplicatedTexture.tpl`, buffer_textures);
+
+   };
+
+   function refreshTable() {
+      for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
+         createTableCells(row);
+      }
+
+      for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
+         readTexture(textureIterator, row);
+         textureIterator += 0x30;
+      }
+   };
+
+   // Executed on Starting
+   for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
+      createTableCells(row);
+   }
+
+   for (let row = 0; row != buffer.readUInt16LE(0x04); row++) {
+      readTexture(textureIterator, row);
+      textureIterator += 0x30;
+   }
+
+   // ============= Event Listeners =============
    exportAllBtn.addEventListener("click", function () {
       fs.mkdirSync(`TPL/${folderName}`, { recursive: true });
       for (let i = 0; i != buffer.readUInt16LE(0x04); i++) {
@@ -383,6 +477,24 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       }
    });
 
+   // REFRESH TABLE
+   refreshBtn.addEventListener("click", function () {
+      refreshTable();
+   });
+
+   // EXTRACT TEXTURE
+   extractBtn.addEventListener("click", function () {
+      if (selectedRow == "") {
+         ipcRenderer.send("error-no-texture-selected");
+         return;
+      }
+      if (!fs.existsSync(`TPL/${folderName}`)) {
+         fs.mkdirSync(`TPL/${folderName}`, { recursive: true });
+      }
+      fs.writeFileSync(`TPL/${folderName}/${selectedRow.substring(3)}.tpl`, exportSingleTexture(selectedRow.substring(3)));
+   });
+
+   // REPLACE TEXTURE
    replaceBtn.addEventListener("click", function () {
       if (selectedRow == "") {
          ipcRenderer.send("error-no-texture-selected");
@@ -403,7 +515,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
 
          // Splitting the imported file in Header, Pixels and Palette
          let importedTextureHeader = importedTexture.subarray(0x10, 0x40);
-         let importedTexturePixels = importedTexture.subarray(0x30, importedTextureHeader.readUint32LE(0x24));
+         let importedTexturePixels = importedTexture.subarray(0x40, importedTextureHeader.readUint32LE(0x24));
          let importedTexturePalette = importedTexture.subarray(importedTextureHeader.readUint32LE(0x24));
 
          // New Params
@@ -423,7 +535,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
 
          // Verifies if width or height changed
          if (newWidth != oldWidth || newHeight != oldHeight) {
-            ipcRenderer.send("texture-different-resolution");
+            // ipcRenderer.send("texture-different-resolution");
          }
 
          let buffer_top = buffer.subarray(0x00, buffer.readUint32LE(0x30 + (0x30 * Number(selectedRow.substring(3)))));
@@ -442,7 +554,7 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
          // Get mipmap quantity
          let mipmapCount = 0;
          for (let texture = 0; texture != totalTextures; texture++) {
-            mipmapCount += buffer_complete.readUint8(0x0A + (0x30 * texture));
+            mipmapCount += buffer_complete.readUint8(0x0A + (buffer_complete.readUint8(0x0A + (0x30 * texture))));
          }
 
          // Update pointers
@@ -450,17 +562,27 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
             let width = buffer_complete.readUint16LE(0x10 + (0x30 * pointer));
             let height = buffer_complete.readUint16LE(0x12 + (0x30 * pointer));
             let bitDepth = buffer_complete.readUint8(0x14 + (0x30 * pointer));
-            let chunk = (64 * pointer) + 64;
-            let firstTextureOffset = (0x30 * totalTextures + mipmapCount) + 0x10;
+            let chunk = 0x30 * Number(selectedRow.substring(3));
+            let firstTextureOffset = 48 * (totalTextures + mipmapCount) + 16;
+            let tempPixelsPointer = buffer_complete.readUint32LE(0x30 + chunk);
+            let tempPalettePointer = buffer_complete.readUint32LE(0x34 + chunk);
 
-            buffer_complete.writeUint32LE((width * height) + firstTextureOffset, 0x30 * Number(selectedRow.substring(3)));
-
-            // Fazer verificações de bit depth
-            if (condition) {
-               // buffer_complete.writeUint32LE(, 0x34 * Number(selectedRow.substring(3))); 
-
+            // Updating pixels and palette pointers
+            if (pointer == 0) {
+               buffer_complete.writeUint32LE(firstTextureOffset, 0x30);
+               buffer_complete.writeUint32LE(firstTextureOffset + ((width * height) / 2), 0x34);
             } else {
-
+               if (bitDepth == 8) {
+                  console.log("4 bit");
+                  buffer_complete.writeUint32LE(buffer_complete.readUint32LE(0x34 + (chunk - 1)) + 128, 0x30 + chunk);
+                  buffer_complete.writeUint32LE(buffer_complete.readUint32LE(0x30 + chunk) + ((width * height) / 2), 0x34 + chunk);
+               } else {
+                  buffer_complete.writeUint32LE(buffer_complete.readUint32LE(0x30 + chunk) + (width * height), 0x34 + chunk);
+                  console.log("8 bit");
+                  console.log(buffer_complete.readUint32LE(0x30 + chunk) + (width * height));
+                  buffer_complete.writeUint32LE(buffer_complete.readUint32LE(0x34 + (chunk - 1)) + 1024, 0x30 + chunk);
+               }
+               // buffer_complete.writeUint32LE((width * height) + firstTextureOffset, 0x30 * Number(selectedRow.substring(3)));
             }
             pointerAcumulator += 0x30;
          }
@@ -472,6 +594,90 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
          return;
       }
    });
+
+   // ADD NEW TEXTURE
+   addTextureBtn.addEventListener("click", function () {
+      importNewTexture();
+   });
+
+   ipcRenderer.on("addTPLtexture", function (e, filepath) {
+      let addNewTextureBuffer = Buffer.alloc(0);
+      let iterator = 0;
+      let mipMapCount = 0;
+      addNewTextureBuffer = fs.readFileSync(filepath);
+
+      let fileHeader = addNewTextureBuffer.subarray(0, 16);
+      let textureHeader = addNewTextureBuffer.subarray(16, 64);
+      let indices = addNewTextureBuffer.subarray(64, addNewTextureBuffer.readUint32LE(52));
+      let pallete = addNewTextureBuffer.subarray(addNewTextureBuffer.readUint32LE(52));
+
+      let complete_mainHeader = buffer.subarray(0, 16);
+      let complete_textureHeader = buffer.subarray(16, (48 * complete_mainHeader.readUint8(4)) + 16);
+      let complete_mipMapHeader = buffer.subarray((48 * complete_mainHeader.readUint8(4)) + 16, buffer.readUint32LE(48))
+      let complete_indicesAndPallete = buffer.subarray(buffer.readUint32LE(48));
+
+      // Updates new texture header pointers before inserting
+      textureHeader.writeUint32LE(buffer.length + 48, 32);
+
+      // Removing MipMaps
+      textureHeader.writeUint8(0, 10);
+
+      // Check bit depth
+      if (textureHeader.readUint8(4) == 8) {
+         console.log("4-bit texture");
+         textureHeader.writeUint32LE((buffer.length + indices.length + 48), 36);
+      } else {
+         console.log("8-bit texture");
+         textureHeader.writeUint32LE((buffer.length + indices.length + 48), 36);
+      }
+
+      // Add new texture header to the end of headers area and updates every pointer by +48
+      complete_indicesAndPallete = Buffer.concat([complete_indicesAndPallete, indices, pallete]);
+
+      // Updates every pointer by +48
+      for (let i = 0; i != complete_mainHeader.readUint8(4); i++) {
+         complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(32 + iterator) + 48, 32 + iterator)
+         complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(36 + iterator) + 48, 36 + iterator)
+         if (complete_textureHeader.readUint32LE(16 + iterator) > 0) {
+            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(16 + iterator) + 48, 16 + iterator)
+            complete_textureHeader.writeUint32LE(complete_textureHeader.readUint32LE(20 + iterator) + 48, 20 + iterator)
+         }
+         iterator += 48;
+      }
+
+      // Gets mipmap quantity
+      mipMapCount = complete_mipMapHeader.length / 48;
+      iterator = 0;
+      for (let j = 0; j != (complete_mipMapHeader.length / 48); j++) {
+         complete_mipMapHeader.writeUint32LE(complete_mipMapHeader.readUint32LE(32 + iterator) + 48, 32 + iterator);
+         iterator += 48;
+      }
+
+      // Updates main header count by +1
+      complete_mainHeader.writeUint8(complete_mainHeader.readUint8(4) + 1, 4);
+      complete_textureHeader = Buffer.concat([complete_textureHeader, textureHeader, complete_mipMapHeader]);
+
+      buffer_textures = Buffer.concat([complete_mainHeader, complete_textureHeader, complete_indicesAndPallete]);
+      count.innerText = Number(count.innerText) + 1;
+      textBox("New texture added sucessfully!", "green");
+      // fs.closeSync(textureFD);
+      fs.writeFileSync(`TPL/addnewtexture.tpl`, buffer_textures);
+   });
+
+   // DUPLICATE TEXTURE
+   duplicateBtn.addEventListener("click", function () {
+      if (selectedRow == "") {
+         ipcRenderer.send("error-no-texture-selected");
+         return;
+      }
+      duplicateTexture();
+   });
+
+   downloadBtn.addEventListener("click", function () {
+      var image = document.getElementById("canvas").toDataURL("image/png")
+         .replace("image/png", "image/octet-stream");
+      download.setAttribute("href", image);
+   })
 
    /* ==========================================
         NEW FUNCIONALITY: Context Menu
@@ -504,10 +710,12 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       if (e.target.parentNode.tagName == "TR") {
          selectedRow = e.target.parentNode.id;
          e.target.parentNode.classList.add("selected");
-         console.log(selectedRow);
+         renderTexture8bit();
+         render4BitTpl()
       } else {
          selectedRow = e.target.parentNode.parentNode.id;
-         console.log(selectedRow);
+         renderTexture8bit();
+         render4BitTpl()
          e.target.parentNode.parentNode.classList.add("selected");
       }
    });
@@ -529,15 +737,94 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
       ipcRenderer.send("replace-texture-open");
    });
 
+   // Duplicate texture
+   menuOption[2].addEventListener("click", function () {
+      duplicateTexture();
+   });
+
+   /* ==========================================
+       NEW FUNCIONALITY: Render textures
+      ========================================== */
+
+   function renderTexture8bit() {
+      let chunk = 0x30 * Number(selectedRow.substring(3));
+      let width = buffer.readUint16LE(0x10 + chunk);
+      let height = buffer.readUint16LE(0x12 + chunk);
+      let pointerPallete = buffer.readUint32LE(0x34 + chunk);
+      let pixelsStart = 0x40;
+      let imageData = ctx.createImageData(width, height);
+      canvas.width = width;
+      canvas.height = height;
+
+      // Loop for 8-bit images
+      for (let i = 0; i < imageData.data.length; i += 4) {
+         // Reads RGBA for every indice
+         imageData.data[i + 0] = buffer.readUint8(pointerPallete + (buffer.readUint8(pixelsStart + chunk))) // R value
+         imageData.data[i + 1] = buffer.readUint8(pointerPallete + (buffer.readUint8(pixelsStart + chunk)) + 1) // G value
+         imageData.data[i + 2] = buffer.readUint8(pointerPallete + (buffer.readUint8(pixelsStart + chunk)) + 2) // B value
+         imageData.data[i + 3] = 255;
+         pixelsStart++; // Moves to next indice
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+   };
+   // renderTexture8bit();
+
+   function render4BitTpl() {
+      let chunk = 0x30 * Number(selectedRow.substring(3));
+      let interlace = buffer.readUint8(0x16 + chunk)
+      let indicesOffset = buffer.readUint32LE(0x30 + chunk);
+      let indicesIterator = 0;
+      let padding = 0;
+      let width = buffer.readUint16LE(0x10 + chunk);
+      let height = buffer.readUint16LE(0x12 + chunk);
+      let pointerPallete = buffer.readUint32LE(0x34 + chunk);
+      let imageData = ctx.createImageData(width, height);
+      canvas.width = width;
+      canvas.height = height;
+
+      if (interlace == 0 || interlace == 1 || interlace == 2) {
+         indicesIterator = 0
+         // Loop for 4-bit images
+         for (let i = 0; i < imageData.data.length; i += 4) {
+            let higherbyte = buffer.readUint8(indicesOffset + ~~(indicesIterator / 2)) & 0x0F; // Gets second part of first byte, the offset is divided by 2 and returns integer
+            let lowerbyte = buffer.readUint8(indicesOffset + ~~(indicesIterator / 2)) >> 4; // Gets first part of first byte, the offset is divided by 2 and returns integer
+
+            // Adds padding of 32 bytes if texture byte is higher than 8
+            if (higherbyte > 7) {
+               padding = 32;
+            } else {
+               padding = 0
+            }
+            // Creates pixels in the canvas
+            imageData.data[i + 0] = buffer.readUint8(pointerPallete + padding + (4 * higherbyte)) // R value
+            imageData.data[i + 1] = buffer.readUint8(pointerPallete + padding + (4 * higherbyte + 1)) // G value
+            imageData.data[i + 2] = buffer.readUint8(pointerPallete + padding + (4 * higherbyte + 2)) // B value
+            imageData.data[i + 3] = 255; // Alpha value
+
+            // Adds padding of 32 bytes if texture byte is higher than 8
+            if (lowerbyte > 7) {
+               padding = 32;
+            } else {
+               padding = 0
+            }
+            // Creates pixels in the canvas
+            imageData.data[i + 0] = buffer.readUint8(pointerPallete + padding + (4 * lowerbyte)) // R value
+            imageData.data[i + 1] = buffer.readUint8(pointerPallete + padding + (4 * lowerbyte + 1)) // G value
+            imageData.data[i + 2] = buffer.readUint8(pointerPallete + padding + (4 * lowerbyte + 2)) // B value
+            imageData.data[i + 3] = 255; // Alpha value
+
+            indicesIterator++; // Moves to next indice
+         }
+         ctx.putImageData(imageData, 0, 0);
+      }
+   }
+   render4BitTpl();
+
    // Save all modified buffer back to file
    saveBtn.addEventListener("click", () => {
-      let COMPLETE_BUFFER = Buffer.concat([
-         buffer_initial,
-         buffer_VAG,
-         buffer_audios,
-      ]);
-      headerFileSize.value = COMPLETE_BUFFER.length + " bytes";
-      fs.writeFileSync(filepath, COMPLETE_BUFFER);
+      headerFileSize.value = buffer.length + " bytes";
+      fs.writeFileSync(filepath, buffer);
       var saveMessage = document.querySelector(".hide");
       saveMessage.style.display = "block";
       setTimeout(() => {
@@ -551,11 +838,11 @@ ipcRenderer.on("tplFileChannel", (e, filepath) => {
    });
 
    ipcRenderer.on("saveAsTPLfileContent", (e, arg) => {
-      let COMPLETE_BUFFER = Buffer.concat([
+      let buffer = Buffer.concat([
          buffer_initial,
          buffer_VAG,
          buffer_audios,
       ]);
-      fs.writeFileSync(arg, COMPLETE_BUFFER);
+      fs.writeFileSync(arg, buffer);
    });
 });

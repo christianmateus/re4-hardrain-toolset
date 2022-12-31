@@ -162,12 +162,13 @@
                </tr> -->
             </tbody>
             <tfoot>
-               <td colspan="14">Total of 7 textures</td>
+               <td colspan="14">Total of <span id="total-textures"></span> textures</td>
             </tfoot>
          </table>
       </section>
       <section class="container-texture-preview">
-         <img style="max-width: 100%;" src="images/t2.png">
+         <canvas id="canvas"></canvas>
+         <a id="download" download="image.png"><button type="button">Download</button></a>
       </section>
    </main>
    <script>

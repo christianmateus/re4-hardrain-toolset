@@ -26,7 +26,7 @@ function createWindow() {
   })
 
   // Load menu.html into the new BrowserWindow
-  mainWindow.loadFile('menu.html');
+  mainWindow.loadFile('tpl.html');
 
   // Open DevTools - Remove for PRODUCTION!
   mainWindow.webContents.openDevTools();
@@ -571,12 +571,16 @@ ipcMain.on("error-multiple-textures", (e, arg) => {
 
 // Error message: no texture selected
 ipcMain.on("error-no-texture-selected", (e, arg) => {
-  dialog.showErrorBox("No texture selected", "Cannot replace unspecified texture, please click on any texture to activate this option.")
+  dialog.showErrorBox("No texture selected", "Cannot find unspecified texture, please click on any texture to activate this option.")
 })
 
 // Error message: no texture selected
 ipcMain.on("texture-different-resolution", (e, arg) => {
-  dialog.showMessageBox("Imported texture has a different resolution from original, be aware that PS2 version is very limited and can crash.")
+  dialog.showMessageBox(mainWindow, {
+    type: "question",
+    title: "Warning",
+    message: "Imported texture has a different resolution from original, be aware that PS2 version is very limited and can crash."
+  })
 })
 
 // Closing TPL file
